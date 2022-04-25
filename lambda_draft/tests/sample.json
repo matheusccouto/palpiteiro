@@ -1,0 +1,1591 @@
+[
+	{
+		"id": 42234,
+		"club": 264,
+		"position": "goalkeeper",
+		"points": 12,
+		"price": 8.74
+	},
+	{
+		"id": 68872,
+		"club": 285,
+		"position": "goalkeeper",
+		"points": 4.6,
+		"price": 8.78
+	},
+	{
+		"id": 69012,
+		"club": 293,
+		"position": "goalkeeper",
+		"points": 9,
+		"price": 7.44
+	},
+	{
+		"id": 71571,
+		"club": 267,
+		"position": "goalkeeper",
+		"points": -4.4,
+		"price": 6.95
+	},
+	{
+		"id": 72018,
+		"club": 276,
+		"position": "goalkeeper",
+		"points": -3.7,
+		"price": 10.95
+	},
+	{
+		"id": 72294,
+		"club": 282,
+		"position": "goalkeeper",
+		"points": 6.2,
+		"price": 9.35
+	},
+	{
+		"id": 72372,
+		"club": 356,
+		"position": "goalkeeper",
+		"points": -0.8,
+		"price": 3.75
+	},
+	{
+		"id": 78584,
+		"club": 265,
+		"position": "goalkeeper",
+		"points": 8.7,
+		"price": 10.21
+	},
+	{
+		"id": 82453,
+		"club": 290,
+		"position": "goalkeeper",
+		"points": 5.7,
+		"price": 8.84
+	},
+	{
+		"id": 85004,
+		"club": 266,
+		"position": "goalkeeper",
+		"points": 8.7,
+		"price": 3.12
+	},
+	{
+		"id": 85425,
+		"club": 277,
+		"position": "goalkeeper",
+		"points": -0.4,
+		"price": 6.52
+	},
+	{
+		"id": 88916,
+		"club": 292,
+		"position": "goalkeeper",
+		"points": -4.5,
+		"price": 3.55
+	},
+	{
+		"id": 90933,
+		"club": 373,
+		"position": "goalkeeper",
+		"points": -2.6,
+		"price": 9.5
+	},
+	{
+		"id": 93882,
+		"club": 280,
+		"position": "goalkeeper",
+		"points": 4.1,
+		"price": 1.98
+	},
+	{
+		"id": 99430,
+		"club": 263,
+		"position": "goalkeeper",
+		"points": 0.3,
+		"price": 1
+	},
+	{
+		"id": 101173,
+		"club": 294,
+		"position": "goalkeeper",
+		"points": 1.6,
+		"price": 1.36
+	},
+	{
+		"id": 101574,
+		"club": 262,
+		"position": "goalkeeper",
+		"points": -4.3,
+		"price": 1.8
+	},
+	{
+		"id": 37662,
+		"club": 293,
+		"position": "fullback",
+		"points": 4.2,
+		"price": 8.71
+	},
+	{
+		"id": 37866,
+		"club": 267,
+		"position": "fullback",
+		"points": -3.1,
+		"price": 4.5
+	},
+	{
+		"id": 38229,
+		"club": 264,
+		"position": "fullback",
+		"points": 8,
+		"price": 7.75
+	},
+	{
+		"id": 38750,
+		"club": 262,
+		"position": "fullback",
+		"points": 4.4,
+		"price": 7.66
+	},
+	{
+		"id": 50645,
+		"club": 354,
+		"position": "fullback",
+		"points": 3.2,
+		"price": 3.49
+	},
+	{
+		"id": 60969,
+		"club": 292,
+		"position": "fullback",
+		"points": 0,
+		"price": 7.69
+	},
+	{
+		"id": 62024,
+		"club": 280,
+		"position": "fullback",
+		"points": 3,
+		"price": 4.46
+	},
+	{
+		"id": 63013,
+		"club": 275,
+		"position": "fullback",
+		"points": 0,
+		"price": 7.71
+	},
+	{
+		"id": 68808,
+		"club": 265,
+		"position": "fullback",
+		"points": 7.2,
+		"price": 8.92
+	},
+	{
+		"id": 69345,
+		"club": 262,
+		"position": "fullback",
+		"points": -0.9,
+		"price": 8.35
+	},
+	{
+		"id": 72079,
+		"club": 284,
+		"position": "fullback",
+		"points": 1.8,
+		"price": 8.85
+	},
+	{
+		"id": 78497,
+		"club": 373,
+		"position": "fullback",
+		"points": -0.8,
+		"price": 2.89
+	},
+	{
+		"id": 82628,
+		"club": 356,
+		"position": "fullback",
+		"points": 0.6,
+		"price": 6.12
+	},
+	{
+		"id": 84339,
+		"club": 356,
+		"position": "fullback",
+		"points": 0,
+		"price": 4.3
+	},
+	{
+		"id": 84382,
+		"club": 266,
+		"position": "fullback",
+		"points": 4.4,
+		"price": 3.5
+	},
+	{
+		"id": 84893,
+		"club": 267,
+		"position": "fullback",
+		"points": 1.9,
+		"price": 6.38
+	},
+	{
+		"id": 86713,
+		"club": 294,
+		"position": "fullback",
+		"points": 3.5,
+		"price": 5
+	},
+	{
+		"id": 87228,
+		"club": 282,
+		"position": "fullback",
+		"points": 8.8,
+		"price": 17.41
+	},
+	{
+		"id": 88423,
+		"club": 280,
+		"position": "fullback",
+		"points": 5.8,
+		"price": 9.88
+	},
+	{
+		"id": 89343,
+		"club": 292,
+		"position": "fullback",
+		"points": 1.2,
+		"price": 5.44
+	},
+	{
+		"id": 90444,
+		"club": 285,
+		"position": "fullback",
+		"points": 7.3,
+		"price": 11.05
+	},
+	{
+		"id": 91888,
+		"club": 263,
+		"position": "fullback",
+		"points": -2,
+		"price": 2.57
+	},
+	{
+		"id": 95127,
+		"club": 373,
+		"position": "fullback",
+		"points": 1.6,
+		"price": 6.85
+	},
+	{
+		"id": 95220,
+		"club": 290,
+		"position": "fullback",
+		"points": 2.3,
+		"price": 5.85
+	},
+	{
+		"id": 95466,
+		"club": 276,
+		"position": "fullback",
+		"points": -1.3,
+		"price": 4.68
+	},
+	{
+		"id": 97899,
+		"club": 265,
+		"position": "fullback",
+		"points": 9.5,
+		"price": 3.29
+	},
+	{
+		"id": 100846,
+		"club": 275,
+		"position": "fullback",
+		"points": 1.6,
+		"price": 1.73
+	},
+	{
+		"id": 101319,
+		"club": 282,
+		"position": "fullback",
+		"points": 6.4,
+		"price": 13.64
+	},
+	{
+		"id": 102464,
+		"club": 354,
+		"position": "fullback",
+		"points": 0.4,
+		"price": 1.97
+	},
+	{
+		"id": 104276,
+		"club": 266,
+		"position": "fullback",
+		"points": 7.7,
+		"price": 7.12
+	},
+	{
+		"id": 104513,
+		"club": 293,
+		"position": "fullback",
+		"points": 5.4,
+		"price": 10.2
+	},
+	{
+		"id": 104649,
+		"club": 285,
+		"position": "fullback",
+		"points": 10.4,
+		"price": 6.5
+	},
+	{
+		"id": 106824,
+		"club": 276,
+		"position": "fullback",
+		"points": -3.1,
+		"price": 0.77
+	},
+	{
+		"id": 107750,
+		"club": 284,
+		"position": "fullback",
+		"points": 1,
+		"price": 2.16
+	},
+	{
+		"id": 109668,
+		"club": 263,
+		"position": "fullback",
+		"points": -1.9,
+		"price": 1.41
+	},
+	{
+		"id": 109963,
+		"club": 275,
+		"position": "fullback",
+		"points": 0.7,
+		"price": 1.29
+	},
+	{
+		"id": 38505,
+		"club": 267,
+		"position": "defender",
+		"points": 1.5,
+		"price": 11.65
+	},
+	{
+		"id": 38632,
+		"club": 266,
+		"position": "defender",
+		"points": 16.5,
+		"price": 7.87
+	},
+	{
+		"id": 49651,
+		"club": 265,
+		"position": "defender",
+		"points": 5.5,
+		"price": 6.35
+	},
+	{
+		"id": 52253,
+		"club": 282,
+		"position": "defender",
+		"points": 0,
+		"price": 7.32
+	},
+	{
+		"id": 61141,
+		"club": 280,
+		"position": "defender",
+		"points": 4.9,
+		"price": 5.32
+	},
+	{
+		"id": 63172,
+		"club": 356,
+		"position": "defender",
+		"points": 0.4,
+		"price": 3.16
+	},
+	{
+		"id": 68923,
+		"club": 264,
+		"position": "defender",
+		"points": 5.7,
+		"price": 6.85
+	},
+	{
+		"id": 71604,
+		"club": 290,
+		"position": "defender",
+		"points": -1.1,
+		"price": 6.09
+	},
+	{
+		"id": 73465,
+		"club": 266,
+		"position": "defender",
+		"points": 4.6,
+		"price": 7.11
+	},
+	{
+		"id": 73620,
+		"club": 276,
+		"position": "defender",
+		"points": 0.8,
+		"price": 7.35
+	},
+	{
+		"id": 73800,
+		"club": 262,
+		"position": "defender",
+		"points": 0.2,
+		"price": 7.84
+	},
+	{
+		"id": 78248,
+		"club": 262,
+		"position": "defender",
+		"points": 5.8,
+		"price": 6.14
+	},
+	{
+		"id": 79035,
+		"club": 277,
+		"position": "defender",
+		"points": -0.2,
+		"price": 3.07
+	},
+	{
+		"id": 79113,
+		"club": 285,
+		"position": "defender",
+		"points": 10.6,
+		"price": 11.77
+	},
+	{
+		"id": 80189,
+		"club": 265,
+		"position": "defender",
+		"points": 4.6,
+		"price": 4.77
+	},
+	{
+		"id": 82773,
+		"club": 373,
+		"position": "defender",
+		"points": 7.6,
+		"price": 5.82
+	},
+	{
+		"id": 83048,
+		"club": 292,
+		"position": "defender",
+		"points": 0,
+		"price": 3.09
+	},
+	{
+		"id": 84263,
+		"club": 264,
+		"position": "defender",
+		"points": 8.1,
+		"price": 7.37
+	},
+	{
+		"id": 87225,
+		"club": 293,
+		"position": "defender",
+		"points": 5.1,
+		"price": 6.31
+	},
+	{
+		"id": 88033,
+		"club": 275,
+		"position": "defender",
+		"points": 0,
+		"price": 5.34
+	},
+	{
+		"id": 88312,
+		"club": 282,
+		"position": "defender",
+		"points": 4.4,
+		"price": 10.49
+	},
+	{
+		"id": 89226,
+		"club": 292,
+		"position": "defender",
+		"points": 3,
+		"price": 6.63
+	},
+	{
+		"id": 90846,
+		"club": 354,
+		"position": "defender",
+		"points": -6,
+		"price": 2.37
+	},
+	{
+		"id": 91251,
+		"club": 284,
+		"position": "defender",
+		"points": 2,
+		"price": 2.58
+	},
+	{
+		"id": 91573,
+		"club": 276,
+		"position": "defender",
+		"points": -2.4,
+		"price": 7.55
+	},
+	{
+		"id": 91664,
+		"club": 292,
+		"position": "defender",
+		"points": -1.7,
+		"price": 3.18
+	},
+	{
+		"id": 91772,
+		"club": 290,
+		"position": "defender",
+		"points": 3.1,
+		"price": 5.17
+	},
+	{
+		"id": 91866,
+		"club": 293,
+		"position": "defender",
+		"points": 8,
+		"price": 6.61
+	},
+	{
+		"id": 94514,
+		"club": 373,
+		"position": "defender",
+		"points": 1.7,
+		"price": 3
+	},
+	{
+		"id": 95638,
+		"club": 263,
+		"position": "defender",
+		"points": 2,
+		"price": 6.23
+	},
+	{
+		"id": 96382,
+		"club": 356,
+		"position": "defender",
+		"points": 0,
+		"price": 1.74
+	},
+	{
+		"id": 98619,
+		"club": 275,
+		"position": "defender",
+		"points": 0.6,
+		"price": 5.93
+	},
+	{
+		"id": 99881,
+		"club": 267,
+		"position": "defender",
+		"points": 18.5,
+		"price": 9.72
+	},
+	{
+		"id": 100842,
+		"club": 284,
+		"position": "defender",
+		"points": 1.7,
+		"price": 0.92
+	},
+	{
+		"id": 101600,
+		"club": 277,
+		"position": "defender",
+		"points": 3.7,
+		"price": 2.82
+	},
+	{
+		"id": 101728,
+		"club": 276,
+		"position": "defender",
+		"points": 1.1,
+		"price": 2.97
+	},
+	{
+		"id": 103088,
+		"club": 285,
+		"position": "defender",
+		"points": 7.5,
+		"price": 4.83
+	},
+	{
+		"id": 103700,
+		"club": 264,
+		"position": "defender",
+		"points": 5.9,
+		"price": 3.07
+	},
+	{
+		"id": 104994,
+		"club": 277,
+		"position": "defender",
+		"points": 3.5,
+		"price": 2.62
+	},
+	{
+		"id": 107509,
+		"club": 263,
+		"position": "defender",
+		"points": 3.7,
+		"price": 1.47
+	},
+	{
+		"id": 108176,
+		"club": 354,
+		"position": "defender",
+		"points": -3,
+		"price": 2.34
+	},
+	{
+		"id": 111204,
+		"club": 294,
+		"position": "defender",
+		"points": 1.3,
+		"price": 1.18
+	},
+	{
+		"id": 38277,
+		"club": 292,
+		"position": "midfielder",
+		"points": 2.6,
+		"price": 5.29
+	},
+	{
+		"id": 38315,
+		"club": 293,
+		"position": "midfielder",
+		"points": 0.8,
+		"price": 3.53
+	},
+	{
+		"id": 38909,
+		"club": 262,
+		"position": "midfielder",
+		"points": -1.9,
+		"price": 4.68
+	},
+	{
+		"id": 38913,
+		"club": 266,
+		"position": "midfielder",
+		"points": 5.2,
+		"price": 13.03
+	},
+	{
+		"id": 38939,
+		"club": 276,
+		"position": "midfielder",
+		"points": 4.8,
+		"price": 10.6
+	},
+	{
+		"id": 50301,
+		"club": 284,
+		"position": "midfielder",
+		"points": 3,
+		"price": 5.08
+	},
+	{
+		"id": 50324,
+		"club": 266,
+		"position": "midfielder",
+		"points": 0,
+		"price": 5.05
+	},
+	{
+		"id": 51772,
+		"club": 262,
+		"position": "midfielder",
+		"points": 3.1,
+		"price": 9.4
+	},
+	{
+		"id": 61033,
+		"club": 265,
+		"position": "midfielder",
+		"points": 3.1,
+		"price": 13.24
+	},
+	{
+		"id": 63289,
+		"club": 285,
+		"position": "midfielder",
+		"points": 3,
+		"price": 9.04
+	},
+	{
+		"id": 69705,
+		"club": 293,
+		"position": "midfielder",
+		"points": 10,
+		"price": 10.18
+	},
+	{
+		"id": 70986,
+		"club": 293,
+		"position": "midfielder",
+		"points": 13.3,
+		"price": 13.77
+	},
+	{
+		"id": 71162,
+		"club": 354,
+		"position": "midfielder",
+		"points": 2.7,
+		"price": 11.34
+	},
+	{
+		"id": 71937,
+		"club": 356,
+		"position": "midfielder",
+		"points": 6.9,
+		"price": 5.08
+	},
+	{
+		"id": 78548,
+		"club": 277,
+		"position": "midfielder",
+		"points": 0,
+		"price": 3.71
+	},
+	{
+		"id": 78715,
+		"club": 264,
+		"position": "midfielder",
+		"points": 2.6,
+		"price": 6.17
+	},
+	{
+		"id": 78856,
+		"club": 292,
+		"position": "midfielder",
+		"points": 2.1,
+		"price": 4.36
+	},
+	{
+		"id": 78865,
+		"club": 285,
+		"position": "midfielder",
+		"points": -0.7,
+		"price": 4.93
+	},
+	{
+		"id": 80583,
+		"club": 275,
+		"position": "midfielder",
+		"points": 6,
+		"price": 5.45
+	},
+	{
+		"id": 81091,
+		"club": 282,
+		"position": "midfielder",
+		"points": 9.8,
+		"price": 8.83
+	},
+	{
+		"id": 81682,
+		"club": 264,
+		"position": "midfielder",
+		"points": 2.5,
+		"price": 9.23
+	},
+	{
+		"id": 82455,
+		"club": 275,
+		"position": "midfielder",
+		"points": 1.4,
+		"price": 8.86
+	},
+	{
+		"id": 82876,
+		"club": 292,
+		"position": "midfielder",
+		"points": 0.6,
+		"price": 4.19
+	},
+	{
+		"id": 83433,
+		"club": 285,
+		"position": "midfielder",
+		"points": 3.3,
+		"price": 12.39
+	},
+	{
+		"id": 85315,
+		"club": 264,
+		"position": "midfielder",
+		"points": -1.6,
+		"price": 4.64
+	},
+	{
+		"id": 85931,
+		"club": 282,
+		"position": "midfielder",
+		"points": 3.4,
+		"price": 11.87
+	},
+	{
+		"id": 86686,
+		"club": 276,
+		"position": "midfielder",
+		"points": -0.8,
+		"price": 7.05
+	},
+	{
+		"id": 87262,
+		"club": 373,
+		"position": "midfielder",
+		"points": -0.3,
+		"price": 2.61
+	},
+	{
+		"id": 87470,
+		"club": 284,
+		"position": "midfielder",
+		"points": 0.3,
+		"price": 4.85
+	},
+	{
+		"id": 87747,
+		"club": 266,
+		"position": "midfielder",
+		"points": 0.7,
+		"price": 4.42
+	},
+	{
+		"id": 87863,
+		"club": 262,
+		"position": "midfielder",
+		"points": 6.2,
+		"price": 17.87
+	},
+	{
+		"id": 87999,
+		"club": 275,
+		"position": "midfielder",
+		"points": 3.2,
+		"price": 6.07
+	},
+	{
+		"id": 89256,
+		"club": 262,
+		"position": "midfielder",
+		"points": 2.4,
+		"price": 9.39
+	},
+	{
+		"id": 92496,
+		"club": 280,
+		"position": "midfielder",
+		"points": 1.1,
+		"price": 9.04
+	},
+	{
+		"id": 92981,
+		"club": 265,
+		"position": "midfielder",
+		"points": 4.5,
+		"price": 4.34
+	},
+	{
+		"id": 93108,
+		"club": 264,
+		"position": "midfielder",
+		"points": 0.9,
+		"price": 5.28
+	},
+	{
+		"id": 94269,
+		"club": 263,
+		"position": "midfielder",
+		"points": 2.4,
+		"price": 2.05
+	},
+	{
+		"id": 95464,
+		"club": 265,
+		"position": "midfielder",
+		"points": 3.7,
+		"price": 5.71
+	},
+	{
+		"id": 95770,
+		"club": 280,
+		"position": "midfielder",
+		"points": 4.3,
+		"price": 2.92
+	},
+	{
+		"id": 96340,
+		"club": 354,
+		"position": "midfielder",
+		"points": 1.7,
+		"price": 6.22
+	},
+	{
+		"id": 96342,
+		"club": 354,
+		"position": "midfielder",
+		"points": 1.8,
+		"price": 6.39
+	},
+	{
+		"id": 96652,
+		"club": 282,
+		"position": "midfielder",
+		"points": -2.8,
+		"price": 5.31
+	},
+	{
+		"id": 97520,
+		"club": 290,
+		"position": "midfielder",
+		"points": -0.2,
+		"price": 3.49
+	},
+	{
+		"id": 98529,
+		"club": 354,
+		"position": "midfielder",
+		"points": 8.2,
+		"price": 2.67
+	},
+	{
+		"id": 99440,
+		"club": 373,
+		"position": "midfielder",
+		"points": 5,
+		"price": 4.35
+	},
+	{
+		"id": 100107,
+		"club": 284,
+		"position": "midfielder",
+		"points": 3.2,
+		"price": 5.9
+	},
+	{
+		"id": 100969,
+		"club": 356,
+		"position": "midfielder",
+		"points": 2,
+		"price": 3.01
+	},
+	{
+		"id": 101315,
+		"club": 294,
+		"position": "midfielder",
+		"points": 1.2,
+		"price": 2.91
+	},
+	{
+		"id": 101594,
+		"club": 294,
+		"position": "midfielder",
+		"points": 1,
+		"price": 3.34
+	},
+	{
+		"id": 101595,
+		"club": 356,
+		"position": "midfielder",
+		"points": -0.2,
+		"price": 1.59
+	},
+	{
+		"id": 102565,
+		"club": 290,
+		"position": "midfielder",
+		"points": 3.8,
+		"price": 2.48
+	},
+	{
+		"id": 102909,
+		"club": 276,
+		"position": "midfielder",
+		"points": -0.7,
+		"price": 3.01
+	},
+	{
+		"id": 104502,
+		"club": 293,
+		"position": "midfielder",
+		"points": 2.3,
+		"price": 1.16
+	},
+	{
+		"id": 104504,
+		"club": 294,
+		"position": "midfielder",
+		"points": 0,
+		"price": 1.58
+	},
+	{
+		"id": 104526,
+		"club": 294,
+		"position": "midfielder",
+		"points": 8.3,
+		"price": 2.89
+	},
+	{
+		"id": 104580,
+		"club": 277,
+		"position": "midfielder",
+		"points": -0.4,
+		"price": 1.54
+	},
+	{
+		"id": 104593,
+		"club": 284,
+		"position": "midfielder",
+		"points": 0,
+		"price": 3.97
+	},
+	{
+		"id": 105294,
+		"club": 265,
+		"position": "midfielder",
+		"points": -1.5,
+		"price": 0.77
+	},
+	{
+		"id": 106083,
+		"club": 290,
+		"position": "midfielder",
+		"points": 0.8,
+		"price": 3.89
+	},
+	{
+		"id": 106202,
+		"club": 267,
+		"position": "midfielder",
+		"points": 2,
+		"price": 3.01
+	},
+	{
+		"id": 107231,
+		"club": 275,
+		"position": "midfielder",
+		"points": 2.3,
+		"price": 2.03
+	},
+	{
+		"id": 107259,
+		"club": 290,
+		"position": "midfielder",
+		"points": 4.9,
+		"price": 1.84
+	},
+	{
+		"id": 107516,
+		"club": 263,
+		"position": "midfielder",
+		"points": -0.2,
+		"price": 0.85
+	},
+	{
+		"id": 107744,
+		"club": 285,
+		"position": "midfielder",
+		"points": -1,
+		"price": 0.96
+	},
+	{
+		"id": 107746,
+		"club": 263,
+		"position": "midfielder",
+		"points": -0.6,
+		"price": 0.79
+	},
+	{
+		"id": 109588,
+		"club": 264,
+		"position": "midfielder",
+		"points": 0,
+		"price": 0.79
+	},
+	{
+		"id": 110605,
+		"club": 277,
+		"position": "midfielder",
+		"points": 3.2,
+		"price": 4.46
+	},
+	{
+		"id": 110962,
+		"club": 263,
+		"position": "midfielder",
+		"points": 5.1,
+		"price": 2.45
+	},
+	{
+		"id": 37655,
+		"club": 290,
+		"position": "forward",
+		"points": 3.5,
+		"price": 6.39
+	},
+	{
+		"id": 38162,
+		"club": 266,
+		"position": "forward",
+		"points": 12,
+		"price": 5.39
+	},
+	{
+		"id": 38279,
+		"club": 356,
+		"position": "forward",
+		"points": -0.6,
+		"price": 7.15
+	},
+	{
+		"id": 38910,
+		"club": 294,
+		"position": "forward",
+		"points": 8.1,
+		"price": 6.95
+	},
+	{
+		"id": 53148,
+		"club": 280,
+		"position": "forward",
+		"points": 6.3,
+		"price": 7.48
+	},
+	{
+		"id": 61149,
+		"club": 266,
+		"position": "forward",
+		"points": 1.8,
+		"price": 5.11
+	},
+	{
+		"id": 61188,
+		"club": 265,
+		"position": "forward",
+		"points": 2.9,
+		"price": 8.71
+	},
+	{
+		"id": 62033,
+		"club": 290,
+		"position": "forward",
+		"points": 17.4,
+		"price": 8.31
+	},
+	{
+		"id": 69138,
+		"club": 276,
+		"position": "forward",
+		"points": 7.6,
+		"price": 7.88
+	},
+	{
+		"id": 70360,
+		"club": 282,
+		"position": "forward",
+		"points": 7.4,
+		"price": 9.01
+	},
+	{
+		"id": 79631,
+		"club": 267,
+		"position": "forward",
+		"points": 11.1,
+		"price": 14.28
+	},
+	{
+		"id": 80287,
+		"club": 276,
+		"position": "forward",
+		"points": 10.4,
+		"price": 11.15
+	},
+	{
+		"id": 81798,
+		"club": 265,
+		"position": "forward",
+		"points": 9,
+		"price": 6.87
+	},
+	{
+		"id": 81898,
+		"club": 294,
+		"position": "forward",
+		"points": 0.7,
+		"price": 2.57
+	},
+	{
+		"id": 82407,
+		"club": 373,
+		"position": "forward",
+		"points": 10,
+		"price": 6.21
+	},
+	{
+		"id": 83257,
+		"club": 262,
+		"position": "forward",
+		"points": -0.6,
+		"price": 12
+	},
+	{
+		"id": 84523,
+		"club": 356,
+		"position": "forward",
+		"points": 1,
+		"price": 8.13
+	},
+	{
+		"id": 86485,
+		"club": 282,
+		"position": "forward",
+		"points": 11.4,
+		"price": 14.75
+	},
+	{
+		"id": 90285,
+		"club": 262,
+		"position": "forward",
+		"points": 8.9,
+		"price": 13.76
+	},
+	{
+		"id": 90309,
+		"club": 356,
+		"position": "forward",
+		"points": 1.5,
+		"price": 5.23
+	},
+	{
+		"id": 92630,
+		"club": 280,
+		"position": "forward",
+		"points": 10.7,
+		"price": 16.6
+	},
+	{
+		"id": 92696,
+		"club": 293,
+		"position": "forward",
+		"points": 6.9,
+		"price": 8.27
+	},
+	{
+		"id": 93988,
+		"club": 275,
+		"position": "forward",
+		"points": 1.4,
+		"price": 3.67
+	},
+	{
+		"id": 94138,
+		"club": 354,
+		"position": "forward",
+		"points": 1.8,
+		"price": 5.74
+	},
+	{
+		"id": 95799,
+		"club": 280,
+		"position": "forward",
+		"points": 2,
+		"price": 11.81
+	},
+	{
+		"id": 96966,
+		"club": 277,
+		"position": "forward",
+		"points": 1.6,
+		"price": 3.71
+	},
+	{
+		"id": 97995,
+		"club": 292,
+		"position": "forward",
+		"points": 1.4,
+		"price": 4.15
+	},
+	{
+		"id": 98289,
+		"club": 284,
+		"position": "forward",
+		"points": 3.3,
+		"price": 8.91
+	},
+	{
+		"id": 98672,
+		"club": 282,
+		"position": "forward",
+		"points": 0.2,
+		"price": 6.2
+	},
+	{
+		"id": 98952,
+		"club": 264,
+		"position": "forward",
+		"points": 1.2,
+		"price": 4.14
+	},
+	{
+		"id": 100652,
+		"club": 285,
+		"position": "forward",
+		"points": 2.1,
+		"price": 4.59
+	},
+	{
+		"id": 101290,
+		"club": 284,
+		"position": "forward",
+		"points": 8.7,
+		"price": 5.96
+	},
+	{
+		"id": 102292,
+		"club": 292,
+		"position": "forward",
+		"points": 0.8,
+		"price": 6.45
+	},
+	{
+		"id": 104646,
+		"club": 263,
+		"position": "forward",
+		"points": 0.9,
+		"price": 2.68
+	},
+	{
+		"id": 104660,
+		"club": 290,
+		"position": "forward",
+		"points": 3,
+		"price": 5.65
+	},
+	{
+		"id": 105111,
+		"club": 277,
+		"position": "forward",
+		"points": 2,
+		"price": 4.4
+	},
+	{
+		"id": 105770,
+		"club": 263,
+		"position": "forward",
+		"points": -0.1,
+		"price": 1.85
+	},
+	{
+		"id": 105786,
+		"club": 267,
+		"position": "forward",
+		"points": 1.1,
+		"price": 9.67
+	},
+	{
+		"id": 106820,
+		"club": 354,
+		"position": "forward",
+		"points": 1.4,
+		"price": 3.53
+	},
+	{
+		"id": 106826,
+		"club": 373,
+		"position": "forward",
+		"points": 3.6,
+		"price": 1.79
+	},
+	{
+		"id": 107555,
+		"club": 294,
+		"position": "forward",
+		"points": -3.6,
+		"price": 0.77
+	},
+	{
+		"id": 107745,
+		"club": 285,
+		"position": "forward",
+		"points": 5.8,
+		"price": 5.15
+	},
+	{
+		"id": 109282,
+		"club": 266,
+		"position": "forward",
+		"points": 3,
+		"price": 3.57
+	},
+	{
+		"id": 110415,
+		"club": 277,
+		"position": "forward",
+		"points": 0.4,
+		"price": 0.79
+	},
+	{
+		"id": 36943,
+		"club": 293,
+		"position": "coach",
+		"points": 8.61,
+		"price": 9.73
+	},
+	{
+		"id": 37245,
+		"club": 354,
+		"position": "coach",
+		"points": 2.05,
+		"price": 9.34
+	},
+	{
+		"id": 37333,
+		"club": 373,
+		"position": "coach",
+		"points": 3.87,
+		"price": 9.37
+	},
+	{
+		"id": 39850,
+		"club": 264,
+		"position": "coach",
+		"points": 5.11,
+		"price": 8.02
+	},
+	{
+		"id": 40006,
+		"club": 285,
+		"position": "coach",
+		"points": 5.55,
+		"price": 11.54
+	},
+	{
+		"id": 41327,
+		"club": 267,
+		"position": "coach",
+		"points": 5.19,
+		"price": 10.33
+	},
+	{
+		"id": 41929,
+		"club": 284,
+		"position": "coach",
+		"points": 2.83,
+		"price": 12.17
+	},
+	{
+		"id": 62137,
+		"club": 356,
+		"position": "coach",
+		"points": 1.23,
+		"price": 5.64
+	},
+	{
+		"id": 70800,
+		"club": 282,
+		"position": "coach",
+		"points": 5.89,
+		"price": 14.17
+	},
+	{
+		"id": 73476,
+		"club": 266,
+		"position": "coach",
+		"points": 6.39,
+		"price": 10.67
+	},
+	{
+		"id": 73975,
+		"club": 265,
+		"position": "coach",
+		"points": 6.83,
+		"price": 9.34
+	},
+	{
+		"id": 82792,
+		"club": 280,
+		"position": "coach",
+		"points": 4.17,
+		"price": 8.55
+	},
+	{
+		"id": 88881,
+		"club": 294,
+		"position": "coach",
+		"points": 2.28,
+		"price": 8.15
+	},
+	{
+		"id": 91274,
+		"club": 277,
+		"position": "coach",
+		"points": 1.68,
+		"price": 9.27
+	},
+	{
+		"id": 92180,
+		"club": 292,
+		"position": "coach",
+		"points": 0.93,
+		"price": 6.88
+	},
+	{
+		"id": 97341,
+		"club": 262,
+		"position": "coach",
+		"points": 2.12,
+		"price": 8.33
+	},
+	{
+		"id": 103582,
+		"club": 263,
+		"position": "coach",
+		"points": 1.99,
+		"price": 6.2
+	},
+	{
+		"id": 109638,
+		"club": 290,
+		"position": "coach",
+		"points": 3.94,
+		"price": 6.33
+	},
+	{
+		"id": 110506,
+		"club": 275,
+		"position": "coach",
+		"points": 2.7,
+		"price": 11.78
+	},
+	{
+		"id": 111079,
+		"club": 276,
+		"position": "coach",
+		"points": 1.18,
+		"price": 7.53
+	}
+]

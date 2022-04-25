@@ -1,0 +1,56 @@
+service: palpiteiro
+frameworkVersion: "3"
+provider:
+  name: aws
+  stage: "${opt:stage}"
+package:
+  individually: true
+  patterns:
+    - "!**/*"
+functions:
+  draft:
+    handler: lambda_draft.handler
+    description: Line up drafting for fantasy soccer.
+    runtime: python3.9
+    timeout: 5 # seconds
+    memorySize: 2048 # megabytes
+    package:
+      patterns:
+        - "lambda_draft/*.py"
+        - "!lambda_draft/tests/**/*"
+        - "!lambda_draft/notebooks/**/*"
+stepFunctions:
+  stateMachines:
+    stepfunc:
+      name: ${self:service}-${opt:stage}
+      events:
+        - schedule:
+            rate: 24 hours
+            enabled: false
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+      definition:
+        StartAt: Draft
+        States:
+          Draft:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [draft, Arn]
+            End: true
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${opt:stage}
+        Subscription:
+          - Protocol: email
+            Endpoint: matheuscouto@gmail.com
+plugins:
+  - serverless-step-functions

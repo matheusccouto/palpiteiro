@@ -1,0 +1,25 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Install Serverless Framework
+        run: |
+          npm install -g serverless@3
+          npm install --save-dev serverless-step-functions
+      - name: Serverless AWS authentication
+        run: sls config credentials --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
+      - name: Deploy
+        run: sls deploy --stage ${{ github.head_ref || github.ref_name }}

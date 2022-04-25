@@ -1,0 +1,17 @@
+[
+    {
+        "price_prev": 11.24,
+        "variation_prev": 0.63,
+        "matches_prev": 5.0,
+        "spi": 42.16,
+        "spi_opp": 55.82,
+        "prob_win": 0.3699,
+        "prob_lose": 0.3878,
+        "prob_tie": 0.2422,
+        "proj_score": 1.46,
+        "proj_score_opp": 1.5,
+        "importance": 30.5,
+        "importance_opp": 8.3,
+        "position": "defender"
+    }
+]
