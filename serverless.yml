@@ -16,7 +16,7 @@ functions:
     memorySize: 2048 # megabytes
     package:
       patterns:
-        - "lambda_draft/*.py"
+        - "lambda_draft/**/*.py"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
 stepFunctions:
