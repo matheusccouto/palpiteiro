@@ -2,9 +2,11 @@
 
 from fnmatch import fnmatch
 
-import lambda_extract_cartola_players
+import pytest
 
-import utils.aws
+import lambda_extract_cartola_players
+import utils.aws.s3
+import utils.test
 
 
 def test_uri():
@@ -13,7 +15,15 @@ def test_uri():
     assert fnmatch(results["uri"], "s3://cartola-dev/atletas/mercado/20*-*.json")
 
 
-def test_exists():
+@pytest.fixture(name="delete_atletas_mercado", )
+def fixture_delete_atletas_mercado():
+    """Clear atletas/mercado dir from palpiteiro-test."""
+    yield
+    utils.aws.s3.delete("s3://palpiteiro-test/atletas/mercado")
+
+
+def test_exists(delete_atletas_mercado):
     """Test if JSON file exists."""
-    results = lambda_extract_cartola_players.handler(event={})
-    assert utils.aws.exists(results["uri"])
+    with utils.test.environ(BUCKET="palpiteiro-test"):
+        results = lambda_extract_cartola_players.handler(event={})
+        assert utils.aws.s3.exists(results["uri"])

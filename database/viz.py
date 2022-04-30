@@ -21,7 +21,7 @@ conn_str = utils.cockroachdb.create_connection_string(
 )
 engine = sqlalchemy.create_engine(conn_str)
 
-df = pd.read_sql("SELECT * FROM cartola.atletas", con=conn_str)
+df = pd.read_sql("SELECT * FROM test.append", con=conn_str)
 df.sample(5)
 
 # %%

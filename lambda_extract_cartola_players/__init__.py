@@ -1,21 +1,22 @@
 """Extract players data from Cartola FC."""
 
+import json
 import os
 
-import utils.aws
+import utils.aws.s3
+import utils.http
 
 PLAYERS_URL = "https://api.cartola.globo.com/atletas/mercado"
 STATUS_URL = "https://api.cartola.globo.com/mercado/status"
-BUCKET = os.environ["BUCKET"]
 
 
 def handler(event, context=None):
     """Lambda handler."""
-    status = utils.aws.get(STATUS_URL)
+    status = utils.http.get(STATUS_URL)
     if status["game_over"]:
         raise ConnectionAbortedError("Extraction aborted. Game is over.")
 
-    players = utils.aws.get(PLAYERS_URL)
+    players = utils.http.get(PLAYERS_URL)
 
     # This endpoint returns has no reference at all for which season this is.
     # This is important to us as we work with multiseason data.
@@ -27,9 +28,8 @@ def handler(event, context=None):
     for player in players["atletas"]:
         player["temporada_id"] = season
 
-    uri = utils.aws.to_s3(
-        data=players,
-        bucket=BUCKET,
-        key=f"atletas/mercado/{season}-{rnd}.json",
-    )
+    bucket = os.environ["BUCKET"]
+    key = f"atletas/mercado/{season}-{rnd}.json"
+    uri = f"s3://{bucket}/{key}"
+    utils.aws.s3.save(data=json.dumps(players), uri=uri)
     return {"uri": uri}
