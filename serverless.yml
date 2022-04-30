@@ -31,7 +31,7 @@ functions:
         - "!lambda_draft/notebooks/**/*"
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
-    description: Extract players data from Cartola FC.
+    description: Extract players data from Cartola FC to JSON.
     runtime: python3.9
     role:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
@@ -40,6 +40,15 @@ functions:
         - "lambda_extract_cartola_players/*.py"
     environment:
       BUCKET: ${param:cartola-bucket}
+  transform-cartola-players:
+    handler: lambda_transform_cartola_players.handler
+    description: Transform players data from Cartola FC from JSO to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_cartola_players/*.py"
   load:
     handler: lambda_load.handler
     description: Load CSV into the database.
@@ -71,12 +80,22 @@ stepFunctions:
           - executionsAborted
           - executionThrottled
       definition:
-        StartAt: ExtractPlayers
+        StartAt: ExtractCartolaPlayers
         States:
-          ExtractPlayers:
+          ExtractCartolaPlayers:
             Type: Task
             Resource:
               Fn::GetAtt: [extract-cartola-players, Arn]
+            Next: TransformCartolaPlayers
+          TransformCartolaPlayers:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-cartola-players, Arn]
+            Next: Load
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
             End: true
 resources:
   Resources:
