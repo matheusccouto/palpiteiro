@@ -1,5 +1,10 @@
 service: palpiteiro
 frameworkVersion: "3"
+params:
+  main:
+    cartola-bucket: cartola-main
+  dev:
+    cartola-bucket: cartola-dev
 provider:
   name: aws
   stage: "${opt:stage}"
@@ -7,6 +12,7 @@ package:
   individually: true
   patterns:
     - "!**/*"
+    - "utils/**/*.py"
 functions:
   draft:
     handler: lambda_draft.handler
@@ -19,14 +25,44 @@ functions:
         - "lambda_draft/**/*.py"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
+  extract-cartola-players:
+    handler: lambda_extract_cartola_players.handler
+    description: Extract players data from Cartola FC.
+    runtime: python3.9
+    role: { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_cartola_players/*.py"
+    environment:
+      BUCKET: ${param:cartola-bucket}
 stepFunctions:
   stateMachines:
     stepfunc:
       name: ${self:service}-${opt:stage}
+      # events:
+      #   - schedule:
+      #       rate: 24 hours
+      #       enabled: false
+      # alarms:
+      #   topics:
+      #     alarm: { Ref: SNSTopic }
+      #   metrics:
+      #     - executionsTimedOut
+      #     - executionsFailed
+      #     - executionsAborted
+      #     - executionThrottled
+      definition:
+        StartAt: Draft
+        States:
+          Draft:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [draft, Arn]
+            End: true
+    extract-cartola-players-stepfunc:
+      name: extract_cartola_players
       events:
-        - schedule:
-            rate: 24 hours
-            enabled: false
+        - schedule: rate(12 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -36,12 +72,12 @@ stepFunctions:
           - executionsAborted
           - executionThrottled
       definition:
-        StartAt: Draft
+        StartAt: ExtractPlayers
         States:
-          Draft:
+          ExtractPlayers:
             Type: Task
             Resource:
-              Fn::GetAtt: [draft, Arn]
+              Fn::GetAtt: [extract-cartola-players, Arn]
             End: true
 resources:
   Resources:

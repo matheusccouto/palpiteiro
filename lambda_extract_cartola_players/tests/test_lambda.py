@@ -1,24 +1,19 @@
 """Unit tests for the lambda function."""
 
-import datetime
+from fnmatch import fnmatch
 
 import lambda_extract_cartola_players
-import utils.test
+
+import utils.aws
 
 
-def test_handler():
-    """Test lambda handler."""
-    results = lambda_extract_cartola_players.handler(event={}, context={})
-    expected = {"clubes": None, "posicoes": None, "status": None, "atletas": None}
-    utils.test.assert_jsons_are_equal(
-        left=results,
-        right=expected,
-        exclude_types=[type(None)],
-    )
+def test_uri():
+    """Test if lambda handler return the file URI."""
+    results = lambda_extract_cartola_players.handler(event={})
+    assert fnmatch(results["uri"], "s3://cartola-dev/atletas/mercado/20*-*.json")
 
 
-def test_season():
-    """Test if season is inside atletas key."""
-    results = lambda_extract_cartola_players.handler(event={}, context={})
-    for player in results["atletas"]:
-        assert player["temporada_id"] == datetime.datetime.today().year
+def test_exists():
+    """Test if JSON file exists."""
+    results = lambda_extract_cartola_players.handler(event={})
+    assert utils.aws.exists(results["uri"])
