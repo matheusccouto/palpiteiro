@@ -1,9 +1,11 @@
-"""Extract players data from Cartola FC."""
+"""Transform players data from Cartola FC."""
 
 import csv
 import io
 import json
 import os
+
+import pandas as pd
 
 import utils.aws.s3
 import utils.http
@@ -11,15 +13,15 @@ import utils.http
 
 def handler(event, context=None):
     """Lambda handler."""
+    # Load
     data = json.loads(utils.aws.s3.load(event["uri"]))
-    data = data["atletas"]  # Filter relevant key.
-
-    output = io.StringIO()
-    writer = csv.DictWriter(output, data[0].keys())
-    writer.writeheader()
+    
+    # Transform
+    data = data["atletas"]
     for row in data:
-        writer.writerow(row)
+        row.update(row.pop("scout"))
 
+    # Save as CSV
     uri = os.path.splitext(event["uri"])[0] + ".csv"
-    utils.aws.s3.save(data=output.read().encode(), uri=uri)
+    utils.aws.s3.save(data=pd.DataFrame.from_records(data).to_csv(), uri=uri)
     return {"uri": uri}

@@ -49,6 +49,8 @@ functions:
     package:
       patterns:
         - "lambda_transform_cartola_players/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
   load:
     handler: lambda_load.handler
     description: Load CSV into the database.
@@ -58,19 +60,31 @@ functions:
     package:
       patterns:
         - "lambda_load/*.py"
+        - "lambda_load/*.crt"
+    layers:
+      - { Ref: PandasLambdaLayer }
+      - { Ref: CockroachdbLambdaLayer }
     environment:
-      USER: ${env.USER}
-      PASSWORD: ${env.PASSWORD}
-      HOST: ${env.HOST}
-      DATABASE: ${env.DATABASE}
-      PORT: ${env.PORT}
-      OPTIONS: ${env.OPTIONS}
+      USER: ${env:USER}
+      PASSWORD: ${env:PASSWORD}
+      HOST: ${env:HOST}
+      DATABASE: ${env:DATABASE}
+      PORT: ${env:PORT}
+      OPTIONS: ${env:OPTIONS}
+      PGSSLROOTCERT: lambda_load/root.crt
+layers:
+  cockroachdb:
+    package:
+      artifact: layer_cockroachdb.zip
+  pandas:
+    package:
+      artifact: layer_pandas.zip
 stepFunctions:
   stateMachines:
     extract-cartola-players-stepfunc:
       name: extract_cartola_players
       events:
-        - schedule: rate(12 hours)
+        - schedule: rate(1 hour)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -92,6 +106,14 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [transform-cartola-players, Arn]
             Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: atletas
+              schema: cartola
+              subset:
+                - temporada_id
+                - rodada_id
+                - atleta_id
           Load:
             Type: Task
             Resource:
@@ -105,6 +127,6 @@ resources:
         TopicName: ${self:service}-${opt:stage}
         Subscription:
           - Protocol: email
-            Endpoint: matheuscouto@gmail.com
+            Endpoint: matheusccouto@gmail.com
 plugins:
   - serverless-step-functions
