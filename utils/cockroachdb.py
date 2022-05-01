@@ -24,3 +24,9 @@ def create_engine(user, password, host, port, database, options):
             options=options,
         )
     )
+
+
+def run(query, engine):
+    """Run query."""
+    with engine.connect() as conn:
+        conn.execute(query)

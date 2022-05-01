@@ -3,9 +3,11 @@ frameworkVersion: "3"
 params:
   main:
     cartola-bucket: cartola-main
+    fivethirtyeight-bucket: fivethirtyeight-main
     deployment-bucket: palpiteiro-main
   dev:
     cartola-bucket: cartola-dev
+    fivethirtyeight-bucket: fivethirtyeight-dev
     deployment-bucket: palpiteiro-dev
 provider:
   name: aws
@@ -73,6 +75,19 @@ functions:
         - "lambda_transform_cartola_matches/*.py"
     layers:
       - { Ref: PandasLambdaLayer }
+  extract-fivethirtyeight-spi:
+    handler: lambda_extract_fivethirtyeight_spi.handler
+    description: Extract matches data from FiveThirtyEight SPI to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_fivethirtyeight_spi/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
+    environment:
+      BUCKET: ${param:fivethirtyeight-bucket}
   load:
     handler: lambda_load.handler
     description: Load CSV into the database.
@@ -104,7 +119,7 @@ layers:
 stepFunctions:
   stateMachines:
     extract-cartola-players-stepfunc:
-      name: extract_cartola_players
+      name: extract_cartola_players-${opt:stage}
       events:
         - schedule: rate(1 hour)
       alarms:
@@ -142,7 +157,7 @@ stepFunctions:
               Fn::GetAtt: [load, Arn]
             End: true
     extract-cartola-matches-stepfunc:
-      name: extract_cartola_matches
+      name: extract_cartola_matches-${opt:stage}
       events:
         - schedule: rate(1 hour)
       alarms:
@@ -172,6 +187,40 @@ stepFunctions:
               schema: cartola
               subset:
                 - partida_id
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
+            End: true
+    extract-fivethirtyeight-spi-stepfunc:
+      name: extract_fivethirtyeight_spi-${opt:stage}
+      events:
+        - schedule: rate(1 hour)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+      definition:
+        StartAt: ExtractFiveThirtyEightSPI
+        States:
+          ExtractFiveThirtyEightSPI:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-fivethirtyeight-spi, Arn]
+            Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: spi
+              schema: fivethirtyeight
+              subset:
+                - season
+                - league_id
+                - team1
+                - team2
           Load:
             Type: Task
             Resource:

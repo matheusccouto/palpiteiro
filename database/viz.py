@@ -11,7 +11,7 @@ import utils.cockroachdb
 
 # %%
 
-conn_str = utils.cockroachdb.create_connection_string(
+engine = utils.cockroachdb.create_engine(
     user=os.environ["USER"],
     password=os.environ["PASSWORD"],
     host=os.environ["HOST"],
@@ -19,9 +19,8 @@ conn_str = utils.cockroachdb.create_connection_string(
     database=os.environ["DATABASE"],
     options=os.environ["OPTIONS"],
 )
-engine = sqlalchemy.create_engine(conn_str)
 
-df = pd.read_sql("SELECT * FROM test.append", con=conn_str)
+df = pd.read_sql("SELECT * FROM cartola.partidas", con=engine, index_col=None)
 df.sample(5)
 
 # %%
