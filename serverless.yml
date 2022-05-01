@@ -51,6 +51,28 @@ functions:
         - "lambda_transform_cartola_players/*.py"
     layers:
       - { Ref: PandasLambdaLayer }
+  extract-cartola-matches:
+    handler: lambda_extract_cartola_matches.handler
+    description: Extract matches data from Cartola FC to JSON.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_cartola_matches/*.py"
+    environment:
+      BUCKET: ${param:cartola-bucket}
+  transform-cartola-matches:
+    handler: lambda_transform_cartola_matches.handler
+    description: Transform matches data from Cartola FC from JSON to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_cartola_matches/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
   load:
     handler: lambda_load.handler
     description: Load CSV into the database.
@@ -114,6 +136,42 @@ stepFunctions:
                 - temporada_id
                 - rodada_id
                 - atleta_id
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
+            End: true
+    extract-cartola-matches-stepfunc:
+      name: extract_cartola_matches
+      events:
+        - schedule: rate(1 hour)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+      definition:
+        StartAt: ExtractCartolaMatches
+        States:
+          ExtractCartolaMatches:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-cartola-matches, Arn]
+            Next: TransformCartolaMatches
+          TransformCartolaMatches:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-cartola-matches, Arn]
+            Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: partidas
+              schema: cartola
+              subset:
+                - partida_id
           Load:
             Type: Task
             Resource:
