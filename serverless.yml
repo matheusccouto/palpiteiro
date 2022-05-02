@@ -2,10 +2,12 @@ service: palpiteiro
 frameworkVersion: "3"
 params:
   main:
+    database: main
     cartola-bucket: cartola-main
     fivethirtyeight-bucket: fivethirtyeight-main
     deployment-bucket: palpiteiro-main
   dev:
+    database: dev
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     deployment-bucket: palpiteiro-dev
@@ -105,7 +107,7 @@ functions:
       USER: ${env:USER}
       PASSWORD: ${env:PASSWORD}
       HOST: ${env:HOST}
-      DATABASE: ${env:DATABASE}
+      DATABASE: ${param:database}
       PORT: ${env:PORT}
       OPTIONS: ${env:OPTIONS}
       PGSSLROOTCERT: lambda_load/root.crt
