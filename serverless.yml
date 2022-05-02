@@ -121,7 +121,7 @@ stepFunctions:
     extract-cartola-players-stepfunc:
       name: extract_cartola_players-${opt:stage}
       events:
-        - schedule: rate(1 hour)
+        - schedule: rate(12 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -159,7 +159,7 @@ stepFunctions:
     extract-cartola-matches-stepfunc:
       name: extract_cartola_matches-${opt:stage}
       events:
-        - schedule: rate(1 hour)
+        - schedule: rate(12 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -195,7 +195,7 @@ stepFunctions:
     extract-fivethirtyeight-spi-stepfunc:
       name: extract_fivethirtyeight_spi-${opt:stage}
       events:
-        - schedule: rate(1 hour)
+        - schedule: rate(12 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
