@@ -16,35 +16,9 @@ engine = utils.cockroachdb.create_engine(
     password=os.environ["PASSWORD"],
     host=os.environ["HOST"],
     port=os.environ["PORT"],
-    database="main",  # os.environ["DATABASE"],
+    database=os.environ["DATABASE"],
     options=os.environ["OPTIONS"],
 )
-
-# %%
-
-with open(os.path.join(THIS_DIR, "query.sql")) as file:
-    query = file.read()
 
 df = pd.read_sql("SELECT * FROM cartola.atletas", con=engine, index_col=None)
 df.sample(5)
-
-# %%
-
-engine = utils.cockroachdb.create_engine(
-    user=os.environ["USER"],
-    password=os.environ["PASSWORD"],
-    host=os.environ["HOST"],
-    port=os.environ["PORT"],
-    database="dev",  # os.environ["DATABASE"],
-    options=os.environ["OPTIONS"],
-)
-
-df.convert_dtypes().to_sql(
-    "atletas",
-    con=engine,
-    schema="cartola",
-    if_exists="replace",
-    index=False,
-    method="multi",
-    chunksize=1000,
-)
