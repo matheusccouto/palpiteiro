@@ -1,5 +1,8 @@
 # Serverless
 .serverless
+node_modules/
+package-lock.json
+package.json
 
 # Profiling results
 profiling.txt
