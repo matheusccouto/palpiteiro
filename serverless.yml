@@ -94,6 +94,7 @@ functions:
     handler: lambda_load.handler
     description: Load CSV into the database.
     runtime: python3.9
+    timeout: 60
     role:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
     package:

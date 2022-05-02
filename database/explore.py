@@ -1,9 +1,7 @@
-"""Notebook for data visualization."""
+"""Notebook for data exploration."""
 # %%
 
 import os
-
-import pandas as pd
 
 import utils.cockroachdb
 
