@@ -1,12 +1,24 @@
 service: palpiteiro
 frameworkVersion: "3"
+params:
+  main:
+    cartola-bucket: cartola-main
+    fivethirtyeight-bucket: fivethirtyeight-main
+    deployment-bucket: palpiteiro-main
+  dev:
+    cartola-bucket: cartola-dev
+    fivethirtyeight-bucket: fivethirtyeight-dev
+    deployment-bucket: palpiteiro-dev
 provider:
   name: aws
-  stage: "${opt:stage}"
+  stage: ${opt:stage}
+  deploymentBucket:
+    name: ${param:deployment-bucket}
 package:
   individually: true
   patterns:
     - "!**/*"
+    - "utils/**/*.py"
 functions:
   draft:
     handler: lambda_draft.handler
@@ -16,17 +28,100 @@ functions:
     memorySize: 2048 # megabytes
     package:
       patterns:
-        - "lambda_draft/*.py"
+        - "lambda_draft/**/*.py"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
+  extract-cartola-players:
+    handler: lambda_extract_cartola_players.handler
+    description: Extract players data from Cartola FC to JSON.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_cartola_players/*.py"
+    environment:
+      BUCKET: ${param:cartola-bucket}
+  transform-cartola-players:
+    handler: lambda_transform_cartola_players.handler
+    description: Transform players data from Cartola FC from JSO to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_cartola_players/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
+  extract-cartola-matches:
+    handler: lambda_extract_cartola_matches.handler
+    description: Extract matches data from Cartola FC to JSON.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_cartola_matches/*.py"
+    environment:
+      BUCKET: ${param:cartola-bucket}
+  transform-cartola-matches:
+    handler: lambda_transform_cartola_matches.handler
+    description: Transform matches data from Cartola FC from JSON to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_cartola_matches/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
+  extract-fivethirtyeight-spi:
+    handler: lambda_extract_fivethirtyeight_spi.handler
+    description: Extract matches data from FiveThirtyEight SPI to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_fivethirtyeight_spi/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
+    environment:
+      BUCKET: ${param:fivethirtyeight-bucket}
+  load:
+    handler: lambda_load.handler
+    description: Load CSV into the database.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_load/*.py"
+        - "lambda_load/*.crt"
+    layers:
+      - { Ref: PandasLambdaLayer }
+      - { Ref: CockroachdbLambdaLayer }
+    environment:
+      USER: ${env:USER}
+      PASSWORD: ${env:PASSWORD}
+      HOST: ${env:HOST}
+      DATABASE: ${env:DATABASE}
+      PORT: ${env:PORT}
+      OPTIONS: ${env:OPTIONS}
+      PGSSLROOTCERT: lambda_load/root.crt
+layers:
+  cockroachdb:
+    package:
+      artifact: layer_cockroachdb.zip
+  pandas:
+    package:
+      artifact: layer_pandas.zip
 stepFunctions:
   stateMachines:
-    stepfunc:
-      name: ${self:service}-${opt:stage}
+    extract-cartola-players-stepfunc:
+      name: extract_cartola_players-${opt:stage}
       events:
-        - schedule:
-            rate: 24 hours
-            enabled: false
+        - schedule: rate(1 hour)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -36,12 +131,100 @@ stepFunctions:
           - executionsAborted
           - executionThrottled
       definition:
-        StartAt: Draft
+        StartAt: ExtractCartolaPlayers
         States:
-          Draft:
+          ExtractCartolaPlayers:
             Type: Task
             Resource:
-              Fn::GetAtt: [draft, Arn]
+              Fn::GetAtt: [extract-cartola-players, Arn]
+            Next: TransformCartolaPlayers
+          TransformCartolaPlayers:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-cartola-players, Arn]
+            Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: atletas
+              schema: cartola
+              subset:
+                - temporada_id
+                - rodada_id
+                - atleta_id
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
+            End: true
+    extract-cartola-matches-stepfunc:
+      name: extract_cartola_matches-${opt:stage}
+      events:
+        - schedule: rate(1 hour)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+      definition:
+        StartAt: ExtractCartolaMatches
+        States:
+          ExtractCartolaMatches:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-cartola-matches, Arn]
+            Next: TransformCartolaMatches
+          TransformCartolaMatches:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-cartola-matches, Arn]
+            Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: partidas
+              schema: cartola
+              subset:
+                - partida_id
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
+            End: true
+    extract-fivethirtyeight-spi-stepfunc:
+      name: extract_fivethirtyeight_spi-${opt:stage}
+      events:
+        - schedule: rate(1 hour)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+      definition:
+        StartAt: ExtractFiveThirtyEightSPI
+        States:
+          ExtractFiveThirtyEightSPI:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-fivethirtyeight-spi, Arn]
+            Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: spi
+              schema: fivethirtyeight
+              subset:
+                - season
+                - league_id
+                - team1
+                - team2
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
             End: true
 resources:
   Resources:
@@ -51,6 +234,6 @@ resources:
         TopicName: ${self:service}-${opt:stage}
         Subscription:
           - Protocol: email
-            Endpoint: matheuscouto@gmail.com
+            Endpoint: matheusccouto@gmail.com
 plugins:
   - serverless-step-functions
