@@ -23,13 +23,19 @@ jobs:
         run: sls config credentials --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
       - name: Create layers artifacts
         run: |
-          	mkdir python
-            pip install -r requirements-pandas.txt --target python
-            zip -r layer_pandas.zip python/
-            rm -r python
-            mkdir python
-            pip install -r requirements-cockroachdb.txt --target python
-            zip -r layer_cockroachdb.zip python/
-            rm -r python
+          mkdir python
+          pip install -r requirements-pandas.txt --target python
+          zip -r layer_pandas.zip python/
+          rm -r python
+          mkdir python
+          pip install -r requirements-cockroachdb.txt --target python
+          zip -r layer_cockroachdb.zip python/
+          rm -r python
       - name: Deploy
         run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
+        env:
+          USER: ${{ secrets.USER }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
+          OPTIONS: ${{ secrets.OPTIONS }}

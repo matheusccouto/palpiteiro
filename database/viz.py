@@ -7,6 +7,8 @@ import pandas as pd
 
 import utils.cockroachdb
 
+THIS_DIR = os.path.dirname(__file__)
+
 # %%
 
 engine = utils.cockroachdb.create_engine(
