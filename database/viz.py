@@ -3,9 +3,7 @@
 
 import os
 
-import missingno as msno
 import pandas as pd
-import sqlalchemy
 
 import utils.cockroachdb
 
@@ -20,9 +18,5 @@ engine = utils.cockroachdb.create_engine(
     options=os.environ["OPTIONS"],
 )
 
-df = pd.read_sql("SELECT * FROM cartola.partidas", con=engine, index_col=None)
+df = pd.read_sql("SELECT * FROM cartola.atletas", con=engine, index_col=None)
 df.sample(5)
-
-# %%
-
-msno.matrix(df.sort_values(["temporada_id", "rodada_id", "clube_id", "atleta_id"]))
