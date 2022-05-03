@@ -1,4 +1,5 @@
 """Notebook for data exploration."""
+
 # %%
 
 import os
