@@ -24,16 +24,19 @@ def handler(event, context=None):
     existing = pd.read_sql_table(event["table"], con=engine, schema=event["schema"])
     new = pd.read_csv(io.StringIO(utils.aws.s3.load(event["uri"])), index_col=0)
 
+    conn = engine.connect()
+    conn.execute(f"DELETE FROM {event['schema']}{event['table']}")
+
     # Concatenate and delete duplicated rows. Keep lasts.
     subset = event["subset"] if "subset" in event else None
-    data = pd.concat((existing, new)).drop_duplicates(subset=subset, keep=False)
+    data = pd.concat((existing, new)).drop_duplicates(subset=subset, keep="last")
 
     # Replace the whole table with the new one.
     data.to_sql(
         name=event["table"],
         con=engine,
         schema=event["schema"],
-        if_exists="append",
+        if_exists="replace",
         index=False,
         method="multi",
     )
