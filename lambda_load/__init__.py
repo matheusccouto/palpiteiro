@@ -22,18 +22,18 @@ def handler(event, context=None):
     """Lambda handler."""
     # Read existing and data to be appended.
     existing = pd.read_sql_table(event["table"], con=engine, schema=event["schema"])
-    new = pd.read_csv(io.StringIO(utils.aws.s3.load(event["uri"])))
+    new = pd.read_csv(io.StringIO(utils.aws.s3.load(event["uri"])), index_col=0)
 
     # Concatenate and delete duplicated rows. Keep lasts.
     subset = event["subset"] if "subset" in event else None
-    data = pd.concat((existing, new)).drop_duplicates(subset=subset, keep="last")
+    data = pd.concat((existing, new)).drop_duplicates(subset=subset, keep=False)
 
     # Replace the whole table with the new one.
     data.to_sql(
         name=event["table"],
         con=engine,
         schema=event["schema"],
-        if_exists="replace",
+        if_exists="append",
         index=False,
         method="multi",
     )

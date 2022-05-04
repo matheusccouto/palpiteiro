@@ -20,5 +20,10 @@ engine = utils.cockroachdb.create_engine(
     options=os.environ["OPTIONS"],
 )
 
-df = pd.read_sql("SELECT * FROM cartola.atletas", con=engine, index_col=None)
+# %%
+
+with open(os.path.join(THIS_DIR, "query.sql")) as file:
+    query = file.read()
+
+df = pd.read_sql("SELECT * FROM fivethirtyeight.spi", con=engine, index_col=None)
 df.sample(5)

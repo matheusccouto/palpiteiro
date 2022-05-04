@@ -15,6 +15,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+      - name: Setup Python environment
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
       - name: Install Serverless Framework
         run: |
           npm install -g serverless@3

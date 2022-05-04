@@ -94,7 +94,7 @@ functions:
     handler: lambda_load.handler
     description: Load CSV into the database.
     runtime: python3.9
-    timeout: 60
+    timeout: 900
     role:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
     package:
@@ -124,7 +124,7 @@ stepFunctions:
     extract-cartola-players-stepfunc:
       name: extract_cartola_players-${opt:stage}
       events:
-        - schedule: rate(12 hours)
+        - schedule: rate(8 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -162,7 +162,7 @@ stepFunctions:
     extract-cartola-matches-stepfunc:
       name: extract_cartola_matches-${opt:stage}
       events:
-        - schedule: rate(12 hours)
+        - schedule: rate(8 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -198,7 +198,7 @@ stepFunctions:
     extract-fivethirtyeight-spi-stepfunc:
       name: extract_fivethirtyeight_spi-${opt:stage}
       events:
-        - schedule: rate(12 hours)
+        - schedule: rate(8 hours)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
