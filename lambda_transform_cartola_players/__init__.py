@@ -1,7 +1,5 @@
 """Transform players data from Cartola FC."""
 
-import csv
-import io
 import json
 import os
 

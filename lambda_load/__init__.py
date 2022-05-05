@@ -1,5 +1,6 @@
 """Load players data from Cartola FC to the database."""
 
+import csv
 import io
 import os
 
@@ -18,26 +19,52 @@ engine = utils.cockroachdb.create_engine(
 )
 
 
+def create_update_query(table, cols, vals, subset):
+    """Create update statement."""
+    set_ = ", ".join([f'"{c}" = {v}' for c, v in zip(cols, vals)])
+    where = " AND ".join([f'"{c}" = {v}' for c, v in zip(cols, vals) if c in subset])
+    return f"UPDATE {table} SET {set_} WHERE {where}"
+
+
+def create_insert_query(table, cols, vals):
+    """Create insert statement."""
+    cols = ", ".join([f'"{c}"' for c in cols])
+    vals = ", ".join([str(v) for v in vals])
+    return f"INSERT INTO {table} ({cols}) VALUES ({vals})"
+
+
 def handler(event, context=None):
     """Lambda handler."""
-    # Read existing and data to be appended.
-    existing = pd.read_sql_table(event["table"], con=engine, schema=event["schema"])
-    new = pd.read_csv(io.StringIO(utils.aws.s3.load(event["uri"])), index_col=0)
+    data = pd.read_csv(io.StringIO(utils.aws.s3.load(event["uri"])), index_col=0)
+    table = event["schema"] + "." + event["table"]
 
-    # Concatenate and delete duplicated rows. Keep lasts.
-    subset = event["subset"] if "subset" in event else None
-    data = pd.concat((existing, new)).drop_duplicates(subset=subset, keep="last")
+    update_count = 0
+    insert_count = 0
+    with engine.connect() as conn:
+        for _, row in data.iterrows():
+            values = (
+                row.to_csv(
+                    header=False,
+                    index=False,
+                    quoting=csv.QUOTE_NONNUMERIC,
+                    quotechar="'",
+                    na_rep="NULL",
+                )
+                .replace("'NULL'", "NULL")
+                .strip()
+                .split("\n")
+            )
 
-    # Replace the whole table with the new one.
-    data.to_sql(
-        name=event["table"],
-        con=engine,
-        schema=event["schema"],
-        if_exists="replace",
-        index=False,
-        method="multi",
-    )
+            query = create_update_query(table, row.index, values, event["subset"])
+            res = conn.execute(query)
+            update_count += res.rowcount
+            if res.rowcount == 0:  # No match
+                query = create_insert_query(table, row.index, values)
+                conn.execute(query)
+                insert_count += 0
+
     return {
         "statusCode": 200,
-        "message": f"{data.shape[0] - existing.shape[0]} rows added",
+        "updated": update_count,
+        "inserted": insert_count,
     }
