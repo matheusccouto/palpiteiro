@@ -1,0 +1,183 @@
+version: 2
+
+sources:
+  - name: cartola
+    tables:
+      - name: atletas
+      - name: partidas
+
+models:
+  - name: stg_atletas_scoring
+    description: Cartola players scoring for each round
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: player
+        description: Player ID
+        tests:
+          - not_null
+      - name: round
+        description: League round
+        tests:
+          - not_null
+      - name: season
+        description: League season
+        tests:
+          - not_null
+      - name: club
+        description: Club
+        tests:
+          - not_null
+      - name: position
+        description: Position
+        tests:
+          - not_null
+          - accepted_values:
+              - 1
+              - 2
+              - 3
+              - 4
+              - 5
+              - 6
+      - name: status
+        description: Status for the match
+        tests:
+          - not_null
+          - accepted_values:
+              - 2
+              - 3
+              - 5
+              - 6
+              - 7
+      - name: points
+        description: Scored by the player in the match
+        tests:
+          - not_null
+      - name: price
+        description: Price
+        tests:
+          - not_null
+      - name: variation
+        description: Price variation
+        tests:
+          - not_null
+      - name: mean
+        description: Mean points in the season
+        tests:
+          - not_null
+      - name: matches
+        description: Amount of matches that the player participated in the season
+        tests:
+          - not_null
+      - name: goal
+        description: Cumulative goals in the season
+        tests:
+          - not_null
+      - name: assist
+        description: Cumulative assists in the season
+        tests:
+          - not_null
+      - name: yellow_card
+        description: Cumulative yellow cards in the season
+        tests:
+          - not_null
+      - name: red_card
+        description: Cumulative red cards in the season
+        tests:
+          - not_null
+      - name: missed_shoot
+        description: Cumulative missed shoots in the season
+        tests:
+          - not_null
+      - name: on_post_shoot
+        description: Cumulative on post shoots in the season
+        tests:
+          - not_null
+      - name: saved_shoot
+        description: Cumulative saved shoots in the season
+        tests:
+          - not_null
+      - name: received_foul
+        description: Cumulative received fouls in the season
+        tests:
+          - not_null
+      - name: received_penalty
+        description: Cumulative received fouls in the season
+        tests:
+          - not_null
+      - name: missed_penalty
+        description: Cumulative missed penalty kick in the season
+        tests:
+          - not_null
+      - name: outside
+        description: Cumulative outsides in the season in the season
+        tests:
+          - not_null
+      - name: missed_pass
+        description: Cumulative missed passes in the season
+        tests:
+          - not_null
+      - name: tackle
+        description: Cumulative succesfull tackles in the season
+        tests:
+          - not_null
+      - name: foul
+        description: Cumulative commited fouls in the season
+        tests:
+          - not_null
+      - name: penalty
+        description: Cumulative commited penalty in the season
+        tests:
+          - not_null
+      - name: own_goal
+        description: Cumulative own goals in the season
+        tests:
+          - not_null
+      - name: allowed_goal
+        description: Cumulative allowed goals in the season
+        tests:
+          - not_null
+      - name: no_goal
+        description: Cumulative games without goals in the season
+        tests:
+          - not_null
+      - name: save
+        description: Cumulative saves in the season
+        tests:
+          - not_null
+      - name: difficult_save
+        description: Cumulative difficult saves in the season
+        tests:
+          - not_null
+      - name: penalty_save
+        description: Cumulative penalty save in the season
+        tests:
+          - not_null
+
+  # - name: stg_atletas_player
+  #   description: Cartola players
+  #   columns:
+  #     - name: id
+  #       description: Primary key
+  #       tests:
+  #         - unique
+  #         - not_null
+  #     - name: slug
+  #       description: Slug
+  #       tests:
+  #         - unique
+  #     - name: name
+  #       description: Name
+  #       tests:
+  #         - not_null
+  #     - name: nickname
+  #       description: Nickname
+  #       tests:
+  #         - not_null
+  #     - name: short_nickname
+  #       description: Nickname
+  #     - name: photo
+  #       description: Photo

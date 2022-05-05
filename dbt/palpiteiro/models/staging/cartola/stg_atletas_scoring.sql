@@ -42,6 +42,4 @@ SELECT
     COALESCE("DD", 0) :: INT AS "difficult_save",
     COALESCE("DP", 0) :: INT AS "penalty_save"
 FROM
-    cartola.atletas
-LIMIT
-    5
+    { { source('cartola', 'atletas') } }
