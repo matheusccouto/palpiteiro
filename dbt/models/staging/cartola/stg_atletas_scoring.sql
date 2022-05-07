@@ -1,6 +1,6 @@
 SELECT
     CAST((temporada_id - 2000) * 100000000 + rodada_id * 1000000 + atleta_id AS INT) AS id,
-    CAST(atleta_id AS INT)AS player,
+    CAST(atleta_id AS INT) AS player,
     CAST(rodada_id AS INT) AS round,
     CAST(temporada_id AS INT) AS season,
     CAST(clube_id AS INT) AS club,
@@ -36,4 +36,4 @@ SELECT
     CAST(COALESCE(DD, 0) AS INT) AS difficult_save,
     CAST(COALESCE(DP, 0) AS INT) AS penalty_save
 FROM
-    cartola.atletas
+    {{ source('cartola', 'atletas') }}

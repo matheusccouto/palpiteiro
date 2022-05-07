@@ -16,3 +16,7 @@ models:
   palpiteiro:
     staging:
       +materialized: view
+      cartola:
+        schema: cartola
+      fivethirtyeight:
+        schema: fivethirtyeight

@@ -150,27 +150,80 @@ models:
         tests:
           - not_null
 
-  # - name: stg_atletas_player
-  #   description: Cartola players
-  #   columns:
-  #     - name: id
-  #       description: Primary key
-  #       tests:
-  #         - unique
-  #         - not_null
-  #     - name: slug
-  #       description: Slug
-  #       tests:
-  #         - unique
-  #     - name: name
-  #       description: Name
-  #       tests:
-  #         - not_null
-  #     - name: nickname
-  #       description: Nickname
-  #       tests:
-  #         - not_null
-  #     - name: short_nickname
-  #       description: Nickname
-  #     - name: photo
-  #       description: Photo
+  - name: stg_atletas_player
+    description: Cartola players
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: slug
+        description: Slug
+      - name: name
+        description: Name
+        tests:
+          - not_null
+      - name: nickname
+        description: Nickname
+        tests:
+          - not_null
+      - name: short_nickname
+        description: Nickname
+      - name: photo
+        description: Photo
+
+  - name: stg_partidas_match
+    description: Cartola matches
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: season
+        description: Season
+        tests:
+          - not_null
+      - name: round
+        description: Round
+        tests:
+          - not_null
+      - name: timestamp
+        description: UTC date
+      - name: venue
+        description: Venue
+      - name: valid
+        description: Is valid for this Cartola round
+        tests:
+          - accepted_values:
+              values: [true, false]
+              quote: false
+      - name: home
+        description: Home club
+        tests:
+          - not_null
+      - name: away
+        description: Away club
+        tests:
+          - not_null
+      - name: position_home
+        description: Home club position
+      - name: position_away
+        description: Away club position
+      - name: score_home
+        description: Home club score
+      - name: score_away
+        description: Away club score
+      - name: broadcasting_status
+        description: Broadcasting status
+      - name: broadcasting_time_start
+        description: Broadcasting start time
+      - name: broadcasting_time_status
+        description: Broadcasting time status
+      - name: broadcasting_phase
+        description: Broadcasting phase
+      - name: broadcasting_label
+        description: Broadcasting label
+      - name: broadcasting_url
+        description: Broadcasting URL
