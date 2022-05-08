@@ -1,3 +1,10 @@
+# DBT
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+keyfile.json
+.user.yml
+
 # Serverless
 .serverless
 node_modules/
