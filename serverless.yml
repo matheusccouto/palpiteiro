@@ -1,16 +1,31 @@
 service: palpiteiro
 frameworkVersion: "3"
 params:
+  default:
+    GCP_SERVICE_ACCOUNT_TYPE: service_account
+    GCP_SERVICE_ACCOUNT_AUTH_URI: https://accounts.google.com/o/oauth2/auth
+    GCP_SERVICE_ACCOUNT_TOKEN_URI: https://oauth2.googleapis.com/token
+    GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
   main:
-    database: main
     cartola-bucket: cartola-main
     fivethirtyeight-bucket: fivethirtyeight-main
     deployment-bucket: palpiteiro-main
+    GCP_SERVICE_ACCOUNT_PROJECT_ID: ${env:GCP_SERVICE_ACCOUNT_PROJECT_ID_MAIN}
+    GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_MAIN}
+    GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_MAIN}
+    GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_MAIN}
+    GCP_SERVICE_ACCOUNT_CLIENT_ID: ${env:GCP_SERVICE_ACCOUNT_CLIENT_ID_MAIN}
+    GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_MAIN}
   dev:
-    database: dev
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     deployment-bucket: palpiteiro-dev
+    GCP_SERVICE_ACCOUNT_PROJECT_ID: ${env:GCP_SERVICE_ACCOUNT_PROJECT_ID_DEV}
+    GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_DEV}
+    GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_DEV}
+    GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_DEV}
+    GCP_SERVICE_ACCOUNT_CLIENT_ID: ${env:GCP_SERVICE_ACCOUNT_CLIENT_ID_DEV}
+    GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV}
 provider:
   name: aws
   stage: ${opt:stage}
@@ -100,22 +115,23 @@ functions:
     package:
       patterns:
         - "lambda_load/*.py"
-        - "lambda_load/*.crt"
     layers:
-      - { Ref: PandasLambdaLayer }
-      - { Ref: CockroachdbLambdaLayer }
+      - { Ref: BigqueryLambdaLayer }
     environment:
-      USER: ${env:USER}
-      PASSWORD: ${env:PASSWORD}
-      HOST: ${env:HOST}
-      DATABASE: ${param:database}
-      PORT: ${env:PORT}
-      OPTIONS: ${env:OPTIONS}
-      PGSSLROOTCERT: lambda_load/root.crt
+      GCP_SERVICE_ACCOUNT_TYPE: ${param:GCP_SERVICE_ACCOUNT_TYPE}
+      GCP_SERVICE_ACCOUNT_PROJECT_ID: ${param:GCP_SERVICE_ACCOUNT_PROJECT_ID}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${param:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${param:GCP_SERVICE_ACCOUNT_PRIVATE_KEY}
+      GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${param:GCP_SERVICE_ACCOUNT_CLIENT_EMAIL}
+      GCP_SERVICE_ACCOUNT_CLIENT_ID: ${param:GCP_SERVICE_ACCOUNT_CLIENT_ID}
+      GCP_SERVICE_ACCOUNT_AUTH_URI: ${param:GCP_SERVICE_ACCOUNT_AUTH_URI}
+      GCP_SERVICE_ACCOUNT_TOKEN_URI: ${param:GCP_SERVICE_ACCOUNT_TOKEN_URI}
+      GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: ${param:GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL}
+      GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${paramGCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL
 layers:
-  cockroachdb:
+  bigquery:
     package:
-      artifact: layer_cockroachdb.zip
+      artifact: layer_bigquery.zip
   pandas:
     package:
       artifact: layer_pandas.zip

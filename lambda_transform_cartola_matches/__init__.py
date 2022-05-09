@@ -27,8 +27,8 @@ def handler(event, context=None):
             row[f"aproveitamento_visitante_{i}"] = aproveitamento_visitante[-i]
 
         transmissao = row.pop("transmissao")
-        row["transmissao.label"] = transmissao["label"]
-        row["transmissao.url"] = transmissao["url"]
+        row["transmissao_label"] = transmissao["label"]
+        row["transmissao_url"] = transmissao["url"]
 
     # Save as CSV
     uri = os.path.splitext(event["uri"])[0] + ".csv"
