@@ -32,7 +32,7 @@ jobs:
           zip -r layer_pandas.zip python/
           rm -r python
           mkdir python
-          pip install -r requirements-bigguery.txt --target python
+          pip install -r requirements-bigquery.txt --target python
           zip -r layer_bigguery.zip python/
           rm -r python
       - name: Deploy
