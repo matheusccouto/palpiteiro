@@ -22,7 +22,7 @@ def handler(event, context=None):
         raise ConnectionAbortedError("Extraction aborted. Game is over.")
 
     data = pd.read_csv(SPI_URL)
-    data = data[data["league"] == 2105]
+    data = data[data["league_id"] == 2105]
 
     bucket = os.environ["BUCKET"]
     key = f"spi/{now}.csv"

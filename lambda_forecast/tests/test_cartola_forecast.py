@@ -3,8 +3,8 @@
 import json
 import os
 
-import lambda_function
-from lambda_function import helper
+import lambda_forecast
+from lambda_forecast import helper
 
 URL = "/api/cartola_forecast"
 THIS_DIR = os.path.dirname(__file__)
