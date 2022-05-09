@@ -32,8 +32,8 @@ jobs:
           zip -r layer_pandas.zip python/
           rm -r python
           mkdir python
-          pip install -r requirements-cockroachdb.txt --target python
-          zip -r layer_cockroachdb.zip python/
+          pip install -r requirements-bigguery.txt --target python
+          zip -r layer_bigguery.zip python/
           rm -r python
       - name: Deploy
         run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
