@@ -33,13 +33,25 @@ jobs:
           rm -r python
           mkdir python
           pip install -r requirements-bigquery.txt --target python
-          zip -r layer_bigguery.zip python/
+          zip -r layer_bigquery.zip python/
           rm -r python
-      - name: Deploy
+      - name: Deploy dev
+        if: github.head_ref == 'dev' || github.ref_name == 'dev'
         run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
         env:
-          USER: ${{ secrets.USER }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          HOST: ${{ secrets.HOST }}
-          PORT: ${{ secrets.PORT }}
-          OPTIONS: ${{ secrets.OPTIONS }}
+          GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_DEV }}
+          GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_DEV }}
+          GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_DEV }}
+          GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_DEV }}
+          GCP_SERVICE_ACCOUNT_CLIENT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_ID_DEV }}
+          GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}
+      - name: Deploy main
+        if: github.head_ref == 'main' || github.ref_name == 'main'
+        run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
+        env:
+          GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_MAIN }}
+          GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_MAIN }}
+          GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_MAIN }}
+          GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_MAIN }}
+          GCP_SERVICE_ACCOUNT_CLIENT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_ID_MAIN }}
+          GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_MAIN }}
