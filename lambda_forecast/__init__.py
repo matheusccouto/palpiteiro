@@ -12,8 +12,8 @@ from . import exceptions, helper
 # Directories.
 THIS_DIR = os.path.dirname(__file__)
 ROOT_DIR = os.path.dirname(THIS_DIR)
-MODEL_PATH = os.path.join(ROOT_DIR, "model", "model.joblib")
-FEATURES_PATH = os.path.join(ROOT_DIR, "model", "features.json")
+MODEL_PATH = os.path.join(THIS_DIR, "model", "model.joblib")
+FEATURES_PATH = os.path.join(THIS_DIR, "model", "features.json")
 
 
 def validate_args(args: Dict[str, float], features: Sequence[str]):
@@ -47,13 +47,9 @@ def parse_arguments(
     return parse_args_dict_sequence(event, features)
 
 
-def lambda_handler(event, context):  # pylint: disable=unused-argument
+def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
     features = list(helper.read_json(FEATURES_PATH))  # Make sure it is a list.
     args = parse_arguments(event, features)
     model = joblib.load(MODEL_PATH)
-    pred = model.predict(args)
-
-    # Arrays are not JSON serializable.
-    # It is needed to convert to a nested list before.
-    return json.dumps(pred.tolist())
+    return model.predict(args).tolist()
