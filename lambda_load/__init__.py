@@ -38,7 +38,7 @@ client = bigquery.Client(
 )
 
 
-def handler(event, context=None):
+def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
     table = event["schema"] + "." + event["table"]
     tmp_table = event["schema"] + ".tmp_" + event["table"]

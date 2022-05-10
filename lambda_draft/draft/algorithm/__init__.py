@@ -17,7 +17,7 @@ def players_per_position(players: Sequence[Player]) -> Dict[str, List[Player]]:
 
 
 class DraftError(Exception):
-    """Error on drating players."""
+    """Error on drafting players."""
 
 
 class BaseAlgorithm(abc.ABC):
@@ -31,8 +31,7 @@ class BaseAlgorithm(abc.ABC):
         self.players = players
         self.players_per_position = players_per_position(self.players)
 
-    @staticmethod
-    def _draft_bench(line_up: LineUp) -> List[Player]:
+    def _draft_bench(self, line_up: LineUp) -> List[Player]:
         """Draft players for the bench of a given line up."""
         bench = []
         for pos, count in line_up.scheme.items():
@@ -46,8 +45,8 @@ class BaseAlgorithm(abc.ABC):
                 )
                 players = [
                     p
-                    for p in players_per_position(line_up.players)[pos]
-                    if p.price <= price
+                    for p in self.players_per_position[pos]
+                    if p.price <= price and p not in line_up.players
                 ]
                 if len(players) == 0:
                     continue
