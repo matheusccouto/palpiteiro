@@ -1,0 +1,39 @@
+name: DBT Deployment
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - id: auth dev
+        if: github.head_ref == 'dev' || github.ref_name == 'dev'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          credentials_json: ${{ secret.GCP_KEYFILE_DEV }}
+      - id: auth dev
+        if: github.head_ref == 'main' || github.ref_name == 'main'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          credentials_json: ${{ secret.GCP_KEYFILE_MAIN }}
+      - name: Setup Python environment
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Install DBT
+        run: |
+          pip install --update pip wheel
+          pip install dbt-bigquery
+      - name: Change to DBT dir
+        run: cd dbt
+      - name: Deploy
+        run: sls deploy  --profiles-dir .
+      - name: Test
+        run: sls test --profiles-dir .
