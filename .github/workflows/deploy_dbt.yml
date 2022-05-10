@@ -32,6 +32,6 @@ jobs:
       - name: Change to DBT dir
         run: cd dbt
       - name: Deploy
-        run: sls deploy  --profiles-dir .
+        run: dbt run deploy  --profiles-dir .
       - name: Test
-        run: sls test --profiles-dir .
+        run: dbt run test --profiles-dir .
