@@ -11,15 +11,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - id: auth dev
+      - name: Authenticate to Google Cloud dev environment
         if: github.head_ref == 'dev' || github.ref_name == 'dev'
-        name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.7.1'
         with:
-          credentials_json: ${{ secrets.GCP_KEYFILE_DEV }}
-      - id: auth dev
+          credentials_json: ${{ secret.GCP_KEYFILE_DEV }}
+      - name: Authenticate to Google Cloud main environment
         if: github.head_ref == 'main' || github.ref_name == 'main'
-        name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.7.1'
         with:
           credentials_json: ${{ secrets.GCP_KEYFILE_MAIN }}
