@@ -22,7 +22,7 @@ def fixture_delete_atletas_mercado():
     utils.aws.s3.delete("s3://palpiteiro-test/atletas/mercado")
 
 
-def test_exists(delete_atletas_mercado):
+def test_exists(delete_atletas_mercado):  # pylint: disable=unused-argument
     """Test if JSON file exists."""
     with utils.test.environ(BUCKET="palpiteiro-test"):
         results = lambda_extract_cartola_players.handler(event={})
