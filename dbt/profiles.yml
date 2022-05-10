@@ -1,0 +1,13 @@
+palpiteiro:
+  outputs:
+    dev:
+      dataset: cartola
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      location: us-east4
+      method: oauth
+      priority: interactive
+      project: palpiteiro-dev
+      threads: 4
+      type: bigquery
+  target: dev
