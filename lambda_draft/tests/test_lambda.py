@@ -110,7 +110,7 @@ def test_bench_amount_when_position_does_not_exist(event):
 
 
 def test_bench_prices(event):
-    """Test if bench prices are lower than startes."""
+    """Test if bench prices are lower than starters."""
     results = lambda_draft.handler(event=event, context=None)
     for bench in results["bench"]:
         for starter in results["players"]:
