@@ -15,7 +15,7 @@ def test_uri():
     assert fnmatch(results["uri"], "s3://cartola-dev/atletas/mercado/20*-*.json")
 
 
-@pytest.fixture(name="delete_atletas_mercado", )
+@pytest.fixture(name="delete_atletas_mercado")
 def fixture_delete_atletas_mercado():
     """Clear atletas/mercado dir from palpiteiro-test."""
     yield
