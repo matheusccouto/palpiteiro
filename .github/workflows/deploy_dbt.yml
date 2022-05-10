@@ -27,7 +27,7 @@ jobs:
           python-version: "3.9"
       - name: Install DBT
         run: |
-          pip install --update pip wheel
+          pip install --upgrade pip wheel
           pip install dbt-bigquery
       - name: Change to DBT dir
         run: cd dbt
