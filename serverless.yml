@@ -2,12 +2,10 @@ service: palpiteiro
 frameworkVersion: "3"
 params:
   main:
-    database: main
     cartola-bucket: cartola-main
     fivethirtyeight-bucket: fivethirtyeight-main
     deployment-bucket: palpiteiro-main
   dev:
-    database: dev
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     deployment-bucket: palpiteiro-dev
@@ -100,22 +98,23 @@ functions:
     package:
       patterns:
         - "lambda_load/*.py"
-        - "lambda_load/*.crt"
     layers:
-      - { Ref: PandasLambdaLayer }
-      - { Ref: CockroachdbLambdaLayer }
+      - { Ref: BigqueryLambdaLayer }
     environment:
-      USER: ${env:USER}
-      PASSWORD: ${env:PASSWORD}
-      HOST: ${env:HOST}
-      DATABASE: ${param:database}
-      PORT: ${env:PORT}
-      OPTIONS: ${env:OPTIONS}
-      PGSSLROOTCERT: lambda_load/root.crt
+      GCP_SERVICE_ACCOUNT_TYPE: service_account
+      GCP_SERVICE_ACCOUNT_PROJECT_ID: ${env:GCP_SERVICE_ACCOUNT_PROJECT_ID}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY}
+      GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_EMAIL}
+      GCP_SERVICE_ACCOUNT_CLIENT_ID: ${env:GCP_SERVICE_ACCOUNT_CLIENT_ID}
+      GCP_SERVICE_ACCOUNT_AUTH_URI: https://accounts.google.com/o/oauth2/auth
+      GCP_SERVICE_ACCOUNT_TOKEN_URI: https://oauth2.googleapis.com/token
+      GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
+      GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL}
 layers:
-  cockroachdb:
+  bigquery:
     package:
-      artifact: layer_cockroachdb.zip
+      artifact: layer_bigquery.zip
   pandas:
     package:
       artifact: layer_pandas.zip
