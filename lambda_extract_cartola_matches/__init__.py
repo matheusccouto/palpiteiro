@@ -10,7 +10,7 @@ MATCHES_URL = "https://api.cartola.globo.com/partidas"
 STATUS_URL = "https://api.cartola.globo.com/mercado/status"
 
 
-def handler(event, context=None):
+def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
     status = utils.http.get(STATUS_URL)
     if status["game_over"]:
