@@ -9,11 +9,11 @@ import utils.aws.s3
 import utils.http
 
 
-def handler(event, context=None):
+def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
     # Load
     data = json.loads(utils.aws.s3.load(event["uri"]))
-    
+
     # Transform
     data = data["atletas"]
     for row in data:
