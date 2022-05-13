@@ -2,7 +2,11 @@ WITH match AS (
     SELECT
         season,
         round,
-        EXTRACT(DATE FROM timestamp) AS timestamp,
+        EXTRACT(
+            DATE
+            FROM
+                timestamp
+        ) AS timestamp,
         home,
         away
     FROM
@@ -59,30 +63,46 @@ SELECT
     COALESCE(prev.mean, 0) AS mean_prev,
     COALESCE(prev.matches, 0) AS matches_prev,
     match.timestamp AS date,
-    IIF(play.club = spi.club1, spi.spi1, spi.spi2) AS spi,
-    IIF(play.club = spi.club1, spi.spi2, spi.spi1) AS spi_opp,
-    IIF(play.club = spi.club1, spi.prob1, spi.prob2) AS prob_win,
-    IIF(play.club = spi.club1, spi.prob2, spi.prob1) AS prob_lose,
-    spi.probtie AS prob_tie,
-    IIF(
-        play.club = spi.club1,
-        spi.proj_score1,
-        spi.proj_score2
+    IF(
+        play.club = spi.club_home,
+        spi.spi_home,
+        spi.spi_away
+    ) AS spi,
+    IF(
+        play.club = spi.club_home,
+        spi.spi_away,
+        spi.spi_home
+    ) AS spi_opp,
+    IF(
+        play.club = spi.club_home,
+        spi.prob_home,
+        spi.prob_away
+    ) AS prob_win,
+    IF(
+        play.club = spi.club_home,
+        spi.prob_away,
+        spi.prob_home
+    ) AS prob_lose,
+    spi.prob_tie AS prob_tie,
+    IF(
+        play.club = spi.club_home,
+        spi.proj_score_home,
+        spi.proj_score_away
     ) AS proj_score,
-    IIF(
-        play.club = spi.club1,
-        spi.proj_score2,
-        spi.proj_score1
+    IF(
+        play.club = spi.club_home,
+        spi.proj_score_away,
+        spi.proj_score_home
     ) AS proj_score_opp,
-    IIF(
-        play.club = spi.club1,
-        spi.importance1,
-        spi.importance2
+    IF(
+        play.club = spi.club_home,
+        spi.importance_home,
+        spi.importance_away
     ) AS importance,
-    IIF(
-        play.club = spi.club1,
-        spi.importance2,
-        spi.importance1
+    IF(
+        play.club = spi.club_home,
+        spi.importance_away,
+        spi.importance_home
     ) AS importance_opp
 FROM
     cartola.stg_atletas_scoring play
