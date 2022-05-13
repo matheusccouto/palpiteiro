@@ -12,6 +12,12 @@ from google.oauth2 import service_account
 import utils.aws.s3
 
 LOCATION = "us-east4"
+DTYPES = {
+    "INTEGER": "int64",
+    "FLOAT": "float64",
+    "STRING": "string",
+    "BOOLEAN": "bool",
+}
 
 creds = service_account.Credentials.from_service_account_info(
     info={
@@ -42,16 +48,13 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     table = f"{creds.project_id}.{event['schema']}.{event['table']}"
     tmp_table = f"{creds.project_id}.{event['schema']}.tmp_{event['table']}"
 
-    table_schema = [
-        {"name": field.name, "type": field.field_type}
-        for field in client.get_table(table).schema
-    ]
-
+    table_schema = {
+        field.name: DTYPES[field.field_type] for field in client.get_table(table).schema
+    }
     file = utils.aws.s3.load(event["uri"])
-    data = pd.read_csv(io.StringIO(file), index_col=0).convert_dtypes()
+    data = pd.read_csv(io.StringIO(file), index_col=0).astype(table_schema)
     data.to_gbq(
         destination_table=tmp_table,
-        table_schema=table_schema,
         if_exists="replace",
         credentials=creds,
         location=LOCATION,
