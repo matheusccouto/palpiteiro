@@ -51,6 +51,6 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         working-directory: ./${{ matrix.folder }}
       - name: Test with Pytest
-        run: pytest ${{ matrix.folder }} --cov=./ --cov-report=xml
+        run: pytest ${{ matrix.folder }} --cov=./ --cov-report=xml --log-cli-level=INFO
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
