@@ -127,9 +127,9 @@ layers:
   pandas:
     package:
       artifact: layer_pandas.zip
-  sklearn:
-    package:
-      artifact: layer_sklearn.zip
+  # sklearn:
+  #   package:
+  #     artifact: layer_sklearn.zip
 stepFunctions:
   stateMachines:
     extract-cartola-players-stepfunc:
