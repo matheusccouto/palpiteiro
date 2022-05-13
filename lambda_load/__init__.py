@@ -5,6 +5,7 @@ import json
 import os
 import time
 
+import numpy as np
 import pandas as pd
 from google.cloud import bigquery
 from google.oauth2 import service_account
@@ -13,10 +14,10 @@ import utils.aws.s3
 
 LOCATION = "us-east4"
 DTYPES = {
-    "INTEGER": "int64",
+    "INTEGER": pd.Int64Dtype(),
     "FLOAT": "float64",
-    "STRING": "string",
-    "BOOLEAN": "bool",
+    "STRING": pd.StringDtype(),
+    "BOOLEAN": pd.BooleanDtype(),
 }
 
 creds = service_account.Credentials.from_service_account_info(
