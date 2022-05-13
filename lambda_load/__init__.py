@@ -32,7 +32,6 @@ creds = service_account.Credentials.from_service_account_info(
     }
 )
 client = bigquery.Client(
-    project=creds.project_id,
     location=LOCATION,
     credentials=creds,
 )
@@ -43,11 +42,16 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     table = f"{creds.project_id}.{event['schema']}.{event['table']}"
     tmp_table = f"{creds.project_id}.{event['schema']}.tmp_{event['table']}"
 
+    table_schema = [
+        {"name": field.name, "type": field.field_type}
+        for field in client.get_table(table).schema
+    ]
+
     file = utils.aws.s3.load(event["uri"])
     data = pd.read_csv(io.StringIO(file), index_col=0).convert_dtypes()
     data.to_gbq(
         destination_table=tmp_table,
-        project_id=creds.project_id,
+        table_schema=table_schema,
         if_exists="replace",
         credentials=creds,
         location=LOCATION,
@@ -66,7 +70,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     WHEN NOT MATCHED THEN
         INSERT ({cols}) VALUES ({cols})
     """
-    job = client.query(query, location=LOCATION, project=creds.project_id)
+    job = client.query(query, location=LOCATION)
 
     while not job.done():
         time.sleep(0.1)
