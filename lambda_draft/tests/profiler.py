@@ -1,6 +1,6 @@
 """Profiling"""
 
-import pprofile  # type: ignore
+import pprofile
 
 from lambda_draft.draft import Scheme
 from lambda_draft.draft.algorithm.genetic import Genetic

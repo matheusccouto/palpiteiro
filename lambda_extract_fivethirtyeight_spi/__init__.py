@@ -13,7 +13,7 @@ SPI_URL = "https://projects.fivethirtyeight.com/soccer-api/club/spi_matches_late
 STATUS_URL = "https://api.cartola.globo.com/mercado/status"
 
 
-def handler(event, context=None):
+def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
     now = datetime.datetime.now(tz=zoneinfo.ZoneInfo("America/Sao_Paulo"))
 
