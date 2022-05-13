@@ -46,7 +46,7 @@ def test_amount_of_players(event):
 def test_expected_points(event):
     """Test if points lies under expected range."""
     results = lambda_draft.handler(event=event, context=None)
-    assert sum([p["points"] for p in results["players"]]) > 140
+    assert sum([p["points"] for p in results["players"]]) > 139
 
 
 def test_price(event):
@@ -57,7 +57,7 @@ def test_price(event):
 
 
 def test_few_players(event):
-    """Test resulting price."""
+    """Test if it fails if using few players."""
     event["players"] = event["players"][:10]
     with pytest.raises(DraftError):
         lambda_draft.handler(event=event, context=None)
@@ -68,6 +68,19 @@ def test_bench_amount(event):
     results = lambda_draft.handler(event=event, context=None)
     assert len(results["bench"]) == 5
     assert len({p["position"] for p in results["bench"]}) == 5
+
+
+def test_bench_with_few_players(event):
+    """Test if it ignores if there is a missing player on the bench."""
+    # Remove all goalkeepers and keep only one.
+    # It will make sure that there will be no goalkeeper available for the bench
+    goalkeepers = [p for p in event["players"] if p["position"] == "goalkeeper"]
+    event["players"] = [p for p in event["players"] if p["position"] != "goalkeeper"]
+    event["players"] += goalkeepers[:1]
+
+    # Make sure that the bench is incomplete.
+    results = lambda_draft.handler(event=event, context=None)
+    assert len(results["bench"]) < 5
 
 
 def test_max_players_per_club(event):
@@ -110,7 +123,7 @@ def test_bench_amount_when_position_does_not_exist(event):
 
 
 def test_bench_prices(event):
-    """Test if bench prices are lower than startes."""
+    """Test if bench prices are lower than starters."""
     results = lambda_draft.handler(event=event, context=None)
     for bench in results["bench"]:
         for starter in results["players"]:

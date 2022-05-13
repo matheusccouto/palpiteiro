@@ -38,10 +38,10 @@ client = bigquery.Client(
 )
 
 
-def handler(event, context=None):
+def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
-    table = event["schema"] + "." + event["table"]
-    tmp_table = event["schema"] + ".tmp_" + event["table"]
+    table = f"{creds.project_id}.{event['schema']}.{event['table']}"
+    tmp_table = f"{creds.project_id}.{event['schema']}.tmp_{event['table']}"
 
     file = utils.aws.s3.load(event["uri"])
     data = pd.read_csv(io.StringIO(file), index_col=0).convert_dtypes()
@@ -53,13 +53,13 @@ def handler(event, context=None):
         location=LOCATION,
     )
 
-    cols = ",".join(data.columns)
+    cols = ", ".join(data.columns)
     match = " AND ".join([f"a.{col} = b.{col}" for col in event["subset"]])
     update = ", ".join([f"a.{col} = b.{col}" for col in data.columns])
 
     query = f"""
-    MERGE {table} a
-    USING {tmp_table} b
+    MERGE `{table}` a
+    USING `{tmp_table}` b
         ON {match}
     WHEN MATCHED THEN
         UPDATE SET {update}
@@ -72,7 +72,7 @@ def handler(event, context=None):
         time.sleep(0.1)
 
     if job.errors:
-        raise RuntimeError(json.loads(job.errors))
+        raise RuntimeError(json.dumps(job.errors))
 
     client.delete_table(tmp_table)
     return {
