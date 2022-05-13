@@ -14,9 +14,6 @@ class Player:
     points: float
     club: int
 
-    def __hash__(self):
-        return self.id
-
     def __eq__(self, other):
         return self.id == other.id
 
@@ -43,9 +40,6 @@ class Scheme:
             "coach": self.coach,
         }
 
-    def __getitem__(self, val):
-        return self.to_dict()[val]
-
     def items(self) -> Iterator:
         """Iterate of items."""
         return self.to_dict().items()
@@ -53,10 +47,6 @@ class Scheme:
     def keys(self) -> Iterator:
         """Iterate of keys."""
         return self.to_dict().keys()
-
-    def values(self) -> Iterator:
-        """Iterate of values."""
-        return self.to_dict().values()
 
 
 @dataclass

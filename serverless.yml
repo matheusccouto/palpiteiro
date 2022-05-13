@@ -31,6 +31,15 @@ functions:
         - "lambda_draft/**/*.py"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
+  forecast:
+    handler: lambda_forecast.handler
+    description: Player forecasting for fantasy soccer.
+    runtime: python3.9
+    package:
+      patterns:
+        - "lambda_forecast/**/*.py"
+        - "!lambda_forecast/tests/**/*"
+        - "!lambda_forecast/data/**/*"
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
     description: Extract players data from Cartola FC to JSON.
@@ -118,6 +127,9 @@ layers:
   pandas:
     package:
       artifact: layer_pandas.zip
+  sklearn:
+    package:
+      artifact: layer_sklearn.zip
 stepFunctions:
   stateMachines:
     extract-cartola-players-stepfunc:
