@@ -8,9 +8,10 @@ import time
 import numpy as np
 import pandas as pd
 from google.cloud import bigquery
-from google.oauth2 import service_account
+
 
 import utils.aws.s3
+import utils.google
 
 LOCATION = "us-east4"
 DTYPES = {
@@ -20,28 +21,8 @@ DTYPES = {
     "BOOLEAN": pd.BooleanDtype(),
 }
 
-creds = service_account.Credentials.from_service_account_info(
-    info={
-        "type": os.environ["GCP_SERVICE_ACCOUNT_TYPE"],
-        "project_id": os.environ["GCP_SERVICE_ACCOUNT_PROJECT_ID"],
-        "private_key_id": os.environ["GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID"],
-        "private_key": os.environ["GCP_SERVICE_ACCOUNT_PRIVATE_KEY"].replace(
-            "\\n", "\n"
-        ),
-        "client_email": os.environ["GCP_SERVICE_ACCOUNT_CLIENT_EMAIL"],
-        "client_id": os.environ["GCP_SERVICE_ACCOUNT_CLIENT_ID"],
-        "auth_uri": os.environ["GCP_SERVICE_ACCOUNT_AUTH_URI"],
-        "token_uri": os.environ["GCP_SERVICE_ACCOUNT_TOKEN_URI"],
-        "auth_provider_x509_cert_url": os.environ[
-            "GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL"
-        ],
-        "client_x509_cert_url": os.environ["GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL"],
-    }
-)
-client = bigquery.Client(
-    location=LOCATION,
-    credentials=creds,
-)
+creds = utils.google.get_creds_from_env_vars()
+client = bigquery.Client(location=LOCATION, credentials=creds)
 
 
 def handler(event, context=None):  # pylint: disable=unused-argument

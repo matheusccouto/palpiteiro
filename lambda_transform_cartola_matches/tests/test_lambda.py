@@ -15,7 +15,7 @@ THIS_DIR = os.path.dirname(__file__)
 @pytest.fixture(name="setup_and_teardown")
 def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
-    with open(os.path.join(THIS_DIR, "sample.json")) as file:
+    with open(os.path.join(THIS_DIR, "sample.json"), encoding="utf-8") as file:
         utils.aws.s3.save(file.read(), "s3://palpiteiro-test/partidas/2022-06.json")
     yield
     utils.aws.s3.delete("s3://palpiteiro-test/partidas")
