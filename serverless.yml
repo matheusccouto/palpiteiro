@@ -29,17 +29,17 @@ functions:
     package:
       patterns:
         - "lambda_draft/**/*.py"
+        - "lambda_draft/model/*"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
-  forecast:
-    handler: lambda_forecast.handler
-    description: Player forecasting for fantasy soccer.
+  predict:
+    handler: lambda_predict.handler
+    description: Player points prediction for fantasy soccer.
     runtime: python3.9
     package:
       patterns:
-        - "lambda_forecast/**/*.py"
-        - "!lambda_forecast/tests/**/*"
-        - "!lambda_forecast/data/**/*"
+        - "lambda_predict/**/*.py"
+        - "!lambda_predict/tests/**/*"
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
     description: Extract players data from Cartola FC to JSON.

@@ -1,13 +1,11 @@
-"""Azure function to forecast Cartola FC points."""
+"""Lambda function to forecast Cartola FC points."""
 
-import json
-import logging
 import os
 from typing import Dict, List, Sequence
 
 import joblib
 
-from . import exceptions, helper
+import utils
 
 # Directories.
 THIS_DIR = os.path.dirname(__file__)
@@ -21,7 +19,7 @@ def validate_args(args: Dict[str, float], features: Sequence[str]):
     missing_args = [feat for feat in features if feat not in args]
     if missing_args:
         error_msg = f"These arguments are missing: {', '.join(missing_args)}"
-        raise exceptions.MissingArgsError(error_msg)
+        raise ValueError(error_msg)
 
 
 def parse_args_dict(args: Dict[str, float], features: Sequence[str]) -> List[float]:
@@ -49,7 +47,7 @@ def parse_arguments(
 
 def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
-    features = list(helper.read_json(FEATURES_PATH))  # Make sure it is a list.
+    features = list(utils.read_json(FEATURES_PATH))  # Make sure it is a list.
     args = parse_arguments(event, features)
     model = joblib.load(MODEL_PATH)
     return model.predict(args).tolist()

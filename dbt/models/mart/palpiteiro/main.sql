@@ -1,26 +1,22 @@
-CREATE VIEW palpiteiro.main AS WITH match AS (
+WITH match AS (
     SELECT
         season,
         round,
-        DATEADD(
-            dd,
-            DATEDIFF(dd, 0, date),
-            0
-        ) AS date,
+        EXTRACT(DATE FROM timestamp) AS timestamp,
         home,
         away
     FROM
-        cartola.match
+        cartola.stg_partidas_match
 ),
 spi AS (
     SELECT
-        spim.*,
-        cn1.id AS club1,
-        cn2.id AS club2
+        spi.*,
+        cn1.id AS club_home,
+        cn2.id AS club_away
     FROM
-        spi.match spim
-        LEFT JOIN cartola.club_name cn1 ON spim.team1 = cn1.name
-        LEFT JOIN cartola.club_name cn2 ON spim.team2 = cn2.name
+        fivethirtyeight.stg_spi_match spi
+        LEFT JOIN cartola.clubs_names cn1 ON spi.home = cn1.name
+        LEFT JOIN cartola.clubs_names cn2 ON spi.away = cn2.name
 )
 SELECT
     play.player,
@@ -62,7 +58,7 @@ SELECT
     COALESCE(prev.variation, 0) AS variation_prev,
     COALESCE(prev.mean, 0) AS mean_prev,
     COALESCE(prev.matches, 0) AS matches_prev,
-    match.date AS date,
+    match.timestamp AS date,
     IIF(play.club = spi.club1, spi.spi1, spi.spi2) AS spi,
     IIF(play.club = spi.club1, spi.spi2, spi.spi1) AS spi_opp,
     IIF(play.club = spi.club1, spi.prob1, spi.prob2) AS prob_win,
@@ -89,8 +85,8 @@ SELECT
         spi.importance1
     ) AS importance_opp
 FROM
-    cartola.play play
-    LEFT JOIN cartola.play prev ON play.player = prev.player
+    cartola.stg_atletas_scoring play
+    LEFT JOIN cartola.stg_atletas_scoring prev ON play.player = prev.player
     AND play.season = prev.season
     AND play.round = prev.round + 1
     LEFT JOIN match ON play.season = match.season
@@ -99,8 +95,8 @@ FROM
         play.club = match.home
         OR play.club = match.away
     )
-    LEFT JOIN spi ON match.date = spi.date
+    LEFT JOIN spi ON match.timestamp = spi.date
     AND (
-        play.club = spi.club1
-        OR play.club = spi.club2
+        play.club = spi.club_home
+        OR play.club = spi.club_away
     )
