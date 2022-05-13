@@ -12,7 +12,7 @@ import utils.test
 def test_uri():
     """Test if lambda handler return the file URI."""
     results = lambda_extract_fivethirtyeight_spi.handler(event={})
-    assert fnmatch(results["uri"], "s3://cartola-dev/spi/*-*-* *:*:*.csv")
+    assert fnmatch(results["uri"], "s3://palpiteiro-test/spi/*-*-* *:*:*.csv")
 
 
 @pytest.fixture(name="delete_atletas_mercado")

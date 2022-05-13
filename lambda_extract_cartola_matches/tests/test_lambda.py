@@ -12,7 +12,7 @@ import utils.test
 def test_uri():
     """Test if lambda handler return the file URI."""
     results = lambda_extract_cartola_matches.handler(event={})
-    assert fnmatch(results["uri"], "s3://cartola-dev/partidas/20*-*.json")
+    assert fnmatch(results["uri"], "s3://palpiteiro-test/partidas/20*-*.json")
 
 
 @pytest.fixture(name="delete_atletas_mercado")

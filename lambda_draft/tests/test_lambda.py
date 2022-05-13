@@ -33,7 +33,7 @@ def test_time(event):
     start = time.time()
     lambda_draft.handler(event=event, context=None)
     end = time.time()
-    assert end - start < 3
+    assert end - start < 5
 
 
 def test_amount_of_players(event):
