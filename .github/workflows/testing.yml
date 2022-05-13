@@ -7,6 +7,8 @@ on:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    env:
+      BUCKET: palpiteiro-test
     strategy:
       fail-fast: false
       matrix:
