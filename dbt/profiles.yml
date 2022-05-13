@@ -7,7 +7,6 @@ palpiteiro:
       location: us-east4
       method: oauth
       priority: interactive
-      project: palpiteiro-dev
       threads: 4
       type: bigquery
   target: dev
