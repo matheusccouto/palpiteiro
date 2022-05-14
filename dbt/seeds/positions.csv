@@ -1,0 +1,7 @@
+id,nome,abreviacao,slug
+1,Goleiro,gol,goalkeeper
+2,Lateral,lat,fullback
+3,Zagueiro,zag,defender
+4,Meia,mei,midfielder
+5,Atacante,ata,forward
+6,Técnico,tec,coach

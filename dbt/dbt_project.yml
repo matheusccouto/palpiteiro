@@ -12,6 +12,9 @@ target-path: "target"
 clean-targets:
   - "target"
   - "dbt_packages"
+seeds:
+  clubs_names:
+    schema: cartola
 models:
   palpiteiro:
     staging:
