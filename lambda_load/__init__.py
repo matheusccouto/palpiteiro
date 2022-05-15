@@ -30,12 +30,14 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     table = f"{creds.project_id}.{event['schema']}.{event['table']}"
     tmp_table = f"{creds.project_id}.{event['schema']}.tmp_{event['table']}"
 
-    table_schema = {
-        field.name: DTYPES[field.field_type] for field in client.get_table(table).schema
-    }
     file = utils.aws.s3.load(event["uri"])
-    data = pd.read_csv(io.StringIO(file), index_col=0).astype(table_schema)
-    data.to_gbq(
+    data = pd.read_csv(io.StringIO(file), index_col=0)
+    table_schema = {
+        field.name: DTYPES[field.field_type]
+        for field in client.get_table(table).schema
+        if field.name in data.columns
+    }
+    data.astype(table_schema).to_gbq(
         destination_table=tmp_table,
         if_exists="replace",
         credentials=creds,
