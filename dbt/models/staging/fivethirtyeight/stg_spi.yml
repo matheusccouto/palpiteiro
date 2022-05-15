@@ -91,3 +91,17 @@ models:
         description: Home club non-shot expected goals
       - name: nsxg_away
         description: Away club non-shot expected goals
+
+  - name: stg_spi_slugs
+    description: Brasileirão Fivethirtyeight clubs slugs
+    columns:
+      - name: name
+        description: Name
+        tests:
+          - unique
+          - not_null
+      - name: slug
+        description: slug
+        tests:
+          - unique
+          - not_null

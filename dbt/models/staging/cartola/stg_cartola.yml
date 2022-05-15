@@ -114,15 +114,15 @@ models:
         tests:
           - not_null
       - name: tackle
-        description: Cumulative succesfull tackles in the season
+        description: Cumulative successful tackles in the season
         tests:
           - not_null
       - name: foul
-        description: Cumulative commited fouls in the season
+        description: Cumulative committed fouls in the season
         tests:
           - not_null
       - name: penalty
-        description: Cumulative commited penalty in the season
+        description: Cumulative committed penalty in the season
         tests:
           - not_null
       - name: own_goal
@@ -191,6 +191,8 @@ models:
           - not_null
       - name: timestamp
         description: UTC date
+        tests:
+          - not_null
       - name: venue
         description: Venue
       - name: valid
@@ -227,3 +229,81 @@ models:
         description: Broadcasting label
       - name: broadcasting_url
         description: Broadcasting URL
+
+  - name: stg_clubs
+    description: Cartola clubs
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: slug
+        description: slug
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: Name
+        tests:
+          - not_null
+      - name: short_name
+        description: Abbreviation
+        tests:
+          - not_null
+      - name: badge60
+        description: 60x60 badge URL
+        tests:
+          - not_null
+      - name: badge45
+        description: 45x45 badge URL
+        tests:
+          - not_null
+      - name: badge30
+        description: 30x30 badge URL
+        tests:
+          - not_null
+      - name: fantasy_name
+        description: Fantasy name
+        tests:
+          - not_null
+
+  - name: stg_positions
+    description: Cartola positions
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: slug
+        description: slug
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: Name
+        tests:
+          - not_null
+      - name: short_name
+        description: Abbreviation
+        tests:
+          - not_null
+
+  - name: stg_status
+    description: Cartola status
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: slug
+        description: slug
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: Name
+        tests:
+          - not_null
