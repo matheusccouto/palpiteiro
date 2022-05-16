@@ -23,7 +23,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     rnd = int(status["rodada_atual"])
 
     scouts = utils.http.get(PLAYERS_URL.format(round=rnd))
-    if "mensagem" in scouts and status["mensagem"] == "Rodada inválida.":
+    if "mensagem" in scouts:
         rnd -= 1
         scouts = utils.http.get(PLAYERS_URL.format(round=rnd))
 
