@@ -51,15 +51,37 @@ functions:
         - "lambda_extract_cartola_players/*.py"
     environment:
       BUCKET: ${param:cartola-bucket}
+  extract-cartola-scouts:
+    handler: lambda_extract_cartola_scouts.handler
+    description: Extract scouts data from Cartola FC to JSON.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_cartola_scouts/*.py"
+    environment:
+      BUCKET: ${param:cartola-bucket}
   transform-cartola-players:
     handler: lambda_transform_cartola_players.handler
-    description: Transform players data from Cartola FC from JSO to CSV.
+    description: Transform players data from Cartola FC from JSON to CSV.
     runtime: python3.9
     role:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
     package:
       patterns:
         - "lambda_transform_cartola_players/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
+  transform-cartola-scouts:
+    handler: lambda_transform_cartola_scouts.handler
+    description: Transform scouts data from Cartola FC from JSON to CSV.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_cartola_scouts/*.py"
     layers:
       - { Ref: PandasLambdaLayer }
   extract-cartola-matches:
@@ -165,6 +187,44 @@ stepFunctions:
                 - temporada_id
                 - rodada_id
                 - atleta_id
+          Load:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load, Arn]
+            End: true
+    extract-cartola-scouts-stepfunc:
+      name: extract_cartola_scouts-${opt:stage}
+      events:
+        - schedule: rate(8 hours)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+      definition:
+        StartAt: ExtractCartolaScouts
+        States:
+          ExtractCartolaScouts:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-cartola-scouts, Arn]
+            Next: TransformCartolaScouts
+          TransformCartolaScouts:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-cartola-scouts, Arn]
+            Next: Load
+            ResultSelector:
+              uri.$: "$.uri"
+              table: scouts
+              schema: cartola
+              subset:
+                - temporada
+                - rodada
+                - id
           Load:
             Type: Task
             Resource:
