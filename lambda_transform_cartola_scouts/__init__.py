@@ -20,7 +20,8 @@ def handler(event, context=None):  # pylint: disable=unused-argument
         row["id"] = key
         row["temporada"] = data["temporada"]
         row["rodada"] = data["rodada"]
-        row.update(row.pop("scout"))
+        if row["scout"] in row:
+            row.update(row.pop("scout"))
         records.append(row)
 
     # Save as CSV
