@@ -219,7 +219,7 @@ stepFunctions:
             Next: Load
             ResultSelector:
               uri.$: "$.uri"
-              table: scouts
+              table: pontuados
               schema: cartola
               subset:
                 - temporada
