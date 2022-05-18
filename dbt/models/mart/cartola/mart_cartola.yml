@@ -40,7 +40,6 @@ models:
                 - midfielder
                 - forward
                 - coach
-              quote: false
       - name: status
         description: Status for the match
         tests:
@@ -52,7 +51,6 @@ models:
                 - injured
                 - "null"
                 - expected
-              quote: false
       - name: points
         description: Scored by the player in the match
         tests:

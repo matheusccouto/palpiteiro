@@ -5,6 +5,7 @@ sources:
     tables:
       - name: atletas
       - name: partidas
+      - name: pontuados
 
 models:
   - name: stg_atletas_scoring
@@ -58,95 +59,95 @@ models:
         tests:
           - not_null
       - name: mean
-        description: Mean points in the season
+        description: Mean points in this match
         tests:
           - not_null
       - name: matches
-        description: Amount of matches that the player participated in the season
+        description: Amount of matches that the player participated in this match
         tests:
           - not_null
       - name: goal
-        description: Cumulative goals in the season
+        description: Goals in this match
         tests:
           - not_null
       - name: assist
-        description: Cumulative assists in the season
+        description: Assists in this match
         tests:
           - not_null
       - name: yellow_card
-        description: Cumulative yellow cards in the season
+        description: Yellow cards in this match
         tests:
           - not_null
       - name: red_card
-        description: Cumulative red cards in the season
+        description: Red cards in this match
         tests:
           - not_null
       - name: missed_shoot
-        description: Cumulative missed shoots in the season
+        description: Missed shoots in this match
         tests:
           - not_null
       - name: on_post_shoot
-        description: Cumulative on post shoots in the season
+        description: On post shoots in this match
         tests:
           - not_null
       - name: saved_shoot
-        description: Cumulative saved shoots in the season
+        description: Saved shoots in this match
         tests:
           - not_null
       - name: received_foul
-        description: Cumulative received fouls in the season
+        description: Received fouls in this match
         tests:
           - not_null
       - name: received_penalty
-        description: Cumulative received fouls in the season
+        description: Received fouls in this match
         tests:
           - not_null
       - name: missed_penalty
-        description: Cumulative missed penalty kick in the season
+        description: Missed penalty kick in this match
         tests:
           - not_null
       - name: outside
-        description: Cumulative outsides in the season in the season
+        description: Outsides in this match in this match
         tests:
           - not_null
       - name: missed_pass
-        description: Cumulative missed passes in the season
+        description: Missed passes in this match
         tests:
           - not_null
       - name: tackle
-        description: Cumulative successful tackles in the season
+        description: Successful tackles in this match
         tests:
           - not_null
       - name: foul
-        description: Cumulative committed fouls in the season
+        description: Committed fouls in this match
         tests:
           - not_null
       - name: penalty
-        description: Cumulative committed penalty in the season
+        description: Committed penalty in this match
         tests:
           - not_null
       - name: own_goal
-        description: Cumulative own goals in the season
+        description: Own goals in this match
         tests:
           - not_null
       - name: allowed_goal
-        description: Cumulative allowed goals in the season
+        description: Allowed goals in this match
         tests:
           - not_null
       - name: no_goal
-        description: Cumulative games without goals in the season
+        description: Games without goals in this match
         tests:
           - not_null
       - name: save
-        description: Cumulative saves in the season
+        description: Saves in this match
         tests:
           - not_null
       - name: difficult_save
-        description: Cumulative difficult saves in the season
+        description: Difficult saves in this match
         tests:
           - not_null
       - name: penalty_save
-        description: Cumulative penalty save in the season
+        description: Penalty save in this match
         tests:
           - not_null
 
@@ -305,5 +306,132 @@ models:
           - not_null
       - name: name
         description: Name
+        tests:
+          - not_null
+
+  - name: stg_pontuados_scoring
+    description: Cartola players scoring for each round
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: player
+        description: Player ID
+        tests:
+          - not_null
+      - name: round
+        description: League round
+        tests:
+          - not_null
+      - name: season
+        description: League season
+        tests:
+          - not_null
+      - name: club
+        description: Club
+        tests:
+          - not_null
+      - name: position
+        description: Position
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6]
+              quote: false
+      - name: played
+        description: Participated in this match
+        tests:
+          - not_null
+          - accepted_values:
+              values: [false, true]
+              quote: false
+      - name: points
+        description: Points scored by the player in the match
+        tests:
+          - not_null
+      - name: goal
+        description: Goals in this match
+        tests:
+          - not_null
+      - name: assist
+        description: Assists in this match
+        tests:
+          - not_null
+      - name: yellow_card
+        description: Yellow cards in this match
+        tests:
+          - not_null
+      - name: red_card
+        description: Red cards in this match
+        tests:
+          - not_null
+      - name: missed_shoot
+        description: Missed shoots in this match
+        tests:
+          - not_null
+      - name: on_post_shoot
+        description: On post shoots in this match
+        tests:
+          - not_null
+      - name: saved_shoot
+        description: Saved shoots in this match
+        tests:
+          - not_null
+      - name: received_foul
+        description: Received fouls in this match
+        tests:
+          - not_null
+      - name: received_penalty
+        description: Received fouls in this match
+        tests:
+          - not_null
+      - name: missed_penalty
+        description: Missed penalty kick in this match
+        tests:
+          - not_null
+      - name: outside
+        description: Outsides in this match in this match
+        tests:
+          - not_null
+      - name: missed_pass
+        description: Missed passes in this match
+        tests:
+          - not_null
+      - name: tackle
+        description: Successful tackles in this match
+        tests:
+          - not_null
+      - name: foul
+        description: Committed fouls in this match
+        tests:
+          - not_null
+      - name: penalty
+        description: Committed penalty in this match
+        tests:
+          - not_null
+      - name: own_goal
+        description: Own goals in this match
+        tests:
+          - not_null
+      - name: allowed_goal
+        description: Allowed goals in this match
+        tests:
+          - not_null
+      - name: no_goal
+        description: Games without goals in this match
+        tests:
+          - not_null
+      - name: save
+        description: Saves in this match
+        tests:
+          - not_null
+      - name: difficult_save
+        description: Difficult saves in this match
+        tests:
+          - not_null
+      - name: penalty_save
+        description: Penalty save in this match
         tests:
           - not_null

@@ -1,12 +1,12 @@
 SELECT
     score.player,
     score.name,
-    mat.season,
-    mat.round,
-    mat.all_time_round,
+    score.season,
+    score.round,
+    score.all_time_round,
     mat.timestamp,
     mat.valid,
-    mat.club,
+    score.club,
     mat.opponent,
     mat.home,
     score.position,
@@ -57,9 +57,6 @@ SELECT
     score.penalty_save
 FROM
     {{ ref ("fct_scoring") }} score
-    LEFT JOIN {{ ref ("fct_scoring") }} prev ON score.player = prev.player
-        AND score.season = prev.season
-        AND score.round = prev.round + 1
     LEFT JOIN {{ ref ("fct_match") }} mat ON score.season = mat.season
         AND score.round = mat.round
         AND score.club = mat.club
