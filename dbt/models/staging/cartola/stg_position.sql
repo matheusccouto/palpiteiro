@@ -4,4 +4,4 @@ SELECT
     nome AS name,
     abreviacao AS short_name
 FROM
-    {{ ref ("positions") }}
+    {{ ref ("position") }}

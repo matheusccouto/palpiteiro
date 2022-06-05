@@ -246,7 +246,7 @@ models:
       - name: photo
         description: Photo
 
-  - name: fct_points
+  - name: fct_point
     description: Cartola points
     columns:
       - name: id

@@ -38,10 +38,10 @@ SELECT
 FROM
     {{ ref ("stg_atletas_scoring") }} sc1
     LEFT JOIN {{ ref ("stg_pontuados_scoring") }} sc2 ON sc1.id = sc2.id
-    LEFT JOIN {{ ref ("fct_points") }} pt ON sc1.id = pt.id
+    LEFT JOIN {{ ref ("fct_point") }} pt ON sc1.id = pt.id
     LEFT JOIN {{ ref ("dim_player") }} pl ON sc1.player = pl.id
-    LEFT JOIN {{ ref ("stg_positions") }} po ON sc1.position = po.id
+    LEFT JOIN {{ ref ("stg_position") }} po ON sc1.position = po.id
     LEFT JOIN {{ ref ("stg_status") }} st ON status = st.id
-    LEFT JOIN {{ ref ("stg_clubs") }} c ON sc1.club = c.id
+    LEFT JOIN {{ ref ("stg_club") }} c ON sc1.club = c.id
 WHERE
     c.slug <> "other"

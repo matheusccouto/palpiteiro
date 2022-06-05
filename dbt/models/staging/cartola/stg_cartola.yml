@@ -6,6 +6,9 @@ sources:
       - name: atletas
       - name: partidas
       - name: pontuados
+      - name: club
+      - name: position
+      - name: status
 
 models:
   - name: stg_atletas_scoring
@@ -231,7 +234,7 @@ models:
       - name: broadcasting_url
         description: Broadcasting URL
 
-  - name: stg_clubs
+  - name: stg_club
     description: Cartola clubs
     columns:
       - name: id
@@ -269,7 +272,7 @@ models:
         tests:
           - not_null
 
-  - name: stg_positions
+  - name: stg_position
     description: Cartola positions
     columns:
       - name: id

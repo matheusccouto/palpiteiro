@@ -10,8 +10,8 @@ WITH mat AS (
     TRUE AS home
   FROM
     {{ ref ('stg_partidas_match') }} m
-    LEFT JOIN {{ ref ("stg_clubs") }} c_home ON home = c_home.id
-    LEFT JOIN {{ ref ("stg_clubs") }} c_away ON away = c_away.id
+    LEFT JOIN {{ ref ("stg_club") }} c_home ON home = c_home.id
+    LEFT JOIN {{ ref ("stg_club") }} c_away ON away = c_away.id
 ),
 inv AS (
   SELECT
