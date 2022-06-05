@@ -4,6 +4,11 @@ models:
   - name: fct_scoring
     description: Cartola players scoring for each round
     columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
       - name: player
         description: Player ID
         tests:
@@ -51,20 +56,16 @@ models:
                 - injured
                 - "null"
                 - expected
-      - name: points
-        description: Scored by the player in the match
+      - name: total_points
+        description: Points scored the player in the match using most recent rules.
         tests:
           - not_null
+      - name: offensive_points
+        description: Offensive points scored the player in the match using most recent rules.
+      - name: defensive_points
+        description: Defensive points scored the player in the match using most recent rules.
       - name: price
         description: Price
-        tests:
-          - not_null
-      - name: variation
-        description: Price variation
-        tests:
-          - not_null
-      - name: mean
-        description: Mean points in this round
         tests:
           - not_null
       - name: matches
@@ -244,3 +245,32 @@ models:
           - not_null
       - name: photo
         description: Photo
+
+  - name: fct_points
+    description: Cartola points
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: player
+        description: Player ID
+        tests:
+          - not_null
+      - name: round
+        description: League round
+        tests:
+          - not_null
+      - name: season
+        description: League season
+        tests:
+          - not_null
+      - name: offensive
+        description: Offensive points
+      - name: defensive
+        description: Defensive points
+      - name: total
+        description: Total points
+        tests:
+          - not_null

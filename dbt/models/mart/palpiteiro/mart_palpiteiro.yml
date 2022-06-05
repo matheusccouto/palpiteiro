@@ -72,24 +72,8 @@ models:
                 - injured
                 - "null"
                 - expected
-      - name: points
-        description: Points scored by the player in the match
-        tests:
-          - not_null
       - name: price
         description: Price
-        tests:
-          - not_null
-      - name: price_prev
-        description: Price before the match
-        tests:
-          - not_null
-      - name: variation
-        description: Price variation
-        tests:
-          - not_null
-      - name: mean
-        description: Mean points in this round
         tests:
           - not_null
       - name: matches

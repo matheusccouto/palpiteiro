@@ -1,45 +1,47 @@
 SELECT
-    sc.id,
+    sc1.id,
     pl.id AS player,
     pl.nickname AS name,
-    sc.round,
-    sc.season,
-    38 * (sc.season - 2017) + sc.round AS all_time_round,
+    sc1.round,
+    sc1.season,
+    38 * (sc1.season - 2017) + sc1.round AS all_time_round,
     c.slug AS club,
     po.slug AS position,
     st.slug AS status,
-    sc.points,
-    sc.price,
-    sc.variation,
-    sc.mean,
-    sc.matches,
-    pt.goal  AS goal,
-    pt.assist AS assist,
-    pt.yellow_card AS yellow_card,
-    pt.red_card AS red_card,
-    pt.missed_shoot AS missed_shoot,
-    pt.on_post_shoot AS on_post_shoot,
-    pt.saved_shoot AS saved_shoot,
-    pt.received_foul AS received_foul,
-    pt.received_penalty AS received_penalty,
-    pt.missed_penalty AS missed_penalty,
-    pt.outside AS outside,
-    pt.missed_pass AS missed_pass,
-    pt.tackle AS tackle,
-    pt.foul AS foul,
-    pt.penalty AS penalty,
-    pt.own_goal AS own_goal,
-    pt.allowed_goal AS allowed_goal,
-    pt.no_goal AS no_goal,
-    pt.save AS save,
-    pt.difficult_save AS difficult_save,
-    pt.penalty_save AS penalty_save,
+    pt.total AS total_points,
+    pt.offensive AS offensive_points,
+    pt.defensive AS defensive_points,
+    sc1.price,
+    sc1.price - sc1.variation AS price_before,
+    sc1.matches,
+    sc2.goal AS goal,
+    sc2.assist AS assist,
+    sc2.yellow_card AS yellow_card,
+    sc2.red_card AS red_card,
+    sc2.missed_shoot AS missed_shoot,
+    sc2.on_post_shoot AS on_post_shoot,
+    sc2.saved_shoot AS saved_shoot,
+    sc2.received_foul AS received_foul,
+    sc2.received_penalty AS received_penalty,
+    sc2.missed_penalty AS missed_penalty,
+    sc2.outside AS outside,
+    sc2.missed_pass AS missed_pass,
+    sc2.tackle AS tackle,
+    sc2.foul AS foul,
+    sc2.penalty AS penalty,
+    sc2.own_goal AS own_goal,
+    sc2.allowed_goal AS allowed_goal,
+    sc2.no_goal AS no_goal,
+    sc2.save AS save,
+    sc2.difficult_save AS difficult_save,
+    sc2.penalty_save AS penalty_save,
 FROM
-    {{ ref ("stg_atletas_scoring") }} sc
-    LEFT JOIN {{ ref ("stg_pontuados_scoring") }} pt ON sc.id = pt.id
-    LEFT JOIN {{ ref ("dim_player") }} pl ON sc.player = pl.id
-    LEFT JOIN {{ ref ("stg_positions") }} po ON sc.position = po.id
+    {{ ref ("stg_atletas_scoring") }} sc1
+    LEFT JOIN {{ ref ("stg_pontuados_scoring") }} sc2 ON sc1.id = sc2.id
+    LEFT JOIN {{ ref ("fct_points") }} pt ON sc1.id = pt.id
+    LEFT JOIN {{ ref ("dim_player") }} pl ON sc1.player = pl.id
+    LEFT JOIN {{ ref ("stg_positions") }} po ON sc1.position = po.id
     LEFT JOIN {{ ref ("stg_status") }} st ON status = st.id
-    LEFT JOIN {{ ref ("stg_clubs") }} c ON sc.club = c.id
+    LEFT JOIN {{ ref ("stg_clubs") }} c ON sc1.club = c.id
 WHERE
     c.slug <> "other"

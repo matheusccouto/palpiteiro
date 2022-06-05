@@ -18,7 +18,11 @@ SELECT
     CAST(COALESCE(PS, 0) AS int) AS received_penalty,
     CAST(COALESCE(PP, 0) AS int) AS missed_penalty,
     CAST(COALESCE(I, 0) AS int) AS outside,
-    CAST(COALESCE(PE, 0) AS int) AS missed_pass,
+    CASE WHEN PE IS NULL THEN
+        CAST(COALESCE(PI, 0) AS int)
+    ELSE
+        CAST(COALESCE(PE, 0) AS int)
+    END AS missed_pass,
     CASE WHEN RB IS NULL THEN
         CAST(COALESCE(DS, 0) AS int)
     ELSE
