@@ -14,9 +14,13 @@ WITH
     season,
     club,
     position,
-    ROUND(offensive, 1) AS offensive,
-    ROUND(defensive, 1) AS defensive,
-    ROUND(offensive + defensive, 1) AS total
+    played,
+    IF(played IS TRUE, ROUND(offensive, 1), NULL) AS offensive,
+    IF(played IS TRUE, ROUND(defensive, 1), NULL) AS defensive,
+    IF(played IS TRUE, ROUND(offensive + defensive, 1), NULL) AS total,
+    IF(played IS TRUE, offensive / (SUM(offensive) OVER (PARTITION BY season, round, club) + 0.1), NULL) AS offensive_repr,
+    IF(played IS TRUE, defensive / (SUM(defensive) OVER (PARTITION BY season, round, club) + 0.1), NULL) AS defensive_repr,
+    IF(played IS TRUE, (offensive + defensive) / (SUM(offensive + defensive) OVER (PARTITION BY season, round, club) + 0.1), NULL) AS total_repr
   FROM
     points ),
   coaches AS (
@@ -36,9 +40,13 @@ SELECT
   p.player,
   p.round,
   p.season,
+  p.played,
   IF(p.position = 6, NULL, p.offensive) AS offensive,
   IF(p.position = 6, NULL, p.defensive) AS defensive,
   IF(p.position = 6, c.total, p.total) AS total,
+  IF(p.position = 6, NULL, p.offensive_repr) AS offensive_repr,
+  IF(p.position = 6, NULL, p.defensive_repr) AS defensive_repr,
+  IF(p.position = 6, NULL, p.total_repr) AS total_repr,
 FROM
   players p
 LEFT JOIN

@@ -6,9 +6,6 @@ sources:
       - name: atletas
       - name: partidas
       - name: pontuados
-      - name: club
-      - name: position
-      - name: status
 
 models:
   - name: stg_atletas_scoring

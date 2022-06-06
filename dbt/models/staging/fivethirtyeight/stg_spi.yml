@@ -4,7 +4,6 @@ sources:
   - name: fivethirtyeight
     tables:
       - name: spi
-      - name: spi_slug
 
 models:
   - name: stg_spi_match
@@ -93,7 +92,7 @@ models:
       - name: nsxg_away
         description: Away club non-shot expected goals
 
-  - name: stg_spi_slug
+  - name: stg_slug
     description: Brasileirão Fivethirtyeight clubs slugs
     columns:
       - name: name

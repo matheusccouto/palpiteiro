@@ -25,8 +25,8 @@ WITH spi AS (
         nsxg_away AS nsxg_opponent
     FROM
         {{ ref ("stg_spi_match") }} spi
-        LEFT JOIN {{ ref ("stg_spi_slug") }} slug_home ON spi.home = slug_home.name
-        LEFT JOIN {{ ref ("stg_spi_slug") }} slug_away ON spi.away = slug_away.name
+        LEFT JOIN {{ ref ("stg_slug") }} slug_home ON spi.home = slug_home.name
+        LEFT JOIN {{ ref ("stg_slug") }} slug_away ON spi.away = slug_away.name
 ),
 inv AS (
     SELECT

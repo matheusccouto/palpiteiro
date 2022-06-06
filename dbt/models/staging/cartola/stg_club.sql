@@ -8,4 +8,4 @@ SELECT
     escudo_30x30 AS badge30,
     nome_fantasia AS fantasy_name
 FROM
-    {{ ref ("club") }}
+    {{ ref ("clube") }}
