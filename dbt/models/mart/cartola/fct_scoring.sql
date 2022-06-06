@@ -17,6 +17,7 @@ SELECT
     sc1.price,
     sc1.price - sc1.variation AS price_before,
     sc1.matches,
+    pt.played,
     sc2.goal AS goal,
     sc2.assist AS assist,
     sc2.yellow_card AS yellow_card,
