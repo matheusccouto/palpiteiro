@@ -68,12 +68,12 @@ class LineUp:
     @property
     def points(self):
         """Get line-up points."""
-        return sum([player.points for player in self.players])
+        return sum(player.points for player in self.players)
 
     @property
     def price(self):
         """Get line-up price."""
-        return sum([player.price for player in self.players])
+        return sum(player.price for player in self.players)
 
     @property
     def players_per_position(self) -> Dict[str, List[Player]]:
