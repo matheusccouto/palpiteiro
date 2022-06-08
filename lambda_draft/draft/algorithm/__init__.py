@@ -40,9 +40,7 @@ class BaseAlgorithm(abc.ABC):
                 continue
 
             if count > 0:
-                price = min(
-                    [p.price for p in players_per_position(line_up.players)[pos]]
-                )
+                price = min(p.price for p in players_per_position(line_up.players)[pos])
                 players = [
                     p
                     for p in self.players_per_position[pos]
