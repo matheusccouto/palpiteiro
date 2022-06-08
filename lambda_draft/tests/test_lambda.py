@@ -46,14 +46,14 @@ def test_amount_of_players(event):
 def test_expected_points(event):
     """Test if points lies under expected range."""
     results = lambda_draft.handler(event=event, context=None)
-    assert sum([p["points"] for p in results["players"]]) > 139
+    assert sum(p["points"] for p in results["players"]) > 139
 
 
 def test_price(event):
     """Test resulting price."""
     event["price"] = 50
     results = lambda_draft.handler(event=event, context=None)
-    assert sum([p["price"] for p in results["players"]]) <= 50
+    assert sum(p["price"] for p in results["players"]) <= 50
 
 
 def test_few_players(event):
@@ -88,7 +88,7 @@ def test_max_players_per_club(event):
     event["max_players_per_club"] = 3
     results = lambda_draft.handler(event=event, context=None)
     clubs = [p["club"] for p in results["players"]]
-    assert max([clubs.count(c) for c in clubs]) <= 3
+    assert max(clubs.count(c) for c in clubs) <= 3
 
 
 def test_schema(event):
