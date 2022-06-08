@@ -23,10 +23,11 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     # I'll include it inside the players that that are inside the 'atletas' key.
 
     season = status["temporada"]
-    rnd = players["atletas"][0]["rodada_id"]
+    rnd = status["rodada_atual"]
 
     for player in players["atletas"]:
         player["temporada_id"] = season
+        player["rodada_id"] = rnd
 
     bucket = os.environ["BUCKET"]
     key = f"atletas/mercado/{season}-{rnd:02d}.json"
