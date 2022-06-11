@@ -5,7 +5,11 @@ SELECT
     CAST(temporada AS int) AS season,
     CAST(clube_id AS int) AS club,
     CAST(posicao_id AS int) AS position,
-    CAST(COALESCE(entrou_em_campo, pontuacao <> 0) AS boolean) AS played,
+    CASE WHEN posicao_id = 6 THEN 
+        FALSE
+    ELSE
+        CAST(COALESCE(entrou_em_campo, pontuacao <> 0) AS boolean)
+    END AS played,
     CAST(pontuacao AS DECIMAL) AS points,
     CAST(COALESCE(G, 0) AS int) AS goal,
     CAST(COALESCE(A, 0) AS int) AS assist,
