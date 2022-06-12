@@ -15,10 +15,6 @@ WITH scoring AS (
     FROM
         {{ source("cartola", "atletas") }}
 )
--- SELECT
---     *
--- FROM
---     scoring
 SELECT
     curr.id,
     curr.player,
@@ -27,15 +23,18 @@ SELECT
     curr.club,
     curr.position,
     CASE
-        WHEN curr.season >= 2022 AND curr.round >= 10 THEN curr.status
+        WHEN curr.season >= 2022 THEN curr.status
         ELSE prev.status
     END AS status,
     curr.points,
     CASE
-        WHEN curr.season >= 2022 AND curr.round >= 10 THEN curr.price
+        WHEN curr.season >= 2022 THEN curr.price
         ELSE curr.price - curr.variation
     END AS price,
-    curr.variation,
+    CASE
+        WHEN curr.season >= 2022 THEN curr.variation
+        ELSE COALESCE(prev.variation, 0)
+    END AS variation,
     curr.mean,
     curr.matches
 FROM
