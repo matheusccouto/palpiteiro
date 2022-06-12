@@ -15,9 +15,9 @@ SELECT
     s.total_points,
     s.offensive_points,
     s.defensive_points,
-    s.total_points / c.total_points_club AS total_points_repr,
-    s.offensive_points / c.offensive_points_club AS offensive_points_repr,
-    s.defensive_points / c.defensive_points_club AS defensive_points_repr,
+    s.total_points / (c.total_points_club + 0.1) AS total_points_repr, -- Add 0.1 to avoid division by zero)
+    s.offensive_points / (c.offensive_points_club + 0.1) AS offensive_points_repr, -- Add 0.1 to avoid division by zero)
+    s.defensive_points / (c.defensive_points_club + 0.1) AS defensive_points_repr, -- Add 0.1 to avoid division by zero)
     c.spi_club,
     c.spi_opponent,
     c.prob_club,
