@@ -1,0 +1,37 @@
+name: Google cloud function deployment
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - forecast
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud dev environment
+        if: github.head_ref == 'dev' || github.ref_name == 'dev'
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          credentials_json: ${{ secrets.GCP_KEYFILE_DEV }}
+      - name: Authenticate to Google Cloud dev environment
+        if: github.head_ref == 'forecast' || github.ref_name == 'forecast'
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          credentials_json: ${{ secrets.GCP_KEYFILE_DEV }}
+      - name: Authenticate to Google Cloud main environment
+        if: github.head_ref == 'main' || github.ref_name == 'main'
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          credentials_json: ${{ secrets.GCP_KEYFILE_MAIN }}
+      - id: Eeploy
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          name: 'points'
+          runtime: 'python39'
+          entry_point: handler
+          region: us-east4
+          source_dir: function_points
