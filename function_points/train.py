@@ -4,14 +4,7 @@ import os
 
 import joblib
 import pandas as pd
-from sklearn import metrics
-import sklearn
-from sklearn.compose import make_column_transformer
 from sklearn.ensemble import HistGradientBoostingRegressor
-from sklearn.inspection import permutation_importance
-from sklearn.model_selection import cross_val_score, train_test_split
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import OneHotEncoder, PowerTransformer
 
 import utils.google
 
