@@ -12,9 +12,7 @@ import joblib
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
-import optuna
 import pandas as pd
-import pyodbc  # pylint: disable=unused-import
 import requests
 from sklearn import metrics
 from sklearn.compose import make_column_transformer
