@@ -68,8 +68,7 @@ SELECT
     CASE
         WHEN ai.position = 'coach' THEN ca.points
         ELSE ai.points * ai.participate
-    END AS points,
-    ai.participate
+    END AS points
 FROM
     ai
     LEFT JOIN cartola.dim_player dp ON ai.player = dp.id
