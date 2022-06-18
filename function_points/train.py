@@ -1,39 +1,60 @@
 """Train machine learning model."""
 
 import os
+from io import BytesIO
 
 import joblib
 import pandas as pd
+from google.cloud import storage
+from sklearn.compose import make_column_transformer
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, PowerTransformer
 
-import utils.google
+# import utils.google
 
 # Directories
 THIS_DIR = os.path.dirname(__file__)
 QUERY_PATH = os.path.join(THIS_DIR, "query.sql")
-MODEL_PATH = os.path.join(THIS_DIR, "model.joblib")
 
-# Google Cloud
-LOCATION = "us-east4"
-CREDS = utils.google.get_creds_from_env_vars()
+# Google Cloud Storage
+BUCKET_NAME = os.environ["BUCKET_NAME"]
+MODEL_PATH = "points/model.joblib"
 
 # Model
 RANDOM_STATE = 0
-ESTIMATOR = HistGradientBoostingRegressor(random_state=RANDOM_STATE)
 TARGET = "total_points"
+ESTIMATOR = make_pipeline(
+    make_column_transformer(
+        (OneHotEncoder(sparse=False), (0,)),
+        remainder=PowerTransformer(),
+    ),
+    HistGradientBoostingRegressor(
+        loss="poisson",
+        random_state=RANDOM_STATE,
+    ),
+)
 
 # Read training data.
-with open(QUERY_PATH, encoding="utf-8") as file:
-    QUERY = file.read()
+with open(QUERY_PATH, encoding="utf-8") as query_file:
+    QUERY = query_file.read()
 
 
-def train(query, creds):
+def train(query):
     """Train machine learning model."""
-    data = pd.read_gbq(query, credentials=creds)
+    # Read and prepare training data.
+    data = pd.read_gbq(query)
     x = data.drop(TARGET, axis=1)
     y = data[TARGET]
+
+    # Train and persist model.
     ESTIMATOR.fit(x, y)
-    joblib.dump(ESTIMATOR, MODEL_PATH)
+
+    # Upload to storage.
+    blob = storage.Client().get_bucket(BUCKET_NAME).blob(MODEL_PATH)
+    with blob.open(mode="wb") as model_file:
+        joblib.dump(ESTIMATOR, model_file)
+
 
 if __name__ == "__main__":
-    train(QUERY, CREDS)
+    train(QUERY)

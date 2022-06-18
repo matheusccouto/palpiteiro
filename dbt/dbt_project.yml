@@ -38,3 +38,5 @@ models:
         schema: fivethirtyeight
       palpiteiro:
         schema: palpiteiro
+on-run-start:
+  - '{{ create_udfs() }}'

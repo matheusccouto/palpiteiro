@@ -15,9 +15,15 @@ SELECT
     s.total_points,
     s.offensive_points,
     s.defensive_points,
+    AVG(s.total_points) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS total_points_last_5,
+    AVG(s.offensive_points) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS offensive_points_last_5,
+    AVG(s.defensive_points) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS defensive_points_last_5,
     s.total_points / (c.total_points_club + 0.1) AS total_points_repr, -- Add 0.1 to avoid division by zero)
     s.offensive_points / (c.offensive_points_club + 0.1) AS offensive_points_repr, -- Add 0.1 to avoid division by zero)
     s.defensive_points / (c.defensive_points_club + 0.1) AS defensive_points_repr, -- Add 0.1 to avoid division by zero)
+    AVG(s.total_points / (c.total_points_club + 0.1)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS total_points_repr_last_5, -- Add 0.1 to avoid division by zero)
+    AVG(s.offensive_points / (c.offensive_points_club + 0.1)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS offensive_points_repr_last_5, -- Add 0.1 to avoid division by zero)
+    AVG(s.defensive_points / (c.defensive_points_club + 0.1)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS defensive_points_repr_last_5, -- Add 0.1 to avoid division by zero)
     c.spi_club,
     c.spi_opponent,
     c.prob_club,
