@@ -27,7 +27,7 @@ jobs:
         uses: 'google-github-actions/auth@v0.7.1'
         with:
           credentials_json: ${{ secrets.GCP_KEYFILE_MAIN }}
-      - id: Eeploy
+      - id: Deploy
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           name: 'points'
@@ -35,3 +35,5 @@ jobs:
           entry_point: handler
           region: us-east4
           source_dir: function_points
+          env_vars:
+            BUCKET_NAME: palpiteiro-dev
