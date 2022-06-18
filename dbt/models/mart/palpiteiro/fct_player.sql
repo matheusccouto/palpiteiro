@@ -49,6 +49,8 @@ WITH p AS (
     FROM
         {{ ref ("fct_scoring") }} s
         LEFT JOIN {{ ref ("fct_club") }} c ON s.club = c.club AND s.all_time_round = c.all_time_round
+    WHERE
+        c.club IS NOT NULL
 ), ai AS (
     SELECT
         p.*,
@@ -78,8 +80,23 @@ WITH p AS (
         ) AS expected_total_points,
         IF (status = 'expected', 1, 0) AS participate_proba
     FROM p
+), club AS (
+    SELECT
+        club,
+        all_time_round,
+        AVG(expected_total_points * participate_proba) AS expected_total_points,
+    FROM
+        ai
+    WHERE
+        position != 'coach' AND participate_proba > 0.5
+    GROUP BY
+        club, all_time_round
 )
 SELECT
     ai.*,
-    ai.expected_total_points * ai.participate_proba AS adjusted_expected_total_points
+    CASE
+        WHEN ai.position = 'coach' THEN club.expected_total_points
+        ELSE ai.expected_total_points * ai.participate_proba
+    END AS adjusted_expected_total_points
 FROM ai
+LEFT JOIN club ON club.club = ai.club AND club.all_time_round = ai.all_time_round

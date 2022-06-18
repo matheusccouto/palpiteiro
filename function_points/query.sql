@@ -27,4 +27,3 @@ FROM
 WHERE
     played IS TRUE
     AND position != 'coach'
-    AND club IS NOT NULL

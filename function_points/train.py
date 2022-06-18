@@ -25,7 +25,7 @@ RANDOM_STATE = 0
 TARGET = "total_points"
 ESTIMATOR = make_pipeline(
     make_column_transformer(
-        (OneHotEncoder(sparse=False), (0,)),
+        (OneHotEncoder(sparse=False, handle_unknown="ignore"), (0,)),
         remainder=PowerTransformer(),
     ),
     HistGradientBoostingRegressor(
