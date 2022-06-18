@@ -75,3 +75,5 @@ FROM
     LEFT JOIN cartola.dim_player dp ON ai.player = dp.id
     LEFT JOIN cartola.stg_club c ON ai.club = c.slug
     LEFT JOIN club_agg ca ON ca.club = ai.club
+WHERE
+    ai.participate > 0.5
