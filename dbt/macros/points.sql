@@ -1,6 +1,6 @@
 {% macro points() %}
 
-CREATE OR REPLACE FUNCTION palpiteiro.points(
+CREATE OR REPLACE FUNCTION {{ target.dataset }}.points(
     position STRING,
     total_points_last_5 FLOAT64,
     offensive_points_last_5 FLOAT64,
