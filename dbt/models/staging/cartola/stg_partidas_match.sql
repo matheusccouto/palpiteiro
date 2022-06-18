@@ -1,5 +1,5 @@
 SELECT
-    (temporada - 2000) * 100000000 + clube_casa_id * 10000 + clube_visitante_id  AS id,
+    (temporada - 2000) * 100000000 + clube_casa_id * 10000 + clube_visitante_id AS id,
     temporada AS season,
     rodada AS round,
     TIMESTAMP(partida_data, "America/Sao_Paulo") AS timestamp,
@@ -28,4 +28,4 @@ SELECT
     aproveitamento_visitante_1 AS previous_result_4_away,
     aproveitamento_visitante_0 AS previous_result_5_away
 FROM
-    {{ source('cartola', 'partidas') }}
+    {{ source ('cartola', 'partidas') }}

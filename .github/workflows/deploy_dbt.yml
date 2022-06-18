@@ -29,7 +29,9 @@ jobs:
         run: |
           pip install --upgrade pip wheel
           pip install dbt-bigquery
-      - name: Deploy
+      - name: Deploy Seeds
+        run: dbt seed --profiles-dir .
+      - name: Deploy Models
         run: dbt run --profiles-dir .
         working-directory: ./dbt
       - name: Test

@@ -9,6 +9,9 @@ deploy-dev:
 	pip install -r requirements-bigquery.txt --target python
 	zip -r layer_bigquery.zip python/
 	rm -r python
+	pip install -r requirements-sklearn.txt --target python
+	zip -r layer_sklearn.zip python/
+	rm -r python
 	sls deploy --stage dev --aws-profile palpiteiro
 	rm layer_pandas.zip
 	rm layer_bigquery.zip

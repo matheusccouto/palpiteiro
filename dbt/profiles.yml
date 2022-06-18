@@ -1,7 +1,7 @@
 palpiteiro:
   outputs:
     dev:
-      dataset: cartola
+      dataset: palpiteiro
       job_execution_timeout_seconds: 300
       job_retries: 1
       location: us-east4

@@ -10,6 +10,7 @@ keyfile.json
 node_modules/
 package-lock.json
 package.json
+*.zip
 
 # Profiling results
 profiling.txt
