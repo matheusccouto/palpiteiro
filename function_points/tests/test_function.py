@@ -1,24 +1,31 @@
 """Unit tests for google cloud function."""
+
+import os
 from unittest.mock import Mock
+
+import pandas as pd
+import pytest
 
 from function_points import main
 
+THIS_DIR = os.path.dirname(__file__)
+SAMPLE_PATH = os.path.join(THIS_DIR, "sample.csv")
 
-def test_handler():
+
+@pytest.fixture(name="req")
+def request_fixture():
+    """Sample data for testing."""
+    body = {"calls": pd.read_csv(SAMPLE_PATH).values.tolist()}
+    return Mock(get_json=Mock(return_value=body))
+
+
+def test_count(req):
     """Test function handler."""
-    body = {
-        "calls": [
-            [0],
-            [1],
-            [2],
-        ]
-    }
-    req = Mock(get_json=Mock(return_value=body))
-    assert len(main.handler(req)) == 3
+    assert len(main.handler(req)["replies"]) == 750
 
 
-def test_handler():
+def test_values(req):
     """Test function handler."""
-    body = {"calls": [[2]]}
-    req = Mock(get_json=Mock(return_value=body))
-    assert main.handler(req)[0] > 0
+    values = main.handler(req)["replies"]
+    assert max(values) < 20
+    assert min(values) > 0

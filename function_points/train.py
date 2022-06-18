@@ -1,7 +1,6 @@
 """Train machine learning model."""
 
 import os
-from io import BytesIO
 
 import joblib
 import pandas as pd
@@ -44,8 +43,8 @@ def train(query):
     """Train machine learning model."""
     # Read and prepare training data.
     data = pd.read_gbq(query)
-    x = data.drop(TARGET, axis=1)
-    y = data[TARGET]
+    x = data.drop(TARGET, axis=1)  # pylint: disable=invalid-name
+    y = data[TARGET]  # pylint: disable=invalid-name
 
     # Train and persist model.
     ESTIMATOR.fit(x, y)
