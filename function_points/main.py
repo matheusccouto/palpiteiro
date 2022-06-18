@@ -15,5 +15,7 @@ with blob.open(mode="rb") as file:
 
 
 def handler(request):
-    """HTTP Cloud Function."""
-    return model.predict(request.get_json()["calls"]).tolist()
+    """HTTP Cloud Function handler."""
+    data = request.get_json()["calls"]
+    pred = model.predict(data).tolist()
+    return {"replies": pred}
