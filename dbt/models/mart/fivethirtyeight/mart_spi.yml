@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: fct_spi
+    description: Brasileirão Fivethirtyeight Soccer Power Index
+    columns:
+      - name: season
+        description: Season
+        tests:
+          - not_null
+      - name: date
+        description: Date
+        tests:
+          - not_null
+      - name: club
+        description: club
+        tests:
+          - not_null
+      - name: opponent
+        description: Opponent
+        tests:
+          - not_null
+      - name: spi_club
+        description: Club soccer power index
+        tests:
+          - not_null
+      - name: spi_opponent
+        description: Opponent soccer power index
+        tests:
+          - not_null
+      - name: prob_club
+        description: Club win probability
+        tests:
+          - not_null
+      - name: prob_opponent
+        description: Opponent win probability
+        tests:
+          - not_null
+      - name: prob_tie
+        description: Tie probability
+        tests:
+          - not_null
+      - name: importance_club
+        description: Club match importance
+        tests:
+          - not_null
+      - name: importance_opponent
+        description: Opponent match importance
+        tests:
+          - not_null
+      - name: proj_score_club
+        description: Club projected score
+        tests:
+          - not_null
+      - name: proj_score_opponent
+        description: Opponent projected score
+        tests:
+          - not_null
+      - name: score_club
+        description: Club score
+      - name: score_opponent
+        description: Opponent score
+      - name: adj_score_club
+        description: Club adjusted score
+      - name: adj_score_opponent
+        description: Opponent adjusted score
+      - name: xg_club
+        description: Club shot-based expected goals
+      - name: xg_opponent
+        description: Opponent shot-based expected goals
+      - name: nsxg_club
+        description: Club non-shot expected goals
+      - name: nsxg_opponent
+        description: Opponent non-shot expected goals

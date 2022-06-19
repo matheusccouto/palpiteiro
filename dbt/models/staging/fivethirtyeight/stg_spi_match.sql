@@ -24,4 +24,4 @@ SELECT
     nsxg1 AS nsxg_home,
     nsxg2 AS nsxg_away
 FROM
-    {{ source('fivethirtyeight', 'spi') }}
+    {{ source ('fivethirtyeight', 'spi') }}

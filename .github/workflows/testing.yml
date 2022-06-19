@@ -27,7 +27,7 @@ jobs:
           - lambda_extract_cartola_matches
           - lambda_extract_cartola_players
           - lambda_extract_fivethirtyeight_spi
-          - lambda_forecast
+          - lambda_predict
           - lambda_load
           - lambda_transform_cartola_matches
           - lambda_transform_cartola_players

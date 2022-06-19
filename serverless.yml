@@ -1,3 +1,5 @@
+org: matheusccouto
+app: palpiteiro
 service: palpiteiro
 frameworkVersion: "3"
 params:
@@ -29,17 +31,17 @@ functions:
     package:
       patterns:
         - "lambda_draft/**/*.py"
+        - "lambda_draft/model/*"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
-  forecast:
-    handler: lambda_forecast.handler
-    description: Player forecasting for fantasy soccer.
+  predict:
+    handler: lambda_predict.handler
+    description: Player points prediction for fantasy soccer.
     runtime: python3.9
     package:
       patterns:
-        - "lambda_forecast/**/*.py"
-        - "!lambda_forecast/tests/**/*"
-        - "!lambda_forecast/data/**/*"
+        - "lambda_predict/**/*.py"
+        - "!lambda_predict/tests/**/*"
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
     description: Extract players data from Cartola FC to JSON.
@@ -142,6 +144,31 @@ functions:
       GCP_SERVICE_ACCOUNT_TOKEN_URI: https://oauth2.googleapis.com/token
       GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
       GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL}
+  train:
+    handler: lambda_train.handler
+    description: Train gradient boosting model.
+    runtime: python3.9
+    timeout: 900
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_train/*.py"
+        - "lambda_train/*.sql"
+    layers:
+      - { Ref: BigqueryLambdaLayer }
+      - { Ref: SklearnLambdaLayer }
+    environment:
+      GCP_SERVICE_ACCOUNT_TYPE: service_account
+      GCP_SERVICE_ACCOUNT_PROJECT_ID: ${env:GCP_SERVICE_ACCOUNT_PROJECT_ID}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${env:GCP_SERVICE_ACCOUNT_PRIVATE_KEY}
+      GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_EMAIL}
+      GCP_SERVICE_ACCOUNT_CLIENT_ID: ${env:GCP_SERVICE_ACCOUNT_CLIENT_ID}
+      GCP_SERVICE_ACCOUNT_AUTH_URI: https://accounts.google.com/o/oauth2/auth
+      GCP_SERVICE_ACCOUNT_TOKEN_URI: https://oauth2.googleapis.com/token
+      GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
+      GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL}
 layers:
   bigquery:
     package:
@@ -149,9 +176,9 @@ layers:
   pandas:
     package:
       artifact: layer_pandas.zip
-  # sklearn:
-  #   package:
-  #     artifact: layer_sklearn.zip
+  sklearn:
+    package:
+      artifact: layer_sklearn.zip
 stepFunctions:
   stateMachines:
     extract-cartola-players-stepfunc:

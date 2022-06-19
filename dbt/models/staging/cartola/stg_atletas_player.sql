@@ -1,14 +1,10 @@
 WITH ordered AS (
     SELECT
         *,
-        ROW_NUMBER() OVER (
-            PARTITION BY atleta_id
-            ORDER BY
-                temporada_id DESC,
-                rodada_id DESC
-        ) AS row
+        ROW_NUMBER() OVER (PARTITION BY atleta_id ORDER BY temporada_id DESC,
+            rodada_id DESC) AS row
     FROM
-        {{ source('cartola', 'atletas') }}
+        {{ source ('cartola', 'atletas') }}
 )
 SELECT
     atleta_id AS id,
@@ -20,4 +16,4 @@ SELECT
 FROM
     ordered
 WHERE
-    row = 1
+    ROW = 1

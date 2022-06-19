@@ -12,6 +12,16 @@ target-path: "target"
 clean-targets:
   - "target"
   - "dbt_packages"
+seeds:
+  palpiteiro:
+    cartola:
+      +schema: cartola
+      clubs:
+      positions:
+      status:
+    fivethirtyeight:
+      +schema: fivethirtyeight
+      club_slug:
 models:
   palpiteiro:
     staging:
@@ -20,3 +30,13 @@ models:
         schema: cartola
       fivethirtyeight:
         schema: fivethirtyeight
+    mart:
+      +materialized: view
+      cartola:
+        schema: cartola
+      fivethirtyeight:
+        schema: fivethirtyeight
+      palpiteiro:
+        schema: palpiteiro
+on-run-start:
+  - '{{ create_udfs() }}'
