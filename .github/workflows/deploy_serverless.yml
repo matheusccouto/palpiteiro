@@ -24,7 +24,9 @@ jobs:
           npm install -g serverless@3
           npm install --save-dev serverless-step-functions
       - name: Serverless AWS authentication
-        run: sls config credentials --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
+        run: |
+          sls config credentials --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
+          sls login
       - name: Create layers artifacts
         run: |
           mkdir python
