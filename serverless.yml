@@ -34,14 +34,6 @@ functions:
         - "lambda_draft/model/*"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
-  predict:
-    handler: lambda_predict.handler
-    description: Player points prediction for fantasy soccer.
-    runtime: python3.9
-    package:
-      patterns:
-        - "lambda_predict/**/*.py"
-        - "!lambda_predict/tests/**/*"
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
     description: Extract players data from Cartola FC to JSON.
@@ -144,20 +136,18 @@ functions:
       GCP_SERVICE_ACCOUNT_TOKEN_URI: https://oauth2.googleapis.com/token
       GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
       GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${env:GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL}
-  train:
-    handler: lambda_train.handler
-    description: Train gradient boosting model.
+  read-gbq:
+    handler: lambda_read_gbq.handler
+    description: Read from Google Big Query.
     runtime: python3.9
     timeout: 900
     role:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
     package:
       patterns:
-        - "lambda_train/*.py"
-        - "lambda_train/*.sql"
+        - "lambda_read_gbq/*.py"
     layers:
       - { Ref: BigqueryLambdaLayer }
-      - { Ref: SklearnLambdaLayer }
     environment:
       GCP_SERVICE_ACCOUNT_TYPE: service_account
       GCP_SERVICE_ACCOUNT_PROJECT_ID: ${env:GCP_SERVICE_ACCOUNT_PROJECT_ID}
@@ -176,9 +166,6 @@ layers:
   pandas:
     package:
       artifact: layer_pandas.zip
-  sklearn:
-    package:
-      artifact: layer_sklearn.zip
 stepFunctions:
   stateMachines:
     extract-cartola-players-stepfunc:
