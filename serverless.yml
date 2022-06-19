@@ -1,5 +1,3 @@
-org: matheusccouto
-app: palpiteiro
 service: palpiteiro
 frameworkVersion: "3"
 params:
