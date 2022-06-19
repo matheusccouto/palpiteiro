@@ -36,9 +36,6 @@ jobs:
           zip -r layer_bigquery.zip python/
           rm -r python
           mkdir python
-          pip install -r requirements-sklearn.txt --target python
-          zip -r layer_sklearn.zip python/
-          rm -r python
       - name: Deploy dev
         if: github.head_ref == 'dev' || github.ref_name == 'dev'
         run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
