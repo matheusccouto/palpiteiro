@@ -1,4 +1,4 @@
-"""Load players data from Cartola FC to the database."""
+"""Read data from Google Big Query."""
 
 import pandas as pd
 
