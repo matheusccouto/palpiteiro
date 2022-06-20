@@ -12,6 +12,6 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     return pd.read_gbq(
         query=event["query"],
         project_id=creds.project_id,
-        index_col=False,
+        index_col=None,
         credentials=creds,
     ).to_records(index=False)
