@@ -1,3 +1,6 @@
+# Streamlit
+secrets.toml
+
 # DBT
 dbt/target/
 dbt/dbt_packages/
