@@ -56,23 +56,30 @@ club_agg AS (
         AND participate > 0.5
     GROUP BY
         club
+),
+expected_to_play AS (
+    SELECT
+        *
+    FROM
+        ai
+    WHERE
+        participate > 0.5
 )
 SELECT
     dp.id,
-    dp.short_nickname AS nickname,
+    dp.short_nickname AS name,
     dp.photo,
-    c.short_name AS club,
-    c.badge60 AS badge,
-    ai.position,
-    ai.price,
+    c.id AS club,
+    c.short_name AS club_name,
+    c.badge60 AS club_badge,
+    e2p.position,
+    e2p.price,
     CASE
-        WHEN ai.position = 'coach' THEN ca.points
-        ELSE ai.points * ai.participate
+        WHEN e2p.position = 'coach' THEN ca.points
+        ELSE e2p.points * e2p.participate
     END AS points
 FROM
-    ai
-    LEFT JOIN cartola.dim_player dp ON ai.player = dp.id
-    LEFT JOIN cartola.stg_club c ON ai.club = c.slug
-    LEFT JOIN club_agg ca ON ca.club = ai.club
-WHERE
-    ai.participate > 0.5
+    expected_to_play e2p
+    LEFT JOIN cartola.dim_player dp ON e2p.player = dp.id
+    LEFT JOIN cartola.stg_club c ON e2p.club = c.slug
+    LEFT JOIN club_agg ca ON ca.club = e2p.club

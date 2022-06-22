@@ -41,6 +41,4 @@ SELECT
     c.defensive_allowed_points_opponent_last_5
 FROM
     {{ ref ("fct_scoring") }} s
-    LEFT JOIN {{ ref ("fct_club") }} c ON s.club = c.club AND s.all_time_round = c.all_time_round
-WHERE
-    c.club IS NOT NULL
+    INNER JOIN {{ ref ("fct_club") }} c ON s.club = c.club AND s.all_time_round = c.all_time_round

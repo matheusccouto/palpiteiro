@@ -32,6 +32,7 @@ jobs:
         with:
           name: "points"
           runtime: "python39"
+          memory_mb: 512
           entry_point: handler
           region: us-east4
           source_dir: function_points

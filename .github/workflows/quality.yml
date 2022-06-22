@@ -11,14 +11,17 @@ jobs:
       fail-fast: false
       matrix:
         folder:
+          - function_points
           - lambda_draft
           - lambda_extract_cartola_matches
           - lambda_extract_cartola_players
+          - lambda_extract_cartola_scouts
           - lambda_extract_fivethirtyeight_spi
-          - lambda_predict
-          - lambda_load
+          - lambda_load_gbq
+          - lambda_read_gbq
           - lambda_transform_cartola_matches
           - lambda_transform_cartola_players
+          - lambda_transform_cartola_scouts
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.9
