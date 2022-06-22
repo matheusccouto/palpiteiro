@@ -129,3 +129,15 @@ def test_bench_prices(event):
         for starter in results["players"]:
             if bench["position"] == starter["position"]:
                 assert bench["price"] <= starter["price"]
+
+
+def test_extra_properties(event):
+    """Test if it passthrought players extra propertires"""
+    for player in event["players"]:
+        player["foo"] = "bar"
+
+    results = lambda_draft.handler(event=event, context=None)
+
+    players = results["players"] + results["bench"]
+    for player in players:
+        assert player["foo"] == "bar"

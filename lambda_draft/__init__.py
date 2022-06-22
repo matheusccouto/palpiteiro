@@ -24,5 +24,9 @@ def handler(event, context):  # pylint: disable=unused-argument
 
     line_up = Genetic(players).draft(price, scheme, max_players_per_club)
 
-    body = dict(players=line_up.players, bench=line_up.bench)
-    return json.loads(json.dumps(body, default=vars))
+    players = [player.id for player in line_up.players]
+    bench = [player.id for player in line_up.bench]
+    return {
+        "players": [p for p in event["players"] if p["id"] in players],
+        "bench": [p for p in event["players"] if p["id"] in bench],
+    }

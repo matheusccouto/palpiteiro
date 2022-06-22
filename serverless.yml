@@ -335,13 +335,6 @@ stepFunctions:
                     "input": "$body",
                     "stateMachineArn": "arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:draft-${opt:stage}"
                   }
-            response:
-              template:
-                application/json: |
-                  #set($inputRoot = $input.path("$.output"))
-                  {
-                      "players": "$inputRoot"
-                  }
       definition:
         StartAt: Read Google Big Query
         States:
