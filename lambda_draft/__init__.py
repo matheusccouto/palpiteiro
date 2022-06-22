@@ -9,9 +9,18 @@ from .draft.algorithm.genetic import Genetic
 def handler(event, context):  # pylint: disable=unused-argument
     """Lambda handler."""
     scheme = Scheme(**event["scheme"])
-    players = [Player(**player) for player in event["players"]]
     price = float(event["price"])
     max_players_per_club = int(event["max_players_per_club"])
+    players = [
+        Player(
+            id=player["id"],
+            position=player["position"],
+            price=player["price"],
+            points=player["points"],
+            club=player["club"],
+        )
+        for player in event["players"]
+    ]
 
     line_up = Genetic(players).draft(price, scheme, max_players_per_club)
 

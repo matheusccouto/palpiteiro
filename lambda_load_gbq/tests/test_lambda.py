@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import pytest
 
-import lambda_load
+import lambda_load_gbq
 import utils.aws.s3
 import utils.google
 
@@ -19,10 +19,8 @@ def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
     pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0).to_gbq(
         destination_table="test.test",
-        project_id=creds.project_id,
         if_exists="replace",
         credentials=creds,
-        location="us-east4",
     )
     with open(os.path.join(THIS_DIR, "new.csv"), encoding="utf-8") as file:
         utils.aws.s3.save(file.read(), "s3://palpiteiro-test/load/test.csv")
@@ -32,7 +30,7 @@ def fixture_setup_and_teardown():
 
 def test_table(setup_and_teardown):  # pylint: disable=unused-argument
     """Test if it appends successfully to an existing table."""
-    lambda_load.handler(
+    lambda_load_gbq.handler(
         event={
             "table": "test",
             "schema": "test",

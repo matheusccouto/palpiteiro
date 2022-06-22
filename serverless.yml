@@ -9,11 +9,17 @@ params:
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     deployment-bucket: palpiteiro-dev
+custom:
+  account: "#{AWS::AccountId}"
 provider:
   name: aws
   stage: ${opt:stage}
+  region: us-east-1
   deploymentBucket:
     name: ${param:deployment-bucket}
+  apiGateway:
+    apiKeys:
+      - streamlit-${opt:stage}
 package:
   individually: true
   patterns:
@@ -111,8 +117,8 @@ functions:
       - { Ref: PandasLambdaLayer }
     environment:
       BUCKET: ${param:fivethirtyeight-bucket}
-  load:
-    handler: lambda_load.handler
+  load-gbq:
+    handler: lambda_load_gbq.handler
     description: Load CSV into the database.
     runtime: python3.9
     timeout: 900
@@ -120,7 +126,7 @@ functions:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
     package:
       patterns:
-        - "lambda_load/*.py"
+        - "lambda_load_gbq/*.py"
     layers:
       - { Ref: BigqueryLambdaLayer }
     environment:
@@ -190,7 +196,7 @@ stepFunctions:
             Type: Task
             Resource:
               Fn::GetAtt: [transform-cartola-players, Arn]
-            Next: Load
+            Next: Load Google Big Query
             ResultSelector:
               uri.$: "$.uri"
               table: atletas
@@ -199,10 +205,10 @@ stepFunctions:
                 - temporada_id
                 - rodada_id
                 - atleta_id
-          Load:
+          Load Google Big Query:
             Type: Task
             Resource:
-              Fn::GetAtt: [load, Arn]
+              Fn::GetAtt: [load-gbq, Arn]
             End: true
     extract-cartola-scouts-stepfunc:
       name: extract_cartola_scouts-${opt:stage}
@@ -228,7 +234,7 @@ stepFunctions:
             Type: Task
             Resource:
               Fn::GetAtt: [transform-cartola-scouts, Arn]
-            Next: Load
+            Next: Load Google Big Query
             ResultSelector:
               uri.$: "$.uri"
               table: pontuados
@@ -237,10 +243,10 @@ stepFunctions:
                 - temporada
                 - rodada
                 - id
-          Load:
+          Load Google Big Query:
             Type: Task
             Resource:
-              Fn::GetAtt: [load, Arn]
+              Fn::GetAtt: [load-gbq, Arn]
             End: true
     extract-cartola-matches-stepfunc:
       name: extract_cartola_matches-${opt:stage}
@@ -266,17 +272,17 @@ stepFunctions:
             Type: Task
             Resource:
               Fn::GetAtt: [transform-cartola-matches, Arn]
-            Next: Load
+            Next: Load Google Big Query
             ResultSelector:
               uri.$: "$.uri"
               table: partidas
               schema: cartola
               subset:
                 - partida_id
-          Load:
+          Load Google Big Query:
             Type: Task
             Resource:
-              Fn::GetAtt: [load, Arn]
+              Fn::GetAtt: [load-gbq, Arn]
             End: true
     extract-fivethirtyeight-spi-stepfunc:
       name: extract_fivethirtyeight_spi-${opt:stage}
@@ -297,7 +303,7 @@ stepFunctions:
             Type: Task
             Resource:
               Fn::GetAtt: [extract-fivethirtyeight-spi, Arn]
-            Next: Load
+            Next: Load Google Big Query
             ResultSelector:
               uri.$: "$.uri"
               table: spi
@@ -307,10 +313,60 @@ stepFunctions:
                 - league_id
                 - team1
                 - team2
-          Load:
+          Load Google Big Query:
             Type: Task
             Resource:
-              Fn::GetAtt: [load, Arn]
+              Fn::GetAtt: [load-gbq, Arn]
+            End: true
+    draft:
+      name: draft-${opt:stage}
+      type: EXPRESS
+      events:
+        - http:
+            path: draft
+            method: POST
+            private: true
+            action: StartSyncExecution
+            request:
+              template:
+                application/json: |
+                  #set( $body = $util.escapeJavaScript($input.json('$')).replaceAll("\\'", "'") )
+                  {
+                    "input": "$body",
+                    "stateMachineArn": "arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:draft-${opt:stage}"
+                  }
+            response:
+              template:
+                application/json: |
+                  #set($inputRoot = $input.path("$.output"))
+                  {
+                      "players": "$inputRoot"
+                  }
+      definition:
+        StartAt: Read Google Big Query
+        States:
+          Read Google Big Query:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [read-gbq, Arn]
+              Payload:
+                query: SELECT * FROM palpiteiro.dim_player_last
+            Next: Draft
+            ResultPath: "$.output"
+          Draft:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [draft, Arn]
+              Payload:
+                scheme.$: "$.scheme"
+                price.$: "$.price"
+                max_players_per_club.$: "$.max_players_per_club"
+                players.$: "$.output.Payload"
+            OutputPath: "$.Payload"
             End: true
 resources:
   Resources:

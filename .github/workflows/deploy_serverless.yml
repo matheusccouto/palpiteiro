@@ -38,7 +38,7 @@ jobs:
           mkdir python
       - name: Deploy dev
         if: github.head_ref == 'dev' || github.ref_name == 'dev'
-        run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
+        run: sls deploy --stage ${{ github.head_ref || github.ref_name }} --conceal
         env:
           GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_DEV }}
           GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_DEV }}
@@ -48,7 +48,7 @@ jobs:
           GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}
       - name: Deploy main
         if: github.head_ref == 'main' || github.ref_name == 'main'
-        run: sls deploy --stage ${{ github.head_ref || github.ref_name }}
+        run: sls deploy --stage ${{ github.head_ref || github.ref_name }} --conceal
         env:
           GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_MAIN }}
           GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_MAIN }}

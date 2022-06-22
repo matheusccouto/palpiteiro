@@ -4,3 +4,4 @@ mypy
 black
 pprofile
 boto3
+dbt-bigquery
