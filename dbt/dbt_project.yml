@@ -16,12 +16,8 @@ seeds:
   palpiteiro:
     cartola:
       +schema: cartola
-      clubs:
-      positions:
-      status:
     fivethirtyeight:
       +schema: fivethirtyeight
-      club_slug:
 models:
   palpiteiro:
     staging:
