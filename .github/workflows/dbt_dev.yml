@@ -3,10 +3,12 @@ on:
   push:
     branches:
       - dev
+  paths:
+    - dbt
 jobs:
   dbt:
     uses: ./.github/workflows/dbt.yml
     with:
-      target: dev
+      TARGET: dev
     secrets:
       GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_DEV }}

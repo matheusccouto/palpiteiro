@@ -2,7 +2,11 @@ name: dbt
 on:
   workflow_call:
     inputs:
-      target:
+      TARGET:
+        required: true
+        type: string
+    secrets:
+      GCP_KEYFILE:
         required: true
         type: string
 jobs:
@@ -24,10 +28,11 @@ jobs:
           pip install --upgrade pip wheel
           pip install dbt-bigquery
       - name: seed
-        run: dbt seed --profiles-dir . --target ${{ inputs.target }}
+        run: dbt seed --profiles-dir . --target ${{ inputs.TARGET }}
+        working-directory: ./dbt
       - name: run
-        run: dbt run --profiles-dir . --target ${{ inputs.target }}
+        run: dbt run --profiles-dir . --target ${{ inputs.TARGET }}
         working-directory: ./dbt
       - name: test
-        run: dbt test --profiles-dir . --target ${{ inputs.target }}
+        run: dbt test --profiles-dir . --target ${{ inputs.TARGET }}
         working-directory: ./dbt
