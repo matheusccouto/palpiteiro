@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - dev
-  paths:
-    - dbt
+    paths:
+      - dbt
 jobs:
   dbt:
     uses: ./.github/workflows/dbt.yml
