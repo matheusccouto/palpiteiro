@@ -33,7 +33,7 @@ with Diagram(
     cartola >> StepFunctions("scouts") >> warehouse
     cartola >> StepFunctions("matches") >> warehouse
     fivethirtyeight >> StepFunctions("spi") >> warehouse
-    warehouse >> StepFunctions("draft") >> APIGateway("API") >> streamlit
+    warehouse >> StepFunctions("draft") >> APIGateway("api") >> streamlit
 
 
 with Diagram(
