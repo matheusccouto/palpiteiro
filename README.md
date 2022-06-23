@@ -2,11 +2,10 @@
 | prod | dev |
 | --- | --- |
 | ![serverless](https://github.com/matheusccouto/palpiteiro/actions/workflows/deploy_serverless.yml/badge.svg) | |
-| ![dbt](https://github.com/matheusccouto/palpiteiro/actions/workflows/deploy_dbt.yml/badge.svg) | |
+| ![dbt-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/dbt_main.yml/badge.svg) | ![dbt-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/dbt_dev.yml/badge.svg) |
 | ![pytest](https://github.com/matheusccouto/palpiteiro/actions/workflows/testing.yml/badge.svg) | |
 | ![pylint](https://github.com/matheusccouto/palpiteiro/actions/workflows/quality.yml/badge.svg) |
 | [![codecov](https://codecov.io/gh/matheusccouto/palpiteiro/branch/main/graph/badge.svg?token=jvukfL51k7)](https://codecov.io/gh/matheusccouto/palpiteiro)
-
 
 ## Overview
 ![overview](diagrams/overview.png)

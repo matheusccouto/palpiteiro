@@ -1,0 +1,12 @@
+name: dbt
+on:
+  push:
+    branches:
+      - main
+jobs:
+  dbt:
+    uses: ./.github/workflows/dbt.yml
+    with:
+      target: main
+    secrets:
+      GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_MAIN }}
