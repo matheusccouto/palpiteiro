@@ -5,6 +5,7 @@ on:
       - dev
     paths:
       - dbt
+  workflow_dispatch:
 jobs:
   dbt:
     uses: ./.github/workflows/dbt.yml
