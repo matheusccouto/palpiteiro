@@ -33,8 +33,7 @@ with Diagram(
     cartola >> StepFunctions("scouts") >> warehouse
     cartola >> StepFunctions("matches") >> warehouse
     fivethirtyeight >> StepFunctions("spi") >> warehouse
-    Functions("machine learning") - warehouse
-    warehouse >> StepFunctions("genetic algorithm") >> APIGateway("API") >> streamlit
+    warehouse >> StepFunctions("draft") >> APIGateway("API") >> streamlit
 
 
 with Diagram(
@@ -209,5 +208,5 @@ with Diagram(
 ):
     with Cluster("state machine"):
         read = Lambda("read")
-        draft = Lambda("draft\n(genetic algo)")
+        draft = Lambda("draft")
     (Bigquery("big query") >> read >> draft >> APIGateway("api"))
