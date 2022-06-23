@@ -5,3 +5,19 @@
 ![pylint](https://github.com/matheusccouto/palpiteiro/actions/workflows/quality.yml/badge.svg)
 [![codecov](https://codecov.io/gh/matheusccouto/palpiteiro/branch/main/graph/badge.svg?token=jvukfL51k7)](https://codecov.io/gh/matheusccouto/palpiteiro)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+## Overview
+![overview](diagrams/overview.png)
+## Big Query
+![big-query](diagrams/big-query.png)
+## Step Functions
+### Cartola Players
+![state-machine-cartola-players](diagrams/state-machine-cartola-players.png)
+### Cartola Scouts
+![state-machine-cartola-scouts](diagrams/state-machine-cartola-scouts.png)
+### Cartola Matches
+![state-machine-cartola-matches](diagrams/state-machine-cartola-matches.png)
+### FiveThirtyEight SPI
+![state-machine-fivethirtyeight-spi](diagrams/state-machine-fivethirtyeight-spi.png)
+### Draft
+![state-machine-draft](diagrams/state-machine-draft.png)
