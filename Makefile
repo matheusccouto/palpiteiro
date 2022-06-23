@@ -1,5 +1,5 @@
 setup:
-	sudo apt install python3.9 python3.9-venv python3.9-dev libpq-dev -y
+	sudo apt install python3.9 python3.9-venv python3.9-dev libpq-dev graphviz -y
 	python3.9 -m venv venv
 	venv/bin/pip install --upgrade pip wheel
 	venv/bin/pip install -r requirements-dev.txt -r requirements-pandas.txt -r requirements-bigquery.txt
