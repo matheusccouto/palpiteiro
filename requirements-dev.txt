@@ -1,7 +1,4 @@
-pylint
 pytest
-mypy
+pylint
 black
-pprofile
-boto3
-dbt-bigquery
+diagrams
