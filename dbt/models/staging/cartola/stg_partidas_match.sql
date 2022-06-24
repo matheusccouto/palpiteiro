@@ -1,8 +1,6 @@
 SELECT
-    (temporada - 2000) * 100000000 + clube_casa_id * 10000 + clube_visitante_id AS id,
     temporada AS season,
     rodada AS round,
-    TIMESTAMP(partida_data, "America/Sao_Paulo") AS timestamp,
     local AS venue,
     valida AS valid,
     clube_casa_id AS home,
@@ -12,7 +10,6 @@ SELECT
     placar_oficial_mandante AS score_home,
     placar_oficial_visitante AS score_away,
     status_transmissao_tr AS broadcasting_status,
-    TIMESTAMP(inicio_cronometro_tr) AS broadcasting_time_start,
     status_cronometro_tr AS broadcasting_time_status,
     periodo_tr AS broadcasting_phase,
     transmissao_label AS broadcasting_label,
@@ -26,6 +23,11 @@ SELECT
     aproveitamento_visitante_3 AS previous_result_2_away,
     aproveitamento_visitante_2 AS previous_result_3_away,
     aproveitamento_visitante_1 AS previous_result_4_away,
-    aproveitamento_visitante_0 AS previous_result_5_away
+    aproveitamento_visitante_0 AS previous_result_5_away,
+    (
+        temporada - 2000
+    ) * 100000000 + clube_casa_id * 10000 + clube_visitante_id AS id,
+    TIMESTAMP(partida_data, "America/Sao_Paulo") AS timestamp,
+    TIMESTAMP(inicio_cronometro_tr) AS broadcasting_time_start
 FROM
     {{ source ('cartola', 'partidas') }}

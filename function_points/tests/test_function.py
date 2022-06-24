@@ -6,7 +6,11 @@ from unittest.mock import Mock
 import pandas as pd
 import pytest
 
-from function_points import main
+import utils.test
+
+# function_points will access env vars during import.
+with utils.test.environ(BUCKET_NAME="palpiteiro-dev"):
+    from function_points import main
 
 THIS_DIR = os.path.dirname(__file__)
 SAMPLE_PATH = os.path.join(THIS_DIR, "sample.csv")

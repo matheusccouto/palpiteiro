@@ -6,6 +6,7 @@ WITH ordered AS (
     FROM
         {{ source ('cartola', 'atletas') }}
 )
+
 SELECT
     atleta_id AS id,
     slug AS slug,
@@ -16,4 +17,4 @@ SELECT
 FROM
     ordered
 WHERE
-    ROW = 1
+    row = 1
