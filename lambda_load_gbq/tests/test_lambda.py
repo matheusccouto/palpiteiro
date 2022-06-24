@@ -18,7 +18,7 @@ creds = utils.google.get_creds_from_env_vars()
 def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
     pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0).to_gbq(
-        destination_table="test.test",
+        destination_table="test.test_load",
         if_exists="replace",
         credentials=creds,
     )
@@ -32,7 +32,7 @@ def test_table(setup_and_teardown):  # pylint: disable=unused-argument
     """Test if it appends successfully to an existing table."""
     lambda_load_gbq.handler(
         event={
-            "table": "test",
+            "table": "test_load",
             "schema": "test",
             "uri": "s3://palpiteiro-test/load/test.csv",
             "subset": ["col1"],
@@ -40,7 +40,7 @@ def test_table(setup_and_teardown):  # pylint: disable=unused-argument
     )
 
     actual = pd.read_gbq(
-        "SELECT * FROM test.test",
+        "SELECT * FROM test.test_load",
         project_id=creds.project_id,
         credentials=creds,
         location="us-east4",
