@@ -39,6 +39,7 @@ jobs:
         run: dbt docs generate --profiles-dir . --target ${{ inputs.TARGET }}
         working-directory: ./dbt
       - name: pack docs
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir docs
           cp dbt/target/catalog.json docs/catalog.json
@@ -46,6 +47,7 @@ jobs:
           cp dbt/target/run_results.json docs/run_results.json
           cp dbt/target/index.html docs/index.html
       - name: github pages
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: github-pages-${{ inputs.TARGET }}
