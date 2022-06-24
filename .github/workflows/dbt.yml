@@ -50,5 +50,5 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
-          branch: github-pages-${{ inputs.TARGET }}
+          branch: github-pages
           folder: docs
