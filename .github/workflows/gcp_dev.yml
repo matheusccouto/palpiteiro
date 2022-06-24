@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 jobs:
   dbt:
-    uses: ./.github/workflows/function_points.yml
+    uses: ./.github/workflows/gcp.yml
     with:
       FUNCTION_NAME: points-dev
       BUCKET_NAME: palpiteiro-dev
