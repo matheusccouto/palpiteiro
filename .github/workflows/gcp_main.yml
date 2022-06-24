@@ -12,7 +12,7 @@ jobs:
   dbt:
     uses: ./.github/workflows/gcp.yml
     with:
-      FUNCTION_NAME: points-main
+      FUNCTION_NAME: points
       BUCKET_NAME: palpiteiro-main
     secrets:
       GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_MAIN }}
