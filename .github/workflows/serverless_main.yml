@@ -16,7 +16,7 @@ jobs:
   dbt:
     uses: ./.github/workflows/serverless.yml
     with:
-      STAGE: dev
+      STAGE: main
     secrets:
       AWS_KEY: ${{ secrets.AWS_KEY }}
       AWS_SECRET: ${{ secrets.AWS_SECRET }}
