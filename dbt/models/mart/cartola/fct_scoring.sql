@@ -1,11 +1,13 @@
 WITH scout AS (
-  SELECT
-    *,
-    goal * 8 + 5 * assist + 3 * on_post_shoot + 1.2 * saved_shoot + 0.8 * missed_shoot + 0.5 * received_foul + 1 * received_penalty - 4 * missed_penalty - 0.1 * outside - 0.1 * missed_pass AS offensive,
-    no_goal * 5 + penalty_save * 7 + save * 1 + tackle * 1.2 - own_goal * 3 - red_card * 3 - yellow_card * 1 - allowed_goal * 1 - foul * 0.3 - penalty * 1 AS defensive
-  FROM
-    {{ ref("stg_pontuados_scoring") }} 
-), point AS (
+    SELECT
+        *,
+        goal * 8 + 5 * assist + 3 * on_post_shoot + 1.2 * saved_shoot + 0.8 * missed_shoot + 0.5 * received_foul + 1 * received_penalty - 4 * missed_penalty - 0.1 * outside - 0.1 * missed_pass AS offensive,
+        no_goal * 5 + penalty_save * 7 + save * 1 + tackle * 1.2 - own_goal * 3 - red_card * 3 - yellow_card * 1 - allowed_goal * 1 - foul * 0.3 - penalty * 1 AS defensive
+    FROM
+        {{ ref("stg_pontuados_scoring") }}
+),
+
+point AS (
     SELECT
         id,
         player,
@@ -18,13 +20,13 @@ WITH scout AS (
     FROM
         scout
 )
+
 SELECT
     sc1.id,
     pl.id AS player,
     pl.nickname AS name,
     sc1.round,
     sc1.season,
-    38 * (sc1.season - 2017) + sc1.round AS all_time_round,
     c.slug AS club,
     po.slug AS position,
     st.slug AS status,
@@ -56,13 +58,14 @@ SELECT
     sc2.save AS save,
     sc2.difficult_save AS difficult_save,
     sc2.penalty_save AS penalty_save,
+    38 * (sc1.season - 2017) + sc1.round AS all_time_round
 FROM
-    {{ ref ("stg_atletas_scoring") }} sc1
-    LEFT JOIN {{ ref ("stg_pontuados_scoring") }} sc2 ON sc1.id = sc2.id
-    LEFT JOIN point pt ON sc1.id = pt.id
-    LEFT JOIN {{ ref ("dim_player") }} pl ON sc1.player = pl.id
-    LEFT JOIN {{ ref ("stg_position") }} po ON sc1.position = po.id
-    LEFT JOIN {{ ref ("stg_status") }} st ON status = st.id
-    LEFT JOIN {{ ref ("stg_club") }} c ON sc1.club = c.id
+    {{ ref ("stg_atletas_scoring") }} AS sc1
+LEFT JOIN {{ ref ("stg_pontuados_scoring") }} AS sc2 ON sc1.id = sc2.id
+LEFT JOIN point AS pt ON sc1.id = pt.id
+LEFT JOIN {{ ref ("dim_player") }} AS pl ON sc1.player = pl.id
+LEFT JOIN {{ ref ("dim_position") }} AS po ON sc1.position = po.id
+LEFT JOIN {{ ref ("dim_status") }} AS st ON status = st.id
+LEFT JOIN {{ ref ("dim_club") }} AS c ON sc1.club = c.id
 WHERE
-    c.slug <> "other"
+    c.slug != "other"

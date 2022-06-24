@@ -48,7 +48,6 @@ models:
       - name: status
         description: Status for the match
         tests:
-          - not_null
           - accepted_values:
               values:
                 - doubt
@@ -58,16 +57,10 @@ models:
                 - expected
       - name: total_points
         description: Points scored the player in the match using most recent rules.
-        tests:
-          - not_null
       - name: offensive_points
         description: Offensive points scored the player in the match using most recent rules.
-        tests:
-          - not_null
       - name: defensive_points
         description: Defensive points scored the player in the match using most recent rules.
-        tests:
-          - not_null
       - name: offensive_repr
         description: Ratio of club offensive points which the player is responsible for.
       - name: defensive_repr
@@ -87,107 +80,86 @@ models:
       - name: goal
         description: Goals in this round
         tests:
-          - not_null
           - not_negative
       - name: assist
         description: Assists in this round
         tests:
-          - not_null
           - not_negative
       - name: yellow_card
         description: Yellow cards in this round
         tests:
-          - not_null
           - not_negative
       - name: red_card
         description: Red cards in this round
         tests:
-          - not_null
           - not_negative
       - name: missed_shoot
         description: Missed shoots in this round
         tests:
-          - not_null
           - not_negative
       - name: on_post_shoot
         description: On post shoots in this round
         tests:
-          - not_null
           - not_negative
       - name: saved_shoot
         description: Saved shoots in this round
         tests:
-          - not_null
           - not_negative
       - name: received_foul
         description: Received fouls in this round
         tests:
-          - not_null
           - not_negative
       - name: received_penalty
         description: Received fouls in this round
         tests:
-          - not_null
           - not_negative
       - name: missed_penalty
         description: Missed penalty kick in this round
         tests:
-          - not_null
           - not_negative
       - name: outside
         description: Outsides in this round in this round
         tests:
-          - not_null
           - not_negative
       - name: missed_pass
         description: Missed passes in this round
         tests:
-          - not_null
           - not_negative
       - name: tackle
         description: Successful tackles in this round
         tests:
-          - not_null
           - not_negative
       - name: foul
         description: Committed fouls in this round
         tests:
-          - not_null
           - not_negative
       - name: penalty
         description: Committed penalty in this round
         tests:
-          - not_null
           - not_negative
       - name: own_goal
         description: Own goals in this round
         tests:
-          - not_null
           - not_negative
       - name: allowed_goal
         description: Allowed goals in this round
         tests:
-          - not_null
           - not_negative
       - name: no_goal
         description: Games without goals in this round
         tests:
-          - not_null
           - not_negative
       - name: save
         description: Saves in this round
         tests:
-          - not_null
           - not_negative
       - name: difficult_save
         description: Difficult saves in this round
         tests:
-          - not_null
           - not_negative
       - name: penalty_save
         description: Penalty save in this round
         tests:
-          - not_null
           - not_negative
 
   - name: fct_match

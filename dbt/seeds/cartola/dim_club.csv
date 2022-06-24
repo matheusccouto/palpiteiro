@@ -1,4 +1,4 @@
-id,nome,abreviacao,escudo_60x60,escudo_45x45,escudo_30x30,nome_fantasia,slug
+id,name,short_name,badge60,badge45,badge30,fantasy_name,slug
 1,Outros,OUT,https://s.glbimg.com/es/sde/f/organizacoes/escudo_default_65x65.png,https://s.glbimg.com/es/sde/f/organizacoes/escudo_default_45x45.png,https://s.glbimg.com/es/sde/f/organizacoes/escudo_default_30x30.png,Outros,other
 262,Flamengo,FLA,https://s.glbimg.com/es/sde/f/organizacoes/2018/04/09/Flamengo-65.png,https://s.glbimg.com/es/sde/f/organizacoes/2018/04/09/Flamengo-45.png,https://s.glbimg.com/es/sde/f/organizacoes/2018/04/09/Flamengo-30.png,Flamengo,flamengo
 263,Botafogo,BOT,https://s.glbimg.com/es/sde/f/organizacoes/2019/02/04/botafogo-65.png,https://s.glbimg.com/es/sde/f/organizacoes/2019/02/04/botafogo-45.png,https://s.glbimg.com/es/sde/f/organizacoes/2019/02/04/botafogo-30.png,Botafogo,botafogo

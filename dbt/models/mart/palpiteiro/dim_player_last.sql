@@ -9,7 +9,7 @@ WITH player AS (
                 MAX(all_time_round)
             FROM
                 {{ ref("fct_match") }}
-        )
+        ) AND valid IS TRUE
 ),
 ai AS (
     SELECT

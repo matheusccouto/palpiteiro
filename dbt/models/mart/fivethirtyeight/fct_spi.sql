@@ -11,8 +11,6 @@ WITH spi AS (
         prob_home AS prob_club,
         prob_away AS prob_opponent,
         prob_tie,
-        COALESCE(importance_home, AVG(importance_home) OVER (PARTITION BY EXTRACT(WEEK FROM date))) AS importance_club,
-        COALESCE(importance_away, AVG(importance_away) OVER (PARTITION BY EXTRACT(WEEK FROM date))) AS importance_opponent,
         proj_score_home AS proj_score_club,
         proj_score_away AS proj_score_opponent,
         score_home AS score_club,
@@ -22,12 +20,21 @@ WITH spi AS (
         xg_home AS xg_club,
         xg_away AS xg_opponent,
         nsxg_home AS nsxg_club,
-        nsxg_away AS nsxg_opponent
+        nsxg_away AS nsxg_opponent,
+        COALESCE(
+            importance_home,
+            AVG(importance_home) OVER (PARTITION BY EXTRACT(WEEK FROM date))
+        ) AS importance_club,
+        COALESCE(
+            importance_away,
+            AVG(importance_away) OVER (PARTITION BY EXTRACT(WEEK FROM date))
+        ) AS importance_opponent
     FROM
-        {{ ref ("stg_spi_match") }} spi
-        LEFT JOIN {{ ref ("stg_slug") }} slug_home ON spi.home = slug_home.name
-        LEFT JOIN {{ ref ("stg_slug") }} slug_away ON spi.away = slug_away.name
+        {{ ref ("stg_spi_match") }} AS spi
+    LEFT JOIN {{ ref ("dim_slug") }} AS slug_home ON spi.home = slug_home.name
+    LEFT JOIN {{ ref ("dim_slug") }} AS slug_away ON spi.away = slug_away.name
 ),
+
 inv AS (
     SELECT
         season,
@@ -54,6 +61,7 @@ inv AS (
     FROM
         spi
 )
+
 SELECT
     season,
     date,

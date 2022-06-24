@@ -1,7 +1,5 @@
 SELECT
-    CONCAT(CAST(season AS STRING), " ", team1, " x ", team2) AS id,
     season AS season,
-    DATE(date) AS date,
     league_id AS league_id,
     league AS league,
     team1 AS home,
@@ -22,6 +20,8 @@ SELECT
     xg1 AS xg_home,
     xg2 AS xg_away,
     nsxg1 AS nsxg_home,
-    nsxg2 AS nsxg_away
+    nsxg2 AS nsxg_away,
+    CONCAT(CAST(season AS STRING), " ", team1, " x ", team2) AS id,
+    DATE(date) AS date
 FROM
     {{ source ('fivethirtyeight', 'spi') }}
