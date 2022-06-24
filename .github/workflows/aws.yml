@@ -1,4 +1,4 @@
-name: serverless
+name: aws
 on:
   workflow_call:
     inputs:

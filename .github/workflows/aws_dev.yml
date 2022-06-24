@@ -1,4 +1,4 @@
-name: serverless
+name: aws
 on:
   push:
     branches:
@@ -9,8 +9,8 @@ on:
       - "requirements-bigquery.txt"
       - "requirements-pandas.txt"
       - "serverless.yml"
-      - ".github/workflows/serverless.yml"
-      - ".github/workflows/serverless_dev.yml"
+      - ".github/workflows/aws.yml"
+      - ".github/workflows/aws_dev.yml"
   workflow_dispatch:
 jobs:
   dbt:

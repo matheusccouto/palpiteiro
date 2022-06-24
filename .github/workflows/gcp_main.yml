@@ -1,12 +1,12 @@
-name: function points
+name: gcp
 on:
   push:
     branches:
       - main
     paths:
       - function_points
-      - ".github/workflows/function_points.yml"
-      - ".github/workflows/function_points_main.yml"
+      - ".github/workflows/gcp.yml"
+      - ".github/workflows/gcp_main.yml"
   workflow_dispatch:
 jobs:
   dbt:
