@@ -80,6 +80,6 @@ SELECT
     END AS points
 FROM
     expected_to_play e2p
-    LEFT JOIN cartola.dim_player dp ON e2p.player = dp.id
-    LEFT JOIN cartola.stg_club c ON e2p.club = c.slug
+    LEFT JOIN {{ ref("dim_player") }} dp ON e2p.player = dp.id
+    LEFT JOIN {{ ref("dim_club") }} c ON e2p.club = c.slug
     LEFT JOIN club_agg ca ON ca.club = e2p.club
