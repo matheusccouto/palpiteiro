@@ -22,13 +22,13 @@ def request_fixture():
 
 def test_count(req):
     """Test function handler."""
-    with utils.test.environ(BUCKET="palpiteiro-dev"):
+    with utils.test.environ(BUCKET_NAME="palpiteiro-dev"):
         assert len(main.handler(req)["replies"]) == 750
 
 
 def test_values(req):
     """Test function handler."""
-    with utils.test.environ(BUCKET="palpiteiro-dev"):
+    with utils.test.environ(BUCKET_NAME="palpiteiro-dev"):
         values = main.handler(req)["replies"]
         assert max(values) < 20
         assert min(values) > 0
