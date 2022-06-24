@@ -48,5 +48,5 @@ jobs:
       - name: github pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
-          branch: ${{ inputs.TARGET }}
+          branch: github-pages-${{ inputs.TARGET }}
           folder: docs
