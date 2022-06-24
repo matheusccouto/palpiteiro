@@ -5,7 +5,7 @@ on:
       - main
       - dev
 jobs:
-  quality:
+  linting:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

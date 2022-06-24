@@ -7,7 +7,10 @@ import pandas as pd
 import pytest
 
 import utils.test
-from function_points import main
+
+# function_points will access env vars during import.
+with utils.test.environ(BUCKET_NAME="palpiteiro-dev"):
+    from function_points import main
 
 THIS_DIR = os.path.dirname(__file__)
 SAMPLE_PATH = os.path.join(THIS_DIR, "sample.csv")
@@ -22,13 +25,11 @@ def request_fixture():
 
 def test_count(req):
     """Test function handler."""
-    with utils.test.environ(BUCKET_NAME="palpiteiro-dev"):
-        assert len(main.handler(req)["replies"]) == 750
+    assert len(main.handler(req)["replies"]) == 750
 
 
 def test_values(req):
     """Test function handler."""
-    with utils.test.environ(BUCKET_NAME="palpiteiro-dev"):
-        values = main.handler(req)["replies"]
-        assert max(values) < 20
-        assert min(values) > 0
+    values = main.handler(req)["replies"]
+    assert max(values) < 20
+    assert min(values) > 0
