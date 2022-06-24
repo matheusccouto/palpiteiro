@@ -1,7 +1,7 @@
 # Palpiteiro
 | prod | dev |
 | --- | --- |
-| ![serverless](https://github.com/matheusccouto/palpiteiro/actions/workflows/deploy_serverless.yml/badge.svg) | |
+| ![serverless-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/serverless_main.yml/badge.svg) | ![serverless-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/serverless_dev.yml/badge.svg) |
 | ![dbt-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/dbt_main.yml/badge.svg) | ![dbt-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/dbt_dev.yml/badge.svg) |
 | ![pytest](https://github.com/matheusccouto/palpiteiro/actions/workflows/testing.yml/badge.svg) | |
 | ![pylint](https://github.com/matheusccouto/palpiteiro/actions/workflows/quality.yml/badge.svg) |
