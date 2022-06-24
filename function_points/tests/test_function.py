@@ -6,6 +6,7 @@ from unittest.mock import Mock
 import pandas as pd
 import pytest
 
+import utils.test
 from function_points import main
 
 THIS_DIR = os.path.dirname(__file__)
@@ -21,11 +22,13 @@ def request_fixture():
 
 def test_count(req):
     """Test function handler."""
-    assert len(main.handler(req)["replies"]) == 750
+    with utils.test.environ(BUCKET="palpiteiro-dev"):
+        assert len(main.handler(req)["replies"]) == 750
 
 
 def test_values(req):
     """Test function handler."""
-    values = main.handler(req)["replies"]
-    assert max(values) < 20
-    assert min(values) > 0
+    with utils.test.environ(BUCKET="palpiteiro-dev"):
+        values = main.handler(req)["replies"]
+        assert max(values) < 20
+        assert min(values) > 0
