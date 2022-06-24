@@ -1,4 +1,4 @@
-name: Unit Testing
+name: testing
 on:
   pull_request:
     branches:
@@ -50,7 +50,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip wheel
           python -m pip install pytest-cov
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         working-directory: ./${{ matrix.folder }}
       - name: Test with Pytest

@@ -6,7 +6,6 @@ import pandas as pd
 import pytest
 
 import lambda_read_gbq
-import utils.aws.s3
 import utils.google
 import utils.test
 
@@ -33,6 +32,6 @@ def test_handler(expected):  # pylint: disable=unused-argument
 
 
 def test_return_serializable(expected):  # pylint: disable=unused-argument
-    """Test if retun is serializable."""
+    """Test if return is serializable."""
     res = lambda_read_gbq.handler(event={"query": "SELECT * FROM test.test"})
     assert utils.test.is_serializable(res)
