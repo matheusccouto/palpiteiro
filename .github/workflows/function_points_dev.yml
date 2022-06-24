@@ -1,0 +1,18 @@
+name: function points
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - function_points
+      - ".github/workflows/function_points.yml"
+      - ".github/workflows/function_points_dev.yml"
+  workflow_dispatch:
+jobs:
+  dbt:
+    uses: ./.github/workflows/function_points.yml
+    with:
+      FUNCTION_NAME: points-dev
+      BUCKET_NAME: palpiteiro-dev
+    secrets:
+      GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_DEV }}

@@ -1,44 +1,69 @@
-name: Serverless Deployment
+name: serverless
 on:
-  push:
-    branches:
-      - main
-      - dev
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      STAGE:
+        required: true
+        type: string
+    secrets:
+      AWS_KEY:
+        required: true
+        type: string
+      AWS_SECRET:
+        required: true
+        type: string
+      GCP_SERVICE_ACCOUNT_PROJECT_ID:
+        required: true
+        type: string
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID:
+        required: true
+        type: string
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY:
+        required: true
+        type: string
+      GCP_SERVICE_ACCOUNT_CLIENT_EMAIL:
+        required: true
+        type: string
+      GCP_SERVICE_ACCOUNT_CLIENT_ID:
+        required: true
+        type: string
+      GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL:
+        required: true
+        type: string
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: checkout repo
         uses: actions/checkout@v3
-      - name: Setup Node.js environment
+      - name: node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - name: Setup Python environment
+      - name: python
         uses: actions/setup-python@v3
         with:
           python-version: "3.9"
-      - name: Install Serverless Framework
+      - name: serverless
         run: |
           npm install -g serverless@3
           npm install --save-dev serverless-step-functions
       - name: Serverless AWS authentication
         run: sls config credentials --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
-      - name: Create layers artifacts
+      - name: pandas layer
         run: |
           mkdir python
           pip install -r requirements-pandas.txt --target python
           zip -r layer_pandas.zip python/
           rm -r python
+      - name: bigquery layer
+        run: |      
           mkdir python
           pip install -r requirements-bigquery.txt --target python
           zip -r layer_bigquery.zip python/
           rm -r python
-          mkdir python
-      - name: Deploy dev
-        if: github.head_ref == 'dev' || github.ref_name == 'dev'
-        run: sls deploy --stage ${{ github.head_ref || github.ref_name }} --conceal
+      - name: deploy
+        run: sls deploy --stage ${{ inputs.STAGE }} --conceal
         env:
           GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_DEV }}
           GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_DEV }}
@@ -46,13 +71,3 @@ jobs:
           GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_DEV }}
           GCP_SERVICE_ACCOUNT_CLIENT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_ID_DEV }}
           GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}
-      - name: Deploy main
-        if: github.head_ref == 'main' || github.ref_name == 'main'
-        run: sls deploy --stage ${{ github.head_ref || github.ref_name }} --conceal
-        env:
-          GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_MAIN }}
-          GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_MAIN }}
-          GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_MAIN }}
-          GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_MAIN }}
-          GCP_SERVICE_ACCOUNT_CLIENT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_ID_MAIN }}
-          GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_MAIN }}

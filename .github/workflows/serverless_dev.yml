@@ -1,0 +1,26 @@
+name: serverless
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "lambda_*/**"
+      - "utils/**"
+      - "requirements-bigquery.txt"
+      - "requirements-pandas.txt"
+      - "serverless.yml"
+      - ".github/workflows/serverless.yml"
+      - ".github/workflows/serverless_dev.yml"
+  workflow_dispatch:
+jobs:
+  dbt:
+    uses: ./.github/workflows/serverless.yml
+    with:
+      STAGE: dev
+    secrets:
+      GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID_DEV }}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID_DEV }}
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_DEV }}
+      GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL_DEV }}
+      GCP_SERVICE_ACCOUNT_CLIENT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_ID_DEV }}
+      GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}

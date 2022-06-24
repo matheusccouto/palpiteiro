@@ -4,7 +4,9 @@ on:
     branches:
       - main
     paths:
-      - dbt
+      - "dbt/**"
+      - ".github/workflows/dbt.yml"
+      - ".github/workflows/dbt_main.yml"
   workflow_dispatch:
 jobs:
   dbt:

@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION {{ target.dataset }}.points(
     offensive_allowed_points_opponent_last_5 FLOAT64,
     defensive_allowed_points_opponent_last_5 FLOAT64
 ) RETURNS FLOAT64 REMOTE WITH CONNECTION `us-east4.remote-function` OPTIONS (
-    endpoint = 'https://us-east4-palpiteiro-{{ target.name }}.cloudfunctions.net/points'
+    endpoint = 'https://us-east4-palpiteiro-{{ target.name }}.cloudfunctions.net/points-{{ target.name }}'
 )
 
 {% endmacro %}
