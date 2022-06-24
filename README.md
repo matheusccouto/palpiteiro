@@ -1,9 +1,9 @@
 # Palpiteiro
 | prod | dev |
 | --- | --- |
-| ![serverless-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/serverless_main.yml/badge.svg) | ![serverless-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/serverless_dev.yml/badge.svg) |
+| ![aws-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/serverless_main.yml/badge.svg) | ![aws-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/serverless_dev.yml/badge.svg) |
 | ![dbt-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/dbt_main.yml/badge.svg) | ![dbt-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/dbt_dev.yml/badge.svg) |
-| ![function-points-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/function_points_main.yml/badge.svg) | ![function-points-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/function_points_dev.yml/badge.svg) |
+| ![gcp-main](https://github.com/matheusccouto/palpiteiro/actions/workflows/function_points_main.yml/badge.svg) | ![gcp-dev](https://github.com/matheusccouto/palpiteiro/actions/workflows/function_points_dev.yml/badge.svg) |
 | [![codecov-main](https://codecov.io/gh/matheusccouto/palpiteiro/branch/main/graph/badge.svg?token=jvukfL51k7)](https://app.codecov.io/gh/matheusccouto/palpiteiro/branch/main) | [![codecov-dev](https://codecov.io/gh/matheusccouto/palpiteiro/branch/dev/graph/badge.svg?token=jvukfL51k7)](https://app.codecov.io/gh/matheusccouto/palpiteiro/branch/dev) |
 
 
