@@ -194,7 +194,7 @@ with Diagram(
     fct_match >> dim_player_last
     fct_player >> dim_player_last
 
-    Storage("model\n(gradient boosting)") >> points
+    Storage("model") >> points
     points >> dim_player_last
 
     dim_player_last >> StepFunctions("draft")
