@@ -8,7 +8,6 @@ on:
     secrets:
       GCP_KEYFILE:
         required: true
-        type: string
 jobs:
   deploy:
     runs-on: ubuntu-latest

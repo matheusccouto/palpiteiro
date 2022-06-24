@@ -8,28 +8,20 @@ on:
     secrets:
       AWS_KEY:
         required: true
-        type: string
       AWS_SECRET:
         required: true
-        type: string
       GCP_SERVICE_ACCOUNT_PROJECT_ID:
         required: true
-        type: string
       GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID:
         required: true
-        type: string
       GCP_SERVICE_ACCOUNT_PRIVATE_KEY:
         required: true
-        type: string
       GCP_SERVICE_ACCOUNT_CLIENT_EMAIL:
         required: true
-        type: string
       GCP_SERVICE_ACCOUNT_CLIENT_ID:
         required: true
-        type: string
       GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL:
         required: true
-        type: string
 jobs:
   deploy:
     runs-on: ubuntu-latest
