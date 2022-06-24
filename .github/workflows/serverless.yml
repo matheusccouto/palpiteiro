@@ -1,0 +1,65 @@
+name: serverless
+on:
+  workflow_call:
+    inputs:
+      STAGE:
+        required: true
+        type: string
+    secrets:
+      AWS_KEY:
+        required: true
+      AWS_SECRET:
+        required: true
+      GCP_SERVICE_ACCOUNT_PROJECT_ID:
+        required: true
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID:
+        required: true
+      GCP_SERVICE_ACCOUNT_PRIVATE_KEY:
+        required: true
+      GCP_SERVICE_ACCOUNT_CLIENT_EMAIL:
+        required: true
+      GCP_SERVICE_ACCOUNT_CLIENT_ID:
+        required: true
+      GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL:
+        required: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: serverless
+        run: |
+          npm install -g serverless@3
+          npm install --save-dev serverless-step-functions
+      - name: Serverless AWS authentication
+        run: sls config credentials --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
+      - name: pandas layer
+        run: |
+          mkdir python
+          pip install -r requirements-pandas.txt --target python
+          zip -r layer_pandas.zip python/
+          rm -r python
+      - name: bigquery layer
+        run: |      
+          mkdir python
+          pip install -r requirements-bigquery.txt --target python
+          zip -r layer_bigquery.zip python/
+          rm -r python
+      - name: deploy
+        run: sls deploy --stage ${{ inputs.STAGE }} --conceal
+        env:
+          GCP_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PROJECT_ID }}
+          GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY_ID }}
+          GCP_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_PRIVATE_KEY }}
+          GCP_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+          GCP_SERVICE_ACCOUNT_CLIENT_ID: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_ID }}
+          GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL }}
