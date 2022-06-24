@@ -2,7 +2,10 @@ name: function points
 on:
   workflow_call:
     inputs:
-      STAGE:
+      FUNCTION_NAME:
+        required: true
+        type: string
+      BUCKET_NAME:
         required: true
         type: string
     secrets:
