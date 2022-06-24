@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 jobs:
   dbt:
-    uses: ./.github/workflows/serverless.yml
+    uses: ./.github/workflows/aws.yml
     with:
       STAGE: main
     secrets:
