@@ -1,12 +1,7 @@
-name: dbt-main
+name: dbt-job-main
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "dbt/**"
-      - ".github/workflows/dbt.yml"
-      - ".github/workflows/dbt_main.yml"
+  schedule:
+    - cron:  '* 0/8 * * *'
   workflow_dispatch:
 jobs:
   dbt:

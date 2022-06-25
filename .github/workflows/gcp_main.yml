@@ -1,4 +1,4 @@
-name: gcp
+name: gcp-main
 on:
   push:
     branches:

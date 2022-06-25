@@ -34,5 +34,7 @@ models:
         schema: fivethirtyeight
       palpiteiro:
         schema: palpiteiro
+        dim_player_last:
+          materialized: table
 on-run-start:
   - '{{ create_udfs() }}'
