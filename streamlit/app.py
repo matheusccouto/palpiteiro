@@ -108,9 +108,7 @@ def main():
     """Main routine"""
     # Page title and configs.
     st.set_page_config(page_title="Palpiteiro", page_icon=":soccer:")
-    st.title("Palpiteiro")
-    st.text("Recomendação de escalações para o Cartola FC")
-
+    st.title(":soccer: Palpiteiro")
     # Inputs
     budget = st.sidebar.number_input(
         "Cartoletas",
