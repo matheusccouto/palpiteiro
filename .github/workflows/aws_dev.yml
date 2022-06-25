@@ -1,4 +1,4 @@
-name: aws
+name: aws-dev
 on:
   push:
     branches:

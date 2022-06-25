@@ -1,4 +1,4 @@
-name: aws
+name: aws-main
 on:
   push:
     branches:
