@@ -1,21 +1,25 @@
 """ Palpiteiro web-app. """
 
 import json
+import os
 
 import pandas as pd
 import requests
+import plotly.graph_objects as go
 import streamlit as st
+from PIL import Image
+
+THIS_DIR = os.path.dirname(__file__)
 
 
-POS_MAP = {
-    "goalkeeper": "GOL",
-    "fullback": "LAT",
-    "defender": "ZAG",
-    "midfielder": "MEI",
-    "forward": "ATA",
-    "coach": "TEC",
-}
-POS_ORDER = {"GOL": 1, "LAT": 2, "ZAG": 3, "MEI": 4, "ATA": 5, "TEC": 6}
+POS = [
+    "goalkeeper",
+    "fullback",
+    "defender",
+    "midfielder",
+    "forward",
+    "coach",
+]
 
 # Default values
 SCHEME = {
@@ -33,49 +37,100 @@ ERROR_MSG = "Foi mal, tivemos um erro"
 SPINNER_MSG = "Por favor aguarde enquanto o algoritmo escolhe os jogadores"
 
 
-def format_html_table(html):
-    """Format a html table."""
-    html = html.replace("<table", "<table width=100%")
-    html = html.replace(
-        "<table",
-        '<table style="text-align: left; border-collapse: collapse"',
+def make_plot(data):
+
+    # Y position per position
+    Y = {"coach": 0.125, "goalkeeper": 0.125, "defender": 0.367, "midfielder": 0.633, "forward": 0.875}
+
+    fig = go.Figure()
+
+    # Background
+    fig.add_layout_image(
+        dict(
+            source=Image.open(os.path.join(THIS_DIR, "pitch.png")),
+            xref="paper",
+            yref="paper",
+            x=0,
+            y=0,
+            sizex=1,
+            sizey=1,
+            xanchor="left",
+            yanchor="bottom",
+            layer="below",
+            sizing="stretch",
+        )
     )
-    html = html.replace("<td", '<td style="border: none"')
-    html = html.replace("<tr", '<tr style="border: none"', 1)
-    return html
+
+    # Separe player per position.
+    pos_players = {
+        pos: [p for p in data["players"] if p["position"] == pos] for pos in POS
+    }
+
+    # Insert defender in the middle of the fullbacks and remove fullbacks key
+    cut = int(len(pos_players["fullback"]) / 2)
+    pos_players["defender"] = (
+        pos_players["fullback"][:cut]
+        + pos_players["defender"]
+        + pos_players["fullback"][cut:]
+    )
+    pos_players.pop("fullback")
+
+    for pos, players in pos_players.items():
+        for i, player in enumerate(players):
+
+            x = (i + 0.5) / len(players)
+            y = Y[pos]
+
+            if player["position"] == "fullback":
+                y += 0.025
+
+            if player["position"] == "defender":
+                y -= 0.025
+            
+            if player["position"] == "coach":
+                x = 0.125
+
+            fig.add_layout_image(
+                dict(
+                    source=Image.open(
+                        requests.get(player["photo"], stream=True, verify=False).raw
+                    ),
+                    xref="paper",
+                    yref="paper",
+                    x=x,
+                    y=y,
+                    sizex=0.2,
+                    sizey=0.2,
+                    xanchor="center",
+                    yanchor="middle",
+                )
+            )
+            fig.add_annotation(
+                xref="paper",
+                yref="paper",
+                x=x,
+                y=y - 0.09,
+                xanchor="center",
+                yanchor="middle",
+                text=player["name"],
+                showarrow=False,
+                font=dict(color="white", size=24, family='monospace'),
+            )
+    
+    # for iplayer in enumerate(data["bench"]):
+
+    fig.update_layout(
+        autosize=False,
+        height=900,
+        width=600,
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        margin=dict(l=0, r=0, t=0, b=100),
+    )
+    return fig
 
 
-def create_html_tag(photo, height, name=None):
-    """Create html tag with image."""
-    if name:
-        name = f" {name}"
-    else:
-        name = ""
-    return f'<img src="{photo}" height="{height}">{name}'
-
-
-def json2html(data):
-    """Convert JSON to a formatted HTML"""
-    data = pd.DataFrame(data)
-    data["__player__"] = data.apply(
-        lambda x: create_html_tag(photo=x["photo"], name=x["name"], height=32),
-        axis=1,
-    ).str.pad(256)
-
-    data["__club__"] = data.apply(
-        lambda x: create_html_tag(photo=x["club_badge"], height=32),
-        axis=1,
-    ).str.pad(256)
-
-    data["__position__"] = data["position"].replace(POS_MAP)
-    data["__order__"] = data["__position__"].replace(POS_ORDER)
-    data = data.sort_values("__order__", ascending=True)
-
-    data = data[["__position__", "__club__", "__player__"]]
-    html_table = data.to_html(escape=False, header=False, index=False, border=0)
-    return format_html_table(html_table)
-
-
+# @st.cache(show_spinner=False)
 def get_line_up(budget, scheme, max_players_per_club):
     """Request a line up."""
     res = requests.post(
@@ -89,6 +144,7 @@ def get_line_up(budget, scheme, max_players_per_club):
             "price": budget,
             "max_players_per_club": max_players_per_club,
         },
+        verify=False,
     )
 
     if res.status_code >= 300:
@@ -100,8 +156,7 @@ def get_line_up(budget, scheme, max_players_per_club):
         st.error(ERROR_MSG)
         st.stop()
 
-    output = json.loads(data["output"])
-    return output["players"], output["bench"]
+    return json.loads(data["output"])
 
 
 def main():
@@ -120,10 +175,8 @@ def main():
 
     # Main body
     with st.spinner(SPINNER_MSG):
-        players, bench = get_line_up(budget, SCHEME, MAX_PLAYERS_PER_CLUB)
-        st.write(json2html(players.copy()), unsafe_allow_html=True)
-        st.header("")
-        st.write(json2html(bench.copy()), unsafe_allow_html=True)
+        data = get_line_up(budget, SCHEME, MAX_PLAYERS_PER_CLUB)
+        st.plotly_chart(make_plot(data), config={'displayModeBar': False})
 
 
 if __name__ == "__main__":
