@@ -7,19 +7,14 @@ import pandas as pd
 import requests
 import plotly.graph_objects as go
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageDraw
 
+# Dirs
 THIS_DIR = os.path.dirname(__file__)
 
-
-POS = [
-    "goalkeeper",
-    "fullback",
-    "defender",
-    "midfielder",
-    "forward",
-    "coach",
-]
+# Vars
+API_URL = st.secrets["API_URL"]
+API_KEY = st.secrets["API_KEY"]
 
 # Default values
 SCHEME = {
@@ -40,7 +35,13 @@ SPINNER_MSG = "Por favor aguarde enquanto o algoritmo escolhe os jogadores"
 def make_plot(data):
 
     # Y position per position
-    Y = {"coach": 0.125, "goalkeeper": 0.125, "defender": 0.367, "midfielder": 0.633, "forward": 0.875}
+    Y = {
+        "coach": 0.125,
+        "goalkeeper": 0.125,
+        "defender": 0.367,
+        "midfielder": 0.633,
+        "forward": 0.875,
+    }
 
     fig = go.Figure()
 
@@ -63,7 +64,8 @@ def make_plot(data):
 
     # Separe player per position.
     pos_players = {
-        pos: [p for p in data["players"] if p["position"] == pos] for pos in POS
+        pos: [p for p in data["players"] if p["position"] == pos]
+        for pos in SCHEME.keys()
     }
 
     # Insert defender in the middle of the fullbacks and remove fullbacks key
@@ -86,17 +88,17 @@ def make_plot(data):
 
             if player["position"] == "defender":
                 y -= 0.025
-            
+
             if player["position"] == "coach":
                 x = 0.125
 
+            img = Image.open(requests.get(player["photo"], stream=True).raw)
+
             fig.add_layout_image(
                 dict(
-                    source=Image.open(
-                        requests.get(player["photo"], stream=True, verify=False).raw
-                    ),
-                    xref="paper",
-                    yref="paper",
+                    source=img,
+                    xref="x",
+                    yref="y",
                     x=x,
                     y=y,
                     sizex=0.2,
@@ -105,38 +107,56 @@ def make_plot(data):
                     yanchor="middle",
                 )
             )
-            fig.add_annotation(
-                xref="paper",
-                yref="paper",
-                x=x,
-                y=y - 0.09,
-                xanchor="center",
-                yanchor="middle",
-                text=player["name"],
-                showarrow=False,
-                font=dict(color="white", size=24, family='monospace'),
+
+            img_club = Image.open(requests.get(player["club_badge"], stream=True).raw)
+
+            fig.add_layout_image(
+                dict(
+                    source=img_club,
+                    xref="x",
+                    yref="y",
+                    x=x + 0.02,
+                    y=y - 0.02,
+                    sizex=0.1,
+                    sizey=0.1,
+                    xanchor="left",
+                    yanchor="top",
+                )
             )
-    
-    # for iplayer in enumerate(data["bench"]):
+
+            fig.add_trace(
+                go.Scatter(
+                    x=[x],
+                    y=[y],
+                    mode="markers+text",
+                    marker=dict(size=65, color="rgba(0,0,0,0)"),
+                    text=player["name"],
+                    textposition="bottom center",
+                    hovertemplate=f"${player['price']}<extra></extra>",
+                    hoverlabel=dict(bgcolor="white", font_family="monospace"),
+                    textfont=dict(family="monospace"),
+                ),
+            )
 
     fig.update_layout(
-        autosize=False,
-        height=900,
-        width=600,
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False),
+        height=600,
+        width=350,
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(visible=False, fixedrange=True),
+        yaxis=dict(visible=False, fixedrange=True),
         margin=dict(l=0, r=0, t=0, b=100),
+        showlegend=False,
     )
     return fig
 
 
-# @st.cache(show_spinner=False)
-def get_line_up(budget, scheme, max_players_per_club):
+@st.cache(show_spinner=False)
+def get_line_up(budget, scheme, max_players_per_club, url, key):
     """Request a line up."""
     res = requests.post(
-        url=st.secrets["API_URL"],
+        url=url,
         headers={
-            "x-api-key": st.secrets["API_KEY"],
+            "x-api-key": key,
             "Content-Type": "application/json",
         },
         json={
@@ -144,7 +164,6 @@ def get_line_up(budget, scheme, max_players_per_club):
             "price": budget,
             "max_players_per_club": max_players_per_club,
         },
-        verify=False,
     )
 
     if res.status_code >= 300:
@@ -164,9 +183,10 @@ def main():
     # Page title and configs.
     st.set_page_config(page_title="Palpiteiro", page_icon=":soccer:")
     st.title(":soccer: Palpiteiro")
+
     # Inputs
     budget = st.sidebar.number_input(
-        "Cartoletas",
+        "$",
         min_value=0.0,
         value=100.0,
         step=0.1,
@@ -175,8 +195,12 @@ def main():
 
     # Main body
     with st.spinner(SPINNER_MSG):
-        data = get_line_up(budget, SCHEME, MAX_PLAYERS_PER_CLUB)
-        st.plotly_chart(make_plot(data), config={'displayModeBar': False})
+        data = get_line_up(budget, SCHEME, MAX_PLAYERS_PER_CLUB, API_URL, API_KEY)
+        st.plotly_chart(
+            make_plot(data),
+            config={"displayModeBar": False},
+            use_container_width=False,
+        )
 
 
 if __name__ == "__main__":
