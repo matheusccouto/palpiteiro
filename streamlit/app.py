@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 import plotly.graph_objects as go
 import streamlit as st
-from PIL import Image, ImageDraw
+from PIL import Image
 
 # Dirs
 THIS_DIR = os.path.dirname(__file__)
@@ -92,7 +92,9 @@ def make_plot(data):
             if player["position"] == "coach":
                 x = 0.125
 
-            img = Image.open(requests.get(player["photo"], stream=True).raw)
+            img = Image.open(
+                requests.get(player["photo"], stream=True, verify=False).raw
+            )
 
             fig.add_layout_image(
                 dict(
@@ -108,7 +110,9 @@ def make_plot(data):
                 )
             )
 
-            img_club = Image.open(requests.get(player["club_badge"], stream=True).raw)
+            img_club = Image.open(
+                requests.get(player["club_badge"], stream=True, verify=False).raw
+            )
 
             fig.add_layout_image(
                 dict(
@@ -130,27 +134,34 @@ def make_plot(data):
                     y=[y],
                     mode="markers+text",
                     marker=dict(size=65, color="rgba(0,0,0,0)"),
-                    text=player["name"],
-                    textposition="bottom center",
+                    # textposition="bottom center",
                     hovertemplate=f"${player['price']}<extra></extra>",
-                    hoverlabel=dict(bgcolor="white", font_family="monospace"),
-                    textfont=dict(family="monospace"),
+                    # hoverlabel=dict(bgcolor="white"),
                 ),
+            )
+            fig.add_annotation(
+                x=x,
+                y=y - 0.1,
+                xref="x",
+                yref="y",
+                text=player["name"],
+                showarrow=False,
+                yanchor="top",
             )
 
     fig.update_layout(
-        height=600,
-        width=350,
+        height=500,
+        # width=350,
         plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
         yaxis=dict(visible=False, fixedrange=True),
-        margin=dict(l=0, r=0, t=0, b=100),
+        margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
     )
     return fig
 
 
-@st.cache(show_spinner=False)
+# @st.cache(show_spinner=False)
 def get_line_up(budget, scheme, max_players_per_club, url, key):
     """Request a line up."""
     res = requests.post(
@@ -199,7 +210,7 @@ def main():
         st.plotly_chart(
             make_plot(data),
             config={"displayModeBar": False},
-            use_container_width=False,
+            use_container_width=True,
         )
 
 
