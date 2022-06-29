@@ -52,7 +52,7 @@ models:
         description: Cartola price
         tests:
           - not_null
-      - name: price_cartola_expresss
+      - name: price_cartola_express
         description: Cartola Express price
         tests:
           - not_null
