@@ -13,10 +13,6 @@ import streamlit as st
 # Dirs
 THIS_DIR = os.path.dirname(__file__)
 
-# Vars
-API_URL = st.secrets["API_URL"]
-API_KEY = st.secrets["API_KEY"]
-
 # Default values
 SCHEME = {
     "goalkeeper": 1,
@@ -33,23 +29,19 @@ ERROR_MSG = "Foi mal, tivemos um erro"
 SPINNER_MSG = ""
 
 
-@st.cache(
-    show_spinner=False,
-    hash_funcs={"_json.Scanner": hash},
-    allow_output_mutation=True,
-)
-def get_line_up(budget, scheme, max_players_per_club, url, key):
+def get_line_up(budget, scheme, max_players_per_club, bench):
     """Request a line up."""
     res = requests.post(
-        url=url,
+        url=st.secrets["API_URL"],
         headers={
-            "x-api-key": key,
+            "x-api-key": st.secrets["API_KEY"],
             "Content-Type": "application/json",
         },
         json={
             "scheme": scheme,
             "price": budget,
             "max_players_per_club": max_players_per_club,
+            "bench": bench,
         },
     )
 
@@ -149,13 +141,26 @@ def main():
     st.title("Palpiteiro")
 
     # Inputs
-    budget = st.sidebar.number_input(
-        "Budget",
-        min_value=0.0,
-        value=100.0,
-        step=0.1,
-        format="%.1f",
-    )
+
+    game = st.sidebar.selectbox("Game", ["Cartola", "Cartola Express"])
+
+    if game == "Cartola":
+        budget = st.sidebar.number_input(
+            "Budget",
+            min_value=0.0,
+            value=100.0,
+            step=0.1,
+            format="%.1f",
+        )
+        bench = True
+    elif game == "Cartola Express":
+        budget = 140.0
+        SCHEME["coach"] = 0
+        bench = False
+    else:
+        raise ValueError("Invalid game")
+    
+    # Main body
 
     with st.spinner(SPINNER_MSG):
 
@@ -163,8 +168,7 @@ def main():
             budget=budget,
             scheme=SCHEME,
             max_players_per_club=MAX_PLAYERS_PER_CLUB,
-            url=API_URL,
-            key=API_KEY,
+            bench=bench,
         )
         data = transform_data(data)
 
