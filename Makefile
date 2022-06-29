@@ -1,8 +1,7 @@
 setup:
-	sudo apt install python3.9 python3.9-venv python3.9-dev libpq-dev graphviz -y
-	python3.9 -m venv venv
-	venv/bin/pip install --upgrade pip wheel
-	venv/bin/pip install -r requirements-dev.txt
+	sudo apt install libpq-dev graphviz -y
+	pip install --upgrade pip wheel
+	pip install -r requirements-dev.txt
 layer_pandas.zip:
 	mkdir python
 	pip install -r requirements-pandas.txt --target python
