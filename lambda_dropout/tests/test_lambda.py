@@ -15,7 +15,7 @@ def fixture_delete_partidas():
 
 def test_droupout(players):
     """Test if JSON file exists."""
-    for x in [0.1, 0.5, 1.0]:
-        event = {"players": players, "dropout": x}
+    for val in [0.1, 0.5, 1.0]:
+        event = {"players": players, "dropout": val}
         res = lambda_dropout.handler(event=event, context=None)
-        assert len(res) == len(players) * x
+        assert len(res) == len(players) * val
