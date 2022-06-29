@@ -363,6 +363,7 @@ stepFunctions:
             Parameters:
               FunctionName:
                 Fn::GetAtt: [read-gbq, Arn]
+              Payload.$: "$"
             InputPath: "$.output"
             Next: Draft
             ResultPath: "$.output"

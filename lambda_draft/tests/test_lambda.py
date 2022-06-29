@@ -25,6 +25,7 @@ def fixture_event():
         },
         "price": 140,
         "max_players_per_club": 5,
+        "bench": True
     }
 
 
@@ -120,6 +121,13 @@ def test_bench_amount_when_position_does_not_exist(event):
     results = lambda_draft.handler(event=event, context=None)
     assert len(results["bench"]) == 4
     assert len({p["position"] for p in results["bench"]}) == 4
+
+
+def test_no_bench(event):
+    """Test if bench is skipped when asked."""
+    event["bench"] = False
+    results = lambda_draft.handler(event=event, context=None)
+    assert len(results["bench"]) == 0
 
 
 def test_bench_prices(event):
