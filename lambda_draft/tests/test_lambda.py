@@ -46,7 +46,7 @@ def test_amount_of_players(event):
 def test_expected_points(event):
     """Test if points lies under expected range."""
     results = lambda_draft.handler(event=event, context=None)
-    assert sum(p["points"] for p in results["players"]) > 139
+    assert sum(p["points"] for p in results["players"]) > 138
 
 
 def test_price(event):

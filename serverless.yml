@@ -336,16 +336,34 @@ stepFunctions:
                     "stateMachineArn": "arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:draft-${opt:stage}"
                   }
       definition:
-        StartAt: Read Google Big Query
+        StartAt: Choice
         States:
+          Choice:
+            Type: Choice
+            Choices:
+              - Variable: "$.game"
+                StringEquals: cartola-express
+                Next: Cartola Express
+            Default: Cartola
+          Cartola Express:
+            Type: Pass
+            Next: Read Google Big Query
+            Result:
+              query: SELECT *, price_cartola_express AS price FROM palpiteiro.dim_player_last
+            ResultPath: "$.output"
+          Cartola:
+            Type: Pass
+            Next: Read Google Big Query
+            Result:
+              query: SELECT *, price_cartola AS price FROM palpiteiro.dim_player_last
+            ResultPath: "$.output"
           Read Google Big Query:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
             Parameters:
               FunctionName:
                 Fn::GetAtt: [read-gbq, Arn]
-              Payload:
-                query: SELECT * FROM palpiteiro.dim_player_last
+            InputPath: "$.output"
             Next: Draft
             ResultPath: "$.output"
           Draft:
