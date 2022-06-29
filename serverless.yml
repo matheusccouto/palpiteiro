@@ -38,6 +38,15 @@ functions:
         - "lambda_draft/model/*"
         - "!lambda_draft/tests/**/*"
         - "!lambda_draft/notebooks/**/*"
+  dropout:
+    handler: lambda_dropout.handler
+    description: Droupout players for increasing variance for Cartola Express.
+    runtime: python3.9
+    timeout: 1 # seconds
+    memorySize: 128 # megabytes
+    package:
+      patterns:
+        - "lambda_dropout/**/*.py"
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
     description: Extract players data from Cartola FC to JSON.
@@ -367,6 +376,18 @@ stepFunctions:
             InputPath: "$.output"
             Next: Draft
             ResultPath: "$.output"
+          Dropout:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [dropout, Arn]
+              Payload:
+                dropout.$: "$.dropout"
+                players.$: "$.output.Payload"
+            InputPath: "$.output"
+            ResultPath: "$.output"
+            End: true
           Draft:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
@@ -377,6 +398,7 @@ stepFunctions:
                 scheme.$: "$.scheme"
                 price.$: "$.price"
                 max_players_per_club.$: "$.max_players_per_club"
+                bench.$: "$.bench"
                 players.$: "$.output.Payload"
             OutputPath: "$.Payload"
             End: true
