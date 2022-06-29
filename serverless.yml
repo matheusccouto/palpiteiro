@@ -374,7 +374,7 @@ stepFunctions:
                 Fn::GetAtt: [read-gbq, Arn]
               Payload.$: "$"
             InputPath: "$.output"
-            Next: Draft
+            Next: Dropout
             ResultPath: "$.output"
           Dropout:
             Type: Task
@@ -387,7 +387,7 @@ stepFunctions:
                 players.$: "$.output.Payload"
             InputPath: "$.output"
             ResultPath: "$.output"
-            End: true
+            Next: Draft
           Draft:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
