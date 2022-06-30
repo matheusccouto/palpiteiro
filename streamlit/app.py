@@ -153,13 +153,24 @@ def main():
             format="%.1f",
         )
         bench = True
+        dropout = 0.0
+
     elif game == "Cartola Express":
         budget = 140.0
         SCHEME["coach"] = 0
         bench = False
+        dropout = st.sidebar.number_input(
+            "Dropout",
+            min_value=0.0,
+            max_value=0.0,
+            value=0.0,
+            step=0.01,
+            format="%.2f",
+        )
+
     else:
         raise ValueError("Invalid game")
-    
+
     # Main body
 
     with st.spinner(SPINNER_MSG):
@@ -169,6 +180,7 @@ def main():
             scheme=SCHEME,
             max_players_per_club=MAX_PLAYERS_PER_CLUB,
             bench=bench,
+            dropout=dropout,
         )
         data = transform_data(data)
 
