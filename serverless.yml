@@ -189,10 +189,7 @@ stepFunctions:
         topics:
           alarm: { Ref: SNSTopic }
         metrics:
-          - executionsTimedOut
           - executionsFailed
-          - executionsAborted
-          - executionThrottled
       definition:
         StartAt: ExtractCartolaPlayers
         States:
@@ -227,10 +224,7 @@ stepFunctions:
         topics:
           alarm: { Ref: SNSTopic }
         metrics:
-          - executionsTimedOut
           - executionsFailed
-          - executionsAborted
-          - executionThrottled
       definition:
         StartAt: ExtractCartolaScouts
         States:
@@ -265,10 +259,7 @@ stepFunctions:
         topics:
           alarm: { Ref: SNSTopic }
         metrics:
-          - executionsTimedOut
           - executionsFailed
-          - executionsAborted
-          - executionThrottled
       definition:
         StartAt: ExtractCartolaMatches
         States:
@@ -301,10 +292,7 @@ stepFunctions:
         topics:
           alarm: { Ref: SNSTopic }
         metrics:
-          - executionsTimedOut
           - executionsFailed
-          - executionsAborted
-          - executionThrottled
       definition:
         StartAt: ExtractFiveThirtyEightSPI
         States:
