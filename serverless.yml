@@ -385,7 +385,6 @@ stepFunctions:
               Payload:
                 dropout.$: "$.dropout"
                 players.$: "$.output.Payload"
-            InputPath: "$.output"
             ResultPath: "$.output"
             Next: Draft
           Draft:
