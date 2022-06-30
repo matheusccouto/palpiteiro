@@ -22,5 +22,5 @@ jobs:
           pip install --upgrade pip wheel
           pip install dbt-bigquery
       - name: run
-        run: dbt run --profiles-dir . --target ${{ inputs.TARGET }}
+        run: dbt run --profiles-dir . --target dev
         working-directory: ./dbt
