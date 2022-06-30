@@ -37,7 +37,7 @@ ESTIMATOR = make_pipeline(
 
 # Tune
 N_TRIALS = None
-TIMEOUT = 60 * 15
+TIMEOUT = 60 * 60
 
 # Read training data.
 with open(QUERY_PATH, encoding="utf-8") as query_file:
@@ -60,10 +60,10 @@ class Objective:
                 "histgradientboostingregressor__max_iter", 10, 1000, log=True
             ),
             "histgradientboostingregressor__max_leaf_nodes": trial.suggest_int(
-                "histgradientboostingregressor__max_leaf_nodes", 16, 2048
+                "histgradientboostingregressor__max_leaf_nodes", 16, 4096
             ),
             "histgradientboostingregressor__max_depth": trial.suggest_int(
-                "histgradientboostingregressor__max_depth", 2, 128
+                "histgradientboostingregressor__max_depth", 2, 256
             ),
             "histgradientboostingregressor__min_samples_leaf": trial.suggest_int(
                 "histgradientboostingregressor__min_samples_leaf", 2, 512
