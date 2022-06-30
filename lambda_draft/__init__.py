@@ -11,6 +11,7 @@ def handler(event, context):  # pylint: disable=unused-argument
     scheme = Scheme(**event["scheme"])
     price = float(event["price"])
     max_players_per_club = int(event["max_players_per_club"])
+    include_bench = bool(event["bench"])
     players = [
         Player(
             id=player["id"],
@@ -28,5 +29,5 @@ def handler(event, context):  # pylint: disable=unused-argument
     bench = [player.id for player in line_up.bench]
     return {
         "players": [p for p in event["players"] if p["id"] in players],
-        "bench": [p for p in event["players"] if p["id"] in bench],
+        "bench": [p for p in event["players"] if p["id"] in bench and include_bench],
     }

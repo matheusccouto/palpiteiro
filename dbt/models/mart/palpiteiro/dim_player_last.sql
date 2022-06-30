@@ -16,7 +16,8 @@ ai AS (
         p.player,
         p.club,
         p.position,
-        p.price,
+        p.price_cartola,
+        p.price_cartola_express,
         {{ target.dataset }}.points(
             position,
             total_points_last_5,
@@ -73,7 +74,8 @@ SELECT
     c.short_name AS club_name,
     c.badge60 AS club_badge,
     e2p.position,
-    e2p.price,
+    e2p.price_cartola,
+    e2p.price_cartola_express,
     CASE
         WHEN e2p.position = 'coach' THEN ca.points
         ELSE e2p.points * e2p.participate

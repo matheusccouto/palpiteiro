@@ -9,7 +9,7 @@ on:
       - ".github/workflows/gcp_dev.yml"
   workflow_dispatch:
 jobs:
-  dbt:
+  gcp:
     uses: ./.github/workflows/gcp.yml
     with:
       FUNCTION_NAME: points

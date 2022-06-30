@@ -4,7 +4,7 @@ on:
     - cron:  '* 0/8 * * *'
   workflow_dispatch:
 jobs:
-  deploy:
+  dbt-run:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
@@ -22,5 +22,5 @@ jobs:
           pip install --upgrade pip wheel
           pip install dbt-bigquery
       - name: run
-        run: dbt run --profiles-dir . --target ${{ inputs.TARGET }}
+        run: dbt run --profiles-dir . --target main
         working-directory: ./dbt
