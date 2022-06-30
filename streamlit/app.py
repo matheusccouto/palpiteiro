@@ -29,7 +29,7 @@ ERROR_MSG = "Foi mal, tivemos um erro"
 SPINNER_MSG = ""
 
 
-def get_line_up(budget, scheme, max_players_per_club, bench):
+def get_line_up(budget, scheme, max_players_per_club, bench, dropout):
     """Request a line up."""
     res = requests.post(
         url=st.secrets["API_URL"],
@@ -42,6 +42,7 @@ def get_line_up(budget, scheme, max_players_per_club, bench):
             "price": budget,
             "max_players_per_club": max_players_per_club,
             "bench": bench,
+            "dropout": dropout,
         },
     )
 
