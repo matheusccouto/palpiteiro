@@ -29,7 +29,7 @@ ERROR_MSG = "Foi mal, tivemos um erro"
 SPINNER_MSG = ""
 
 
-def get_line_up(budget, scheme, max_players_per_club, bench, dropout):
+def get_line_up(game, budget, scheme, max_players_per_club, bench, dropout):
     """Request a line up."""
     res = requests.post(
         url=st.secrets["API_URL"],
@@ -38,6 +38,7 @@ def get_line_up(budget, scheme, max_players_per_club, bench, dropout):
             "Content-Type": "application/json",
         },
         json={
+            "game": game,
             "scheme": scheme,
             "price": budget,
             "max_players_per_club": max_players_per_club,
@@ -47,6 +48,7 @@ def get_line_up(budget, scheme, max_players_per_club, bench, dropout):
     )
 
     if res.status_code >= 300:
+        print(res.text)
         st.error(ERROR_MSG)
         st.stop()
 
@@ -66,7 +68,7 @@ def get_line_up(budget, scheme, max_players_per_club, bench, dropout):
     return pd.concat([players, bench])
 
 
-def transform_data(data):
+def transform_data(data, captain=False):
     """Transform data for plotting."""
     data = data.copy()
     data["rank"] = data.groupby(["position", "type"])["id"].rank().astype(int)
@@ -81,6 +83,12 @@ def transform_data(data):
     data["y"] = data["plot"].apply(lambda x: pos[x]["y"])
     data["badge_x"] = data["x"] + 0.025
     data["badge_y"] = data["y"] - 0.075
+
+    if captain:
+        data["captain"] = data["points"] == data["points"].max()
+        data["name"] = data.apply(
+            lambda x: "(C) " + x["name"] if x["captain"] else x["name"], axis=1
+        )
 
     return data
 
@@ -146,6 +154,7 @@ def main():
     game = st.sidebar.selectbox("Game", ["Cartola", "Cartola Express"])
 
     if game == "Cartola":
+        game = "cartola"
         budget = st.sidebar.number_input(
             "Budget",
             min_value=0.0,
@@ -157,13 +166,14 @@ def main():
         dropout = 0.0
 
     elif game == "Cartola Express":
+        game = "cartola-express"
         budget = 140.0
         SCHEME["coach"] = 0
         bench = False
         dropout = st.sidebar.number_input(
             "Dropout",
             min_value=0.0,
-            max_value=0.0,
+            max_value=1.0,
             value=0.0,
             step=0.01,
             format="%.2f",
@@ -177,13 +187,14 @@ def main():
     with st.spinner(SPINNER_MSG):
 
         data = get_line_up(
+            game=game,
             budget=budget,
             scheme=SCHEME,
             max_players_per_club=MAX_PLAYERS_PER_CLUB,
             bench=bench,
             dropout=dropout,
         )
-        data = transform_data(data)
+        data = transform_data(data, captain=game == "cartola")
 
         fig = go.Figure()
         fig.add_layout_image(
@@ -220,7 +231,7 @@ def main():
             height=450,
             plot_bgcolor="rgba(0,0,0,0)",
             xaxis=dict(visible=False, fixedrange=True),
-            yaxis=dict(visible=False, fixedrange=True),
+            yaxis=dict(visible=False, fixedrange=True, range=[-0.25, 1]),
             margin=dict(l=0, r=0, t=0, b=0),
             showlegend=False,
         )
