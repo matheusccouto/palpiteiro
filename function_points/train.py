@@ -37,7 +37,7 @@ ESTIMATOR = make_pipeline(
 
 # Tune
 N_TRIALS = None
-TIMEOUT = 60 * 15
+TIMEOUT = 60 * 60
 
 # Read training data.
 with open(QUERY_PATH, encoding="utf-8") as query_file:
@@ -48,8 +48,8 @@ with open(QUERY_PATH, encoding="utf-8") as query_file:
 class Objective:
     """Optuna objective."""
 
-    x: pd.DataFrame
-    y: pd.Series
+    x: pd.DataFrame  # pylint: disable=invalid-name
+    y: pd.Series  # pylint: disable=invalid-name
 
     def __call__(self, trial):
         params = {
@@ -60,10 +60,10 @@ class Objective:
                 "histgradientboostingregressor__max_iter", 10, 1000, log=True
             ),
             "histgradientboostingregressor__max_leaf_nodes": trial.suggest_int(
-                "histgradientboostingregressor__max_leaf_nodes", 16, 2048
+                "histgradientboostingregressor__max_leaf_nodes", 16, 4096
             ),
             "histgradientboostingregressor__max_depth": trial.suggest_int(
-                "histgradientboostingregressor__max_depth", 2, 128
+                "histgradientboostingregressor__max_depth", 2, 256
             ),
             "histgradientboostingregressor__min_samples_leaf": trial.suggest_int(
                 "histgradientboostingregressor__min_samples_leaf", 2, 512
@@ -93,14 +93,14 @@ def get_data(query):
     return x, y
 
 
-def tune(x, y):
+def tune(x, y):  # pylint: disable=invalid-name
     """Train machine learning model."""
     study = optuna.create_study(direction="maximize")
     study.optimize(Objective(x=x, y=y), n_trials=N_TRIALS, timeout=TIMEOUT)
     return study.best_params
 
 
-def train(x, y, params):
+def train(x, y, params):  # pylint: disable=invalid-name
     """Train machine learning model."""
     ESTIMATOR.set_params(**params)
     ESTIMATOR.fit(x, y)
@@ -111,7 +111,12 @@ def train(x, y, params):
         joblib.dump(ESTIMATOR, model_file)
 
 
-if __name__ == "__main__":
-    x, y = get_data(QUERY)
+def main(query):
+    """Train machine learning model."""
+    x, y = get_data(query)  # pylint: disable=invalid-name
     params = tune(x, y)
     train(x, y, params)
+
+
+if __name__ == "__main__":
+    main(QUERY)

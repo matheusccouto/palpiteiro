@@ -44,6 +44,6 @@ def test_table(setup_and_teardown):  # pylint: disable=unused-argument
         project_id=creds.project_id,
         credentials=creds,
         location="us-east4",
-    ).sort_values("col1", ignore_index=True)
+    ).sort_values("col1", ignore_index=True).drop("loaded_at", axis=1)
     expected = pd.read_csv(os.path.join(THIS_DIR, "result.csv"), index_col=0)
     pd.testing.assert_frame_equal(actual.convert_dtypes(), expected.convert_dtypes())

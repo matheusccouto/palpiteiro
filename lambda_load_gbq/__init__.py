@@ -13,7 +13,6 @@ from google.cloud import bigquery
 import utils.aws.s3
 import utils.google
 
-LOCATION = "us-east4"
 DTYPES = {
     "INTEGER": pd.Int64Dtype(),
     "FLOAT": "float64",
@@ -22,7 +21,7 @@ DTYPES = {
 }
 
 creds = utils.google.get_creds_from_env_vars()
-client = bigquery.Client(location=LOCATION, credentials=creds)
+client = bigquery.Client(credentials=creds)
 
 
 def handler(event, context=None):  # pylint: disable=unused-argument
@@ -32,6 +31,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
 
     file = utils.aws.s3.load(event["uri"])
     data = pd.read_csv(io.StringIO(file), index_col=0)
+    data["loaded_at"] = pd.Timestamp.now()
     table_schema = {
         field.name: DTYPES[field.field_type]
         for field in client.get_table(table).schema
@@ -41,7 +41,6 @@ def handler(event, context=None):  # pylint: disable=unused-argument
         destination_table=tmp_table,
         if_exists="replace",
         credentials=creds,
-        location=LOCATION,
     )
 
     cols = ", ".join(data.columns)
@@ -57,7 +56,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     WHEN NOT MATCHED THEN
         INSERT ({cols}) VALUES ({cols})
     """
-    job = client.query(query, location=LOCATION)
+    job = client.query(query)
 
     while not job.done():
         time.sleep(0.1)
