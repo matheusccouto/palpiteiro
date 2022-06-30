@@ -4,7 +4,7 @@ on:
     - cron:  '* 0/8 * * *'
   workflow_dispatch:
 jobs:
-  deploy:
+  dbt-run:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
