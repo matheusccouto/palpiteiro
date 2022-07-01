@@ -1,6 +1,7 @@
 """Unit tests for the lambda function."""
 
 import os
+import zoneinfo
 
 import pandas as pd
 import pytest
@@ -17,16 +18,12 @@ creds = utils.google.get_creds_from_env_vars()
 @pytest.fixture(name="setup_and_teardown")
 def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
-    pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0).to_gbq(
+    data=pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0)
+    data["loaded_at"] = pd.Timestamp.now(tz=zoneinfo.ZoneInfo("UTC"))
+    data.to_gbq(
         destination_table="test.test_load",
         if_exists="replace",
         credentials=creds,
-        table_schema={
-            "col1": lambda_load_gbq.DTYPES["INTEGER"],
-            "col2": lambda_load_gbq.DTYPES["INTEGER"],
-            "col3": lambda_load_gbq.DTYPES["INTEGER"],
-            "loaded_at": lambda_load_gbq.DTYPES["TIMESTAMP"],
-        }
     )
     with open(os.path.join(THIS_DIR, "new.csv"), encoding="utf-8") as file:
         utils.aws.s3.save(file.read(), "s3://palpiteiro-test/load/test.csv")
