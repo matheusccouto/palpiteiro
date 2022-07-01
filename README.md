@@ -6,6 +6,7 @@ Fantasy soccer tips with machine learning and genetic algorithm.
 ![aws](https://img.shields.io/github/workflow/status/matheusccouto/palpiteiro/aws-main?label=aws)
 ![gcp](https://img.shields.io/github/workflow/status/matheusccouto/palpiteiro/gcp-main?label=gcp)
 ![dbt](https://img.shields.io/github/workflow/status/matheusccouto/palpiteiro/dbt-main?label=dbt)
+![dbt-sources](https://img.shields.io/github/workflow/status/matheusccouto/palpiteiro/dbt-source-main?label=dbt%20sources)
 ![dbt-job](https://img.shields.io/github/workflow/status/matheusccouto/palpiteiro/dbt-job-main?label=dbt%20job)
 [![dbt-docs](https://img.shields.io/github/deployments/matheusccouto/palpiteiro/github-pages?label=dbt%20docs)](https://matheusccouto.github.io/palpiteiro)
 [![codecov](https://codecov.io/gh/matheusccouto/palpiteiro/branch/main/graph/badge.svg?token=jvukfL51k7)](https://app.codecov.io/gh/matheusccouto/palpiteiro/branch/main)
