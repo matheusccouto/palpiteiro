@@ -1,4 +1,5 @@
 SELECT
+    s.id,
     s.player,
     s.all_time_round,
     c.club,

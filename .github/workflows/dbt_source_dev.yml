@@ -1,10 +1,10 @@
 name: dbt-source-dev
 on:
   schedule:
-    - cron:  '* 0/8 * * *'
+    - cron:  '* 0/12 * * *'
   workflow_dispatch:
 jobs:
-  dbt-run:
+  dbt-source:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
@@ -26,4 +26,7 @@ jobs:
         working-directory: ./dbt
       - name: freshness
         run: dbt source freshness --profiles-dir . --target dev
+        working-directory: ./dbt
+      - name: snapshot
+        run: dbt run --exclude path:snapshots/palpiteiro --profiles-dir . --target dev
         working-directory: ./dbt

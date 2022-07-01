@@ -24,3 +24,6 @@ jobs:
       - name: run
         run: dbt run --profiles-dir . --target main
         working-directory: ./dbt
+      - name: snapshot
+        run: dbt run --select path:snapshots/palpiteiro --profiles-dir . --target main
+        working-directory: ./dbt
