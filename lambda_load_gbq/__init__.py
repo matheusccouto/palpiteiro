@@ -18,6 +18,7 @@ DTYPES = {
     "FLOAT": "float64",
     "STRING": pd.StringDtype(),
     "BOOLEAN": pd.BooleanDtype(),
+    "TIMESTAMP": pd.DatetimeTZDtype(),
 }
 
 creds = utils.google.get_creds_from_env_vars()
