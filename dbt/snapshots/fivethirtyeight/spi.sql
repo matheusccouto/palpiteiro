@@ -9,6 +9,6 @@
     )
 }}
 
-select * from {{ source("fivethirtyeight", "spi") }}
+SELECT * FROM {{ source("fivethirtyeight", "spi") }}
 
 {% endsnapshot %}
