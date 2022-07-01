@@ -13,6 +13,7 @@ WITH player AS (
 ),
 ai AS (
     SELECT
+        p.id,
         p.player,
         p.club,
         p.position,
@@ -67,7 +68,7 @@ expected_to_play AS (
         participate > 0.5
 )
 SELECT
-    dp.id,
+    e2p.id,
     dp.short_nickname AS name,
     dp.photo,
     c.id AS club,
@@ -77,9 +78,10 @@ SELECT
     e2p.price_cartola,
     e2p.price_cartola_express,
     CASE
-        WHEN e2p.position = 'coach' THEN ca.points
-        ELSE e2p.points * e2p.participate
-    END AS points
+        WHEN e2p.position = 'coach' THEN round(ca.points, 2)
+        ELSE round(e2p.points * e2p.participate, 2)
+    END AS points,
+    current_timestamp AS materialized_at
 FROM
     expected_to_play e2p
     LEFT JOIN {{ ref("dim_player") }} dp ON e2p.player = dp.id
