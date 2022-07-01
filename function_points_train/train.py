@@ -1,12 +1,11 @@
 """Train machine learning model."""
 
+import json
 import os
 from dataclasses import dataclass
 
-import joblib
 import pandas as pd
 import optuna
-from google.cloud import storage
 from sklearn.compose import make_column_transformer
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.model_selection import cross_val_score
@@ -16,6 +15,7 @@ from sklearn.preprocessing import OneHotEncoder, PowerTransformer
 # Directories
 THIS_DIR = os.path.dirname(__file__)
 QUERY_PATH = os.path.join(THIS_DIR, "query.sql")
+PARAMS_PATH = os.path.join(THIS_DIR, "params.json")
 
 # Google Cloud Storage
 BUCKET_NAME = os.environ["BUCKET_NAME"]
@@ -39,9 +39,13 @@ ESTIMATOR = make_pipeline(
 N_TRIALS = None
 TIMEOUT = 60 * 60
 
-# Read training data.
+# Read query.
 with open(QUERY_PATH, encoding="utf-8") as query_file:
     QUERY = query_file.read()
+
+# Read params.
+with open(PARAMS_PATH, encoding="utf-8") as params_file:
+    PARAMS = json.load(params_file)
 
 
 @dataclass
@@ -50,6 +54,8 @@ class Objective:
 
     x: pd.DataFrame  # pylint: disable=invalid-name
     y: pd.Series  # pylint: disable=invalid-name
+    cv: int = 5  # pylint: disable=invalid-name
+    scoring: str = "neg_mean_poisson_deviance"
 
     def __call__(self, trial):
         params = {
@@ -80,8 +86,8 @@ class Objective:
             ESTIMATOR,
             self.x,
             self.y,
-            cv=5,
-            scoring="neg_mean_poisson_deviance",
+            cv=self.cv,
+            scoring=self.scoring,
         ).mean()
 
 
@@ -100,22 +106,18 @@ def tune(x, y):  # pylint: disable=invalid-name
     return study.best_params
 
 
-def train(x, y, params):  # pylint: disable=invalid-name
+def train(query):
     """Train machine learning model."""
-    ESTIMATOR.set_params(**params)
+    x, y = get_data(query)  # pylint: disable=invalid-name
+    ESTIMATOR.set_params(**PARAMS)
     ESTIMATOR.fit(x, y)
-
-    # Upload to storage.
-    blob = storage.Client().get_bucket(BUCKET_NAME).blob(MODEL_PATH)
-    with blob.open(mode="wb") as model_file:
-        joblib.dump(ESTIMATOR, model_file)
+    return ESTIMATOR
 
 
 def main(query):
     """Train machine learning model."""
     x, y = get_data(query)  # pylint: disable=invalid-name
     params = tune(x, y)
-    train(x, y, params)
 
 
 if __name__ == "__main__":
