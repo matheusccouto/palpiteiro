@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: cartola
+    tables:
+      - name: atletas
+        freshness:
+          error_after:
+            count: 1
+            period: day
+        loaded_at_field: loaded_at
+      - name: partidas
+        freshness:
+          error_after:
+            count: 1
+            period: day
+        loaded_at_field: loaded_at
+      - name: pontuados
+        freshness:
+          error_after:
+            count: 1
+            period: day
+        loaded_at_field: loaded_at
+
+  - name: fivethirtyeight
+    tables:
+      - name: spi
+        freshness:
+          error_after:
+            count: 1
+            period: day
+        loaded_at_field: loaded_at

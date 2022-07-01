@@ -1,12 +1,5 @@
 version: 2
 
-sources:
-  - name: cartola
-    tables:
-      - name: atletas
-      - name: partidas
-      - name: pontuados
-
 models:
   - name: stg_atletas_scoring
     description: Cartola players scoring for each round
