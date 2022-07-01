@@ -1,0 +1,29 @@
+name: dbt-source-main
+on:
+  schedule:
+    - cron:  '* 0/8 * * *'
+  workflow_dispatch:
+jobs:
+  dbt-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: authenticate
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          credentials_json: ${{ secrets.GCP_KEYFILE_MAIN }}
+      - name: setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: requirements
+        run: |
+          pip install --upgrade pip wheel
+          pip install dbt-bigquery
+      - name: test
+        run: dbt test --select source:* --profiles-dir . --target main
+        working-directory: ./dbt
+      - name: freshness
+        run: dbt source freshness --profiles-dir . --target main
+        working-directory: ./dbt

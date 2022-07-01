@@ -1,10 +1,5 @@
 version: 2
 
-sources:
-  - name: fivethirtyeight
-    tables:
-      - name: spi
-
 models:
   - name: stg_spi_match
     description: Brasileirão Fivethirtyeight Soccer Power Index
