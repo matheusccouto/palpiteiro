@@ -1,6 +1,7 @@
 """Unit tests for the lambda function."""
 
 import os
+import zoneinfo
 
 import pandas as pd
 import pytest
@@ -17,7 +18,9 @@ creds = utils.google.get_creds_from_env_vars()
 @pytest.fixture(name="setup_and_teardown")
 def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
-    pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0).to_gbq(
+    data=pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0)
+    data["loaded_at"] = pd.Timestamp.now(tz=zoneinfo.ZoneInfo("UTC"))
+    data.to_gbq(
         destination_table="test.test_load",
         if_exists="replace",
         credentials=creds,

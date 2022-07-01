@@ -4,6 +4,7 @@ import io
 import json
 import os
 import time
+import zoneinfo
 
 import numpy as np
 import pandas as pd
@@ -13,11 +14,13 @@ from google.cloud import bigquery
 import utils.aws.s3
 import utils.google
 
+TZ = zoneinfo.ZoneInfo("UTC")
 DTYPES = {
     "INTEGER": pd.Int64Dtype(),
     "FLOAT": "float64",
     "STRING": pd.StringDtype(),
     "BOOLEAN": pd.BooleanDtype(),
+    "TIMESTAMP": pd.DatetimeTZDtype(tz=TZ),
 }
 
 creds = utils.google.get_creds_from_env_vars()
@@ -31,7 +34,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
 
     file = utils.aws.s3.load(event["uri"])
     data = pd.read_csv(io.StringIO(file), index_col=0)
-    data["loaded_at"] = pd.Timestamp.now()
+    data["loaded_at"] = pd.Timestamp.now(tz=TZ)
     table_schema = {
         field.name: DTYPES[field.field_type]
         for field in client.get_table(table).schema
