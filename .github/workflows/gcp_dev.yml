@@ -5,6 +5,7 @@ on:
       - dev
     paths:
       - function_points
+      - function_points_train
       - ".github/workflows/gcp.yml"
       - ".github/workflows/gcp_dev.yml"
   workflow_dispatch:
@@ -12,7 +13,6 @@ jobs:
   gcp:
     uses: ./.github/workflows/gcp.yml
     with:
-      FUNCTION_NAME: points
       BUCKET_NAME: palpiteiro-dev
     secrets:
       GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_DEV }}

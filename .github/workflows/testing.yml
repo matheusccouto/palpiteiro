@@ -24,6 +24,7 @@ jobs:
       matrix:
         folder:
           - function_points
+          - function_points_train
           - lambda_draft
           - lambda_dropout
           - lambda_extract_cartola_matches

@@ -4,7 +4,6 @@ import os
 from unittest.mock import Mock
 
 import joblib
-import pandas as pd
 import pytest
 from google.cloud import storage
 
