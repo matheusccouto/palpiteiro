@@ -6,7 +6,8 @@ import os
 import joblib
 from google.cloud import storage
 
-from . import tune, utils
+import tune
+import utils
 
 THIS_DIR = os.path.dirname(__file__)
 

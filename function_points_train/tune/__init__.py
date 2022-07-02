@@ -15,13 +15,14 @@ from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder, PowerTransformer
 
-from . import utils
+import utils
 
 # Directories
 THIS_DIR = os.path.dirname(__file__)
-QUERY_TRAIN_PATH = os.path.join(THIS_DIR, "query_train.sql")
-QUERY_TEST_PATH = os.path.join(THIS_DIR, "query_test.sql")
-PARAMS_PATH = os.path.join(THIS_DIR, "params.json")
+ROOT_DIR = os.path.dirname(THIS_DIR)
+QUERY_TRAIN_PATH = os.path.join(ROOT_DIR, "query_train.sql")
+QUERY_TEST_PATH = os.path.join(ROOT_DIR, "query_test.sql")
+PARAMS_PATH = os.path.join(ROOT_DIR, "params.json")
 
 
 # MLFlows
