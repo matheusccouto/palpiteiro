@@ -2,9 +2,6 @@ name: gcp
 on:
   workflow_call:
     inputs:
-      FUNCTION_NAME:
-        required: true
-        type: string
       BUCKET_NAME:
         required: true
         type: string
