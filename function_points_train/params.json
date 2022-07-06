@@ -1,9 +1,0 @@
-{
-    "histgradientboostingregressor__learning_rate": 0.06165059216146112,
-    "histgradientboostingregressor__max_iter": 98,
-    "histgradientboostingregressor__max_leaf_nodes": 1084,
-    "histgradientboostingregressor__max_depth": 216,
-    "histgradientboostingregressor__min_samples_leaf": 168,
-    "histgradientboostingregressor__l2_regularization": 0.4765808741327817,
-    "histgradientboostingregressor__max_bins": 69
-  }

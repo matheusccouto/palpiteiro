@@ -1,0 +1,16 @@
+Pipeline:
+  steps:
+    - - transformer
+      - ColumnTransformer:
+          remainder:
+            PowerTransformer:
+          transformers:
+            - encoder
+            - OneHotEncoder:
+                sparse: false
+                handle_unknown: ignore
+            - - 0
+    - - regressor
+      - HistGradientBoostingRegressor:
+          loss: poisson
+          random_state: 0
