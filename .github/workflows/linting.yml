@@ -15,6 +15,7 @@ jobs:
           - function_points_train
           - lambda_draft
           - lambda_dropout
+          - lambda_cartola_bot
           - lambda_extract_cartola_matches
           - lambda_extract_cartola_players
           - lambda_extract_cartola_scouts
