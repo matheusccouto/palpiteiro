@@ -4,7 +4,7 @@ import logging
 import os
 from dataclasses import dataclass
 
-import mlflow
+# import mlflow
 import pandas as pd
 import optuna
 import skyaml
@@ -72,7 +72,7 @@ def get_data(query, target):
     return x, y
 
 
-def tune(pipeline, query_train, query_test, target, metric, n_trials, timeout):
+def tune(pipeline, query_train, query_test, target, metric, n_trials, timeout, output):
     """Train machine learning model."""
     # mlflow.set_tracking_uri("databricks")
     # mlflow.set_experiment(EXPERIMENT_NAME)
@@ -85,10 +85,12 @@ def tune(pipeline, query_train, query_test, target, metric, n_trials, timeout):
     # mlflow.log_artifact(pipeline, "pipeline-in.yml")
 
     logging.info("load data")
-    # mlflow.log_text(query_train, "data/sql/train.sql")
-    # mlflow.log_text(query_test, "data/sql/test.sql")
-    x_train, y_train = get_data(query_train, target)
-    x_test, y_test = get_data(query_test, target)
+    # mlflow.log_artifact(query_train, "data/sql/train.sql")
+    # mlflow.log_artifact(query_test, "data/sql/test.sql")
+    with open(query_train, encoding="utf-8") as f:
+        x_train, y_train = get_data(f.read(), target)
+    with open(query_test, encoding="utf-8") as f:
+        x_test, y_test = get_data(f.read(), target)
 
     logging.info("log data")
     # mlflow.log_param("target", target)
@@ -117,9 +119,8 @@ def tune(pipeline, query_train, query_test, target, metric, n_trials, timeout):
     score = get_scorer(metric)(pipe, x_test, y_test)
 
     logging.info("export model yaml")
-    pipeline_export_path = os.path.join(THIS_DIR, "pipeline.yml")
-    skyaml.py2yaml(pipe, pipeline_export_path)
-    # mlflow.log_artifact(pipeline_export_path, "pipeline-out.yml")
+    skyaml.py2yaml(pipe, output)
+    # mlflow.log_artifact(output, "pipeline-out.yml")
 
     logging.info("log results")
     # mlflow.log_metric(metric + "_test", score)

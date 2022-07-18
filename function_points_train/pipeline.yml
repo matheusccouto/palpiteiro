@@ -1,0 +1,22 @@
+Pipeline:
+  steps:
+  - - columntransformer
+    - ColumnTransformer:
+        remainder:
+          PowerTransformer: null
+        transformers:
+        - - onehotencoder
+          - OneHotEncoder:
+              handle_unknown: ignore
+              sparse: false
+          - - 0
+  - - histgradientboostingregressor
+    - HistGradientBoostingRegressor:
+        l2_regularization: 0.6227566149275071
+        learning_rate: 0.08270742268252944
+        loss: poisson
+        max_bins: 43
+        max_depth: 65
+        max_iter: 37
+        max_leaf_nodes: 2885
+        min_samples_leaf: 234

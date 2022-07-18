@@ -6,10 +6,16 @@ import lambda_dropout
 
 
 @pytest.fixture(name="players")
-def fixture_delete_partidas():
-    """Clear partida dir from palpiteiro-test."""
+def fixture_players():
+    """Generate synth players data."""
     yield [
-        {"id": 1, "position": "goalkeeper", "price": 1, "points": 1, "club": 1},
+        {
+            "id": 1,
+            "position": "goalkeeper",
+            "price": 1,
+            "points": 1,
+            "club": 1,
+        },
     ] * 100
 
 

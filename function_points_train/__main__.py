@@ -7,13 +7,14 @@ from utils.tune import tune
 
 THIS_DIR = os.path.dirname(__file__)
 
-PIPELINE = os.path.join(THIS_DIR, "exp.yml")
+PIPELINE = os.path.join(THIS_DIR, "xp.yml")
 QUERY_TRAIN = os.path.join(THIS_DIR, "query_train.sql")
 QUERY_TEST = os.path.join(THIS_DIR, "query_test.sql")
 TARGET = "total_points"
 METRIC = "neg_mean_poisson_deviance"
 N_TRIALS = 100
 TIMEOUT = None
+OUTPUT = os.path.join(THIS_DIR, "pipeline.yml")
 
 if __name__ == "__main__":
 
@@ -23,8 +24,9 @@ if __name__ == "__main__":
     parser.add_argument("--query-test", default=QUERY_TEST)
     parser.add_argument("--target", default=TARGET)
     parser.add_argument("--metric", default=METRIC)
-    parser.add_argument("--n-trials", default=N_TRIALS)
-    parser.add_argument("--timeout", default=TIMEOUT)
+    parser.add_argument("--n-trials", default=N_TRIALS, type=int)
+    parser.add_argument("--timeout", default=TIMEOUT, type=int)
+    parser.add_argument("--output", default=OUTPUT)
     args = parser.parse_args()
 
     tune(
@@ -35,4 +37,5 @@ if __name__ == "__main__":
         metric=args.metric,
         n_trials=args.n_trials,
         timeout=args.timeout,
+        output=args.output,
     )
