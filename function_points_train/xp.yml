@@ -1,0 +1,15 @@
+Pipeline:
+  steps:
+    - - columntransformer
+      - ColumnTransformer:
+          remainder:
+            PowerTransformer: null
+          transformers:
+            - - onehotencoder
+              - OneHotEncoder:
+                  handle_unknown: ignore
+                  sparse: false
+              - - 0
+    - - histgradientboostingregressor
+      - HistGradientBoostingRegressor:
+          loss: poisson
