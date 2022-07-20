@@ -399,29 +399,29 @@ stepFunctions:
                 players.$: "$.output.Payload"
             OutputPath: "$.Payload"
             End: true
-      cartola-bot:
-        Comment: Line-up bot for Cartola
-        StartAt: Draft
-        States:
-          Draft:
-            Type: Task
-            End: true
-            Parameters:
-              StateMachineArn: arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:draft-${opt:stage}
-              Input:
-                game: cartola
-                scheme:
-                  goalkeeper: 1
-                  fullback: 2
-                  defender: 2
-                  midfielder: 3
-                  forward: 3
-                  coach: 1
-                price: 140
-                max_players_per_club: 5
-                bench: true
-                dropout: 0.0
-            Resource: arn:aws:states:::aws-sdk:sfn:startSyncExecution
+    cartola-bot:
+      Comment: Line-up bot for Cartola
+      StartAt: Draft
+      States:
+        Draft:
+          Type: Task
+          End: true
+          Parameters:
+            StateMachineArn: arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:draft-${opt:stage}
+            Input:
+              game: cartola
+              scheme:
+                goalkeeper: 1
+                fullback: 2
+                defender: 2
+                midfielder: 3
+                forward: 3
+                coach: 1
+              price: 140
+              max_players_per_club: 5
+              bench: true
+              dropout: 0.0
+          Resource: arn:aws:states:::aws-sdk:sfn:startSyncExecution
 resources:
   Resources:
     SNSTopic:
