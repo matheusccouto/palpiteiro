@@ -201,7 +201,7 @@ layers:
       artifact: layer_pandas.zip
 stepFunctions:
   stateMachines:
-    ${self:service}-extract-cartola-players-stepfunc:
+    palpiteiro-extract-cartola-players-stepfunc:
       name: extract_cartola_players-${opt:stage}
       role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
       events:
@@ -237,7 +237,7 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    ${self:service}-extract-cartola-scouts-stepfunc:
+    palpiteiro-extract-cartola-scouts-stepfunc:
       name: extract_cartola_scouts-${opt:stage}
       role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
       events:
@@ -273,7 +273,7 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    ${self:service}-extract-cartola-matches-stepfunc:
+    palpiteiro-extract-cartola-matches-stepfunc:
       name: extract_cartola_matches-${opt:stage}
       role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
       events:
@@ -307,7 +307,7 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    ${self:service}-extract-fivethirtyeight-spi-stepfunc:
+    palpiteiro-extract-fivethirtyeight-spi-stepfunc:
       name: extract_fivethirtyeight_spi-${opt:stage}
       role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
       events:
@@ -339,7 +339,7 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    ${self:service}-draft:
+    palpiteiro-draft:
       name: draft-${opt:stage}
       role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
       type: EXPRESS
@@ -414,7 +414,7 @@ stepFunctions:
                 players.$: "$.output.Payload"
             OutputPath: "$.Payload"
             End: true
-    ${self:service}-cartola-bot:
+    palpiteiro-cartola-bot:
       name: cartola-bot-${opt:stage}
       role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
       definition:
@@ -432,7 +432,7 @@ stepFunctions:
             Type: Task
             End: true
             Parameters:
-              StateMachineArn: arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:${self:service}-draft-${opt:stage}
+              StateMachineArn: arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:palpiteiro-draft-${opt:stage}
               Input:
                 game: cartola
                 scheme:
@@ -452,7 +452,7 @@ resources:
     SNSTopic:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ${self:service}-${opt:stage}
+        TopicName: palpiteiro-${opt:stage}
         Subscription:
           - Protocol: email
             Endpoint: matheusccouto@gmail.com
