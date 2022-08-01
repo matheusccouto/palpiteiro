@@ -430,7 +430,7 @@ stepFunctions:
                 Fn::GetAtt: [cartola-budget, Arn]
           Draft:
             Type: Task
-            End: true
+            Next: Submit
             Parameters:
               StateMachineArn: arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:palpiteiro-draft-${opt:stage}
               Input:
@@ -447,6 +447,14 @@ stepFunctions:
                 bench: true
                 dropout: 0.0
             Resource: arn:aws:states:::aws-sdk:sfn:startSyncExecution
+          Submit:
+            Type: Task
+            End: true
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [cartola-bot, Arn]
+            InputPath: $.Output
 resources:
   Resources:
     SNSTopic:
