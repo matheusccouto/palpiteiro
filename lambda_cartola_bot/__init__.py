@@ -4,8 +4,6 @@ import os
 
 import utils.http
 
-# USERNAME = os.environ["GLOBO_USERNAME"]
-# PASSWORD = os.environ["GLOBO_PASSWORD"]
 GLBID = os.environ["GLBID"]
 HEADERS = {"Content-Type": "application/json", "X-GLB-Token": GLBID}
 
@@ -19,22 +17,8 @@ POSITION = {
 }
 
 
-def authenticate(email, password):
-    """Authenticate globo.com"""
-    return utils.http.post(
-        "https://login.globo.com/api/authentication",
-        body=dict(
-            captcha="",
-            payload=dict(email=email, password=password, serviceId=4728),
-        ),
-        headers=HEADERS,
-        parse_json=False,
-    )
-
-
 def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
-    # authenticate(USERNAME, PASSWORD)
     return utils.http.post(
         "https://api.cartolafc.globo.com/auth/time/salvar",
         body={

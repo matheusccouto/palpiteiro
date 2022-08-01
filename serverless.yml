@@ -47,6 +47,16 @@ functions:
     package:
       patterns:
         - "lambda_dropout/**/*.py"
+  cartola-budget:
+    handler: lambda_cartola_budget.handler
+    description: Bot for getting available budget for my Cartola team.
+    runtime: python3.9
+    memorySize: 128 # megabytes
+    package:
+      patterns:
+        - "lambda_cartola_budget/**/*.py"
+    environment:
+      GLBID: ${env:GLBID}
   cartola-bot:
     handler: lambda_cartola_bot.handler
     description: Bot for submitting Cartola FC line up.
@@ -403,8 +413,15 @@ stepFunctions:
       name: cartola-bot-${opt:stage}
       definition:
         Comment: Line-up bot for Cartola
-        StartAt: Draft
+        StartAt: Budget
         States:
+          Budget:
+            Type: Task
+            Next: Draft
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [cartola-budget, Arn]
           Draft:
             Type: Task
             End: true
@@ -419,7 +436,7 @@ stepFunctions:
                   midfielder: 3
                   forward: 3
                   coach: 1
-                price: 140
+                price.$: $.budget
                 max_players_per_club: 5
                 bench: true
                 dropout: 0.0
