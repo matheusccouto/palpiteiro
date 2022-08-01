@@ -203,7 +203,7 @@ stepFunctions:
   stateMachines:
     palpiteiro-extract-cartola-players-stepfunc:
       name: extract_cartola_players-${opt:stage}
-      role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
