@@ -239,7 +239,7 @@ stepFunctions:
             End: true
     palpiteiro-extract-cartola-scouts-stepfunc:
       name: extract_cartola_scouts-${opt:stage}
-      role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -275,7 +275,7 @@ stepFunctions:
             End: true
     palpiteiro-extract-cartola-matches-stepfunc:
       name: extract_cartola_matches-${opt:stage}
-      role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -309,7 +309,7 @@ stepFunctions:
             End: true
     palpiteiro-extract-fivethirtyeight-spi-stepfunc:
       name: extract_fivethirtyeight_spi-${opt:stage}
-      role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -341,7 +341,7 @@ stepFunctions:
             End: true
     palpiteiro-draft:
       name: draft-${opt:stage}
-      role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       type: EXPRESS
       events:
         - http:
@@ -416,7 +416,7 @@ stepFunctions:
             End: true
     palpiteiro-cartola-bot:
       name: cartola-bot-${opt:stage}
-      role: arn:aws:iam:${self:provider.region}:${aws:accountId}:role/palpiteiro-step-functions
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       definition:
         Comment: Line-up bot for Cartola
         StartAt: Budget
