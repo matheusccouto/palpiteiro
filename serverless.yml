@@ -454,6 +454,7 @@ stepFunctions:
             Parameters:
               FunctionName:
                 Fn::GetAtt: [cartola-bot, Arn]
+              Payload.$: $
             InputPath: $.Output
 resources:
   Resources:
