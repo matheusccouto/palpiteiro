@@ -201,8 +201,8 @@ layers:
       artifact: layer_pandas.zip
 stepFunctions:
   stateMachines:
-    palpiteiro-extract-cartola-players-stepfunc:
-      name: extract_cartola_players-${opt:stage}
+    palpiteiro-extract-cartola-players:
+      name: palpiteiro-extract_cartola_players-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
@@ -237,8 +237,8 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    palpiteiro-extract-cartola-scouts-stepfunc:
-      name: extract_cartola_scouts-${opt:stage}
+    palpiteiro-extract-cartola-scouts:
+      name: palpiteiro-extract_cartola_scouts-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
@@ -273,8 +273,8 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    palpiteiro-extract-cartola-matches-stepfunc:
-      name: extract_cartola_matches-${opt:stage}
+    palpiteiro-extract-cartola-matches:
+      name: palpiteiro-extract_cartola_matches-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
@@ -307,8 +307,8 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    palpiteiro-extract-fivethirtyeight-spi-stepfunc:
-      name: extract_fivethirtyeight_spi-${opt:stage}
+    palpiteiro-extract-fivethirtyeight-spi:
+      name: palpiteiro-extract_fivethirtyeight_spi-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
@@ -340,7 +340,7 @@ stepFunctions:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
     palpiteiro-draft:
-      name: draft-${opt:stage}
+      name: palpiteiro-draft-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       type: EXPRESS
       events:
@@ -415,7 +415,7 @@ stepFunctions:
             OutputPath: "$.Payload"
             End: true
     palpiteiro-cartola-bot:
-      name: cartola-bot-${opt:stage}
+      name: palpiteiro-cartola-bot-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       definition:
         Comment: Line-up bot for Cartola
