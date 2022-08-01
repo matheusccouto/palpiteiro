@@ -436,7 +436,7 @@ stepFunctions:
                   midfielder: 3
                   forward: 3
                   coach: 1
-                price.$: $.budget
+                price.$: $.Payload.budget
                 max_players_per_club: 5
                 bench: true
                 dropout: 0.0
