@@ -417,6 +417,8 @@ stepFunctions:
     palpiteiro-cartola-bot:
       name: palpiteiro-cartola-bot-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
+      events:
+        - schedule: rate(8 hours)
       definition:
         Comment: Line-up bot for Cartola
         StartAt: Budget
