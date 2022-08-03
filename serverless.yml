@@ -366,6 +366,9 @@ stepFunctions:
               - Variable: "$.game"
                 StringEquals: cartola-express
                 Next: Cartola Express
+              - Variable: "$.game"
+                StringEquals: custom
+                Next: Custom
             Default: Cartola
           Cartola Express:
             Type: Pass
@@ -379,6 +382,9 @@ stepFunctions:
             Result:
               query: SELECT * EXCEPT (materialized_at), price_cartola AS price FROM palpiteiro.dim_player_last
             ResultPath: "$.output"
+          Custom:
+            Type: Pass
+            Next: Dropout
           Read Google Big Query:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke

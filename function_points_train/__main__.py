@@ -88,4 +88,7 @@ if __name__ == "__main__":
     logging.info("Score %s", score)
     wandb.log({"score": score})
 
+    wandb.sklearn.plot_regressor(estimator, x_train, x_test, y_train, y_test, model_name="test")
+    wandb.finish()
+
     logging.info("Run URL: %s", wandb.run.get_url())
