@@ -1,3 +1,7 @@
+# Experiments Tracking
+xp-out.yml
+wandb/
+
 # Streamlit
 secrets.toml
 
