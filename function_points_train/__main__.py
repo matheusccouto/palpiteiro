@@ -1,10 +1,12 @@
 """CLI for training points model."""
 
 import argparse
+import json
 import logging
 import os
 import sys
 
+import requests
 import sktune
 import wandb
 from sklearn.metrics import get_scorer
@@ -33,7 +35,33 @@ logging.basicConfig(
 )
 
 # WandB
-os.environ['WANDB_SILENT'] = "true"
+os.environ["WANDB_SILENT"] = "true"
+
+# Draft API
+DRAFT_URL = os.environ["DRAFT_URL"]
+DRAFT_KEY = os.environ["DRAFT_KEY"]
+
+
+def draft(data, scheme, budget, max_players_per_club, dropout):
+    """Simulate a Cartola FC season."""
+    body = {
+        "game": "custom",
+        "scheme": scheme,
+        "price": budget,
+        "max_players_per_club": max_players_per_club,
+        "bench": False,
+        "dropout": dropout,
+        "output": {"Payload": data.to_dict(orient="records")},
+    }
+    res = requests.post(
+        DRAFT_URL,
+        params={"Content-Type": "application/json", "x-api-key": DRAFT_KEY},
+        data=json.dumps(body),
+    )
+    if res.status_code >= 300:
+        raise ValueError(res.text)
+    return sum(p["actual_points"] for p in json.loads(res.content.decode())["players"])
+
 
 if __name__ == "__main__":
 
@@ -91,7 +119,14 @@ if __name__ == "__main__":
     logging.info("Score %s", score)
     wandb.log({"score": score})
 
-    wandb.sklearn.plot_regressor(estimator, x_train, x_test, y_train, y_test, model_name="test")
+    wandb.sklearn.plot_regressor(
+        estimator,
+        x_train,
+        x_test,
+        y_train,
+        y_test,
+        model_name="test",
+    )
     wandb.finish()
 
     logging.info("Run URL: %s", wandb.run.get_url())
