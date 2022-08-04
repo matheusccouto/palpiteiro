@@ -54,7 +54,7 @@ def test_price(event):
     """Test resulting price."""
     event["price"] = 50
     results = lambda_draft.handler(event=event, context=None)
-    assert sum(p["price"] for p in results["players"]) <= 50
+    assert round(sum(p["price"] for p in results["players"])) <= 50
 
 
 def test_few_players(event):
