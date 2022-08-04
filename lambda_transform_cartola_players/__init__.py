@@ -18,6 +18,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     data = data["atletas"]
     for row in data:
         row.update(row.pop("scout"))
+        row.update(row.pop("gato_mestre"))
 
     # Save as CSV
     uri = os.path.splitext(event["uri"])[0] + ".csv"

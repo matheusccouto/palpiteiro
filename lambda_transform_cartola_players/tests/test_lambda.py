@@ -17,7 +17,7 @@ def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
     with open(os.path.join(THIS_DIR, "sample.json"), encoding="utf-8") as file:
         utils.aws.s3.save(
-            file.read(), "s3://palpiteiro-test/atletas/mercado/2022-05.json"
+            file.read(), "s3://palpiteiro-test/atletas/mercado/2022-20.json"
         )
     yield
     utils.aws.s3.delete("s3://palpiteiro-test/atletas/mercado")
@@ -26,14 +26,14 @@ def fixture_setup_and_teardown():
 def test_uri(setup_and_teardown):  # pylint: disable=unused-argument
     """Test if lambda handler return the file URI."""
     results = lambda_transform_cartola_players.handler(
-        event={"uri": "s3://palpiteiro-test/atletas/mercado/2022-05.json"},
+        event={"uri": "s3://palpiteiro-test/atletas/mercado/2022-20.json"},
     )
-    assert fnmatch(results["uri"], "s3://palpiteiro-test/atletas/mercado/2022-05.csv")
+    assert fnmatch(results["uri"], "s3://palpiteiro-test/atletas/mercado/2022-20.csv")
 
 
 def test_exists(setup_and_teardown):  # pylint: disable=unused-argument
     """Test if CSV file exists."""
     results = lambda_transform_cartola_players.handler(
-        event={"uri": "s3://palpiteiro-test/atletas/mercado/2022-05.json"}
+        event={"uri": "s3://palpiteiro-test/atletas/mercado/2022-20.json"}
     )
     assert utils.aws.s3.exists(results["uri"])

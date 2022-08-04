@@ -19,13 +19,16 @@ jobs:
       GCP_SERVICE_ACCOUNT_TOKEN_URI: https://oauth2.googleapis.com/token
       GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
       GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}
+      GLBID: ${{ secrets.GLBID }}
     strategy:
       fail-fast: false
       matrix:
         folder:
           - function_points
+          - function_points_train
           - lambda_draft
           - lambda_dropout
+          - lambda_cartola_bot
           - lambda_extract_cartola_matches
           - lambda_extract_cartola_players
           - lambda_extract_cartola_scouts

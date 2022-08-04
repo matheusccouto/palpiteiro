@@ -47,6 +47,26 @@ functions:
     package:
       patterns:
         - "lambda_dropout/**/*.py"
+  cartola-budget:
+    handler: lambda_cartola_budget.handler
+    description: Bot for getting available budget for my Cartola team.
+    runtime: python3.9
+    memorySize: 128 # megabytes
+    package:
+      patterns:
+        - "lambda_cartola_budget/**/*.py"
+    environment:
+      GLBID: ${env:GLBID}
+  cartola-bot:
+    handler: lambda_cartola_bot.handler
+    description: Bot for submitting Cartola FC line up.
+    runtime: python3.9
+    memorySize: 128 # megabytes
+    package:
+      patterns:
+        - "lambda_cartola_bot/**/*.py"
+    environment:
+      GLBID: ${env:GLBID}
   extract-cartola-players:
     handler: lambda_extract_cartola_players.handler
     description: Extract players data from Cartola FC to JSON.
@@ -181,8 +201,9 @@ layers:
       artifact: layer_pandas.zip
 stepFunctions:
   stateMachines:
-    extract-cartola-players-stepfunc:
-      name: extract_cartola_players-${opt:stage}
+    palpiteiro-extract-cartola-players:
+      name: palpiteiro-extract_cartola_players-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -216,8 +237,9 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    extract-cartola-scouts-stepfunc:
-      name: extract_cartola_scouts-${opt:stage}
+    palpiteiro-extract-cartola-scouts:
+      name: palpiteiro-extract_cartola_scouts-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -251,8 +273,9 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    extract-cartola-matches-stepfunc:
-      name: extract_cartola_matches-${opt:stage}
+    palpiteiro-extract-cartola-matches:
+      name: palpiteiro-extract_cartola_matches-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -284,8 +307,9 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    extract-fivethirtyeight-spi-stepfunc:
-      name: extract_fivethirtyeight_spi-${opt:stage}
+    palpiteiro-extract-fivethirtyeight-spi:
+      name: palpiteiro-extract_fivethirtyeight_spi-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
         - schedule: rate(8 hours)
       alarms:
@@ -315,8 +339,9 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
-    draft:
-      name: draft-${opt:stage}
+    palpiteiro-draft:
+      name: palpiteiro-draft-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       type: EXPRESS
       events:
         - http:
@@ -341,6 +366,9 @@ stepFunctions:
               - Variable: "$.game"
                 StringEquals: cartola-express
                 Next: Cartola Express
+              - Variable: "$.game"
+                StringEquals: custom
+                Next: Custom
             Default: Cartola
           Cartola Express:
             Type: Pass
@@ -354,6 +382,9 @@ stepFunctions:
             Result:
               query: SELECT * EXCEPT (materialized_at), price_cartola AS price FROM palpiteiro.dim_player_last
             ResultPath: "$.output"
+          Custom:
+            Type: Pass
+            Next: Dropout
           Read Google Big Query:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
@@ -389,12 +420,56 @@ stepFunctions:
                 players.$: "$.output.Payload"
             OutputPath: "$.Payload"
             End: true
+    palpiteiro-cartola-bot:
+      name: palpiteiro-cartola-bot-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
+      events:
+        - schedule: rate(8 hours)
+      definition:
+        Comment: Line-up bot for Cartola
+        StartAt: Budget
+        States:
+          Budget:
+            Type: Task
+            Next: Draft
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [cartola-budget, Arn]
+          Draft:
+            Type: Task
+            Next: Submit
+            Parameters:
+              StateMachineArn: arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:palpiteiro-draft-${opt:stage}
+              Input:
+                game: cartola
+                scheme:
+                  goalkeeper: 1
+                  fullback: 2
+                  defender: 2
+                  midfielder: 3
+                  forward: 3
+                  coach: 1
+                price.$: $.Payload.budget
+                max_players_per_club: 5
+                bench: true
+                dropout: 0.0
+            Resource: arn:aws:states:::aws-sdk:sfn:startSyncExecution
+          Submit:
+            Type: Task
+            End: true
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [cartola-bot, Arn]
+              Payload.$: $
+            InputPath: $.Output
 resources:
   Resources:
     SNSTopic:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ${self:service}-${opt:stage}
+        TopicName: palpiteiro-${opt:stage}
         Subscription:
           - Protocol: email
             Endpoint: matheusccouto@gmail.com
