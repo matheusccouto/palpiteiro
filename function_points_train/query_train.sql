@@ -1,4 +1,5 @@
 SELECT
+    id,
     position,
     total_points_last_5,
     offensive_points_last_5,

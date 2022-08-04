@@ -18,6 +18,7 @@ ESTIMATOR = os.path.join(THIS_DIR, "xp-in.yml")
 QUERY_TRAIN = os.path.join(THIS_DIR, "query_train.sql")
 QUERY_TEST = os.path.join(THIS_DIR, "query_test.sql")
 TARGET = "total_points"
+INDEX = "id"
 METRIC = "neg_mean_poisson_deviance"
 DIRECTION = "maximize"
 N_TRIALS = 100
@@ -41,6 +42,7 @@ if __name__ == "__main__":
     parser.add_argument("--query-train", default=QUERY_TRAIN)
     parser.add_argument("--query-test", default=QUERY_TEST)
     parser.add_argument("--target", default=TARGET)
+    parser.add_argument("--index", default=INDEX)
     parser.add_argument("--metric", default=METRIC)
     parser.add_argument("--direction", default=DIRECTION)
     parser.add_argument("--n-trials", default=N_TRIALS, type=int)
@@ -53,6 +55,7 @@ if __name__ == "__main__":
     wandb.log(
         {
             "target": args.target,
+            "index": args.index,
             "metric": args.metric,
             "direction": args.direction,
             "n-trials": args.n_trials,
@@ -63,9 +66,9 @@ if __name__ == "__main__":
     wandb.save(args.query_train)
     wandb.save(args.query_test)
     logging.info("Get training data")
-    x_train, y_train = get_data(args.query_train, args.target)
+    x_train, y_train = get_data(args.query_train, args.target, args.index)
     logging.info("Get testing data")
-    x_test, y_test = get_data(args.query_test, args.target)
+    x_test, y_test = get_data(args.query_test, args.target, args.index)
 
     wandb.save(args.estimator)
     logging.info("Start tuning")
