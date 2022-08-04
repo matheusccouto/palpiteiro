@@ -35,4 +35,4 @@ def event_fixture():
 def test_bot(event):
     """Test if JSON file exists."""
     res = lambda_cartola_bot.handler(event=event, context=None)
-    assert res["mensagem"] != "Usuário não autorizado"	
+    assert res["mensagem"] != "Usuário não autorizado"
