@@ -1,12 +1,14 @@
 SELECT
     id,
+    player,
     club,
     position,
+    all_time_round,
     price_cartola_express AS price,
-    points AS actual_points,
+    total_points AS actual_points,
 FROM
     palpiteiro.fct_player
 WHERE
-    status == 'expected'
+    status = 'expected'
     AND position != 'coach'
-    AND id IN {players_ids}
+    AND id IN ({players_ids})
