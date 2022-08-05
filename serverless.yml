@@ -355,7 +355,7 @@ stepFunctions:
                   #set( $body = $util.escapeJavaScript($input.json('$')).replaceAll("\\'", "'") )
                   {
                     "input": "$body",
-                    "stateMachineArn": "arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:draft-${opt:stage}"
+                    "stateMachineArn": "arn:aws:states:${self:provider.region}:${aws:accountId}:stateMachine:palpiteiro-draft-${opt:stage}"
                   }
       definition:
         StartAt: Choice

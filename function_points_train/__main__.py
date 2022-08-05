@@ -5,7 +5,9 @@ import json
 import logging
 import os
 import sys
+from decimal import Decimal
 
+import pandas as pd
 import requests
 import sktune
 import wandb
@@ -19,11 +21,12 @@ THIS_DIR = os.path.dirname(__file__)
 ESTIMATOR = os.path.join(THIS_DIR, "xp-in.yml")
 QUERY_TRAIN = os.path.join(THIS_DIR, "query_train.sql")
 QUERY_TEST = os.path.join(THIS_DIR, "query_test.sql")
+QUERY_DRAFT = os.path.join(THIS_DIR, "query_draft.sql")
 TARGET = "total_points"
 INDEX = "id"
 METRIC = "neg_mean_poisson_deviance"
 DIRECTION = "maximize"
-N_TRIALS = 100
+N_TRIALS = 1
 TIMEOUT = None
 OUTPUT = os.path.join(THIS_DIR, "xp-out.yml")
 
@@ -42,12 +45,38 @@ DRAFT_URL = os.environ["DRAFT_URL"]
 DRAFT_KEY = os.environ["DRAFT_KEY"]
 
 
-def draft(data, scheme, budget, max_players_per_club, dropout):
+def get_draft_data(path, players_ids):
+    """Get draft data."""
+    with open(path, encoding="utf-8") as file:
+        query = file.read()
+    query = query.format(players_ids=",".join(map(str, players_ids)))
+    return pd.read_gbq(query, index_col="id")
+
+
+class DecimalEncoder(json.JSONEncoder):
+    """Decimal encoder for JSON."""
+
+    def default(self, obj):
+        """Encode Decimal."""
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return json.JSONEncoder.default(self, obj)
+
+
+def draft(data, max_players_per_club, dropout):
     """Simulate a Cartola FC season."""
+    scheme = {
+        "goalkeeper": 1,
+        "fullback": 2,
+        "defender": 2,
+        "midfielder": 3,
+        "forward": 3,
+        "coach": 0,
+    }
     body = {
         "game": "custom",
         "scheme": scheme,
-        "price": budget,
+        "price": 140,
         "max_players_per_club": max_players_per_club,
         "bench": False,
         "dropout": dropout,
@@ -56,7 +85,7 @@ def draft(data, scheme, budget, max_players_per_club, dropout):
     res = requests.post(
         DRAFT_URL,
         params={"Content-Type": "application/json", "x-api-key": DRAFT_KEY},
-        data=json.dumps(body),
+        data=json.dumps(body, cls=DecimalEncoder),
     )
     if res.status_code >= 300:
         raise ValueError(res.text)
@@ -119,14 +148,14 @@ if __name__ == "__main__":
     logging.info("Score %s", score)
     wandb.log({"score": score})
 
-    wandb.sklearn.plot_regressor(
-        estimator,
-        x_train,
-        x_test,
-        y_train,
-        y_test,
-        model_name="test",
+    logging.info("Get draft data")
+
+    draft_data = get_draft_data(QUERY_DRAFT, x_test.index).convert_dtypes()
+    y_pred = pd.Series(
+        estimator.predict(x_test), index=x_test.index, name="expected_points"
     )
-    wandb.finish()
+    draft_data = draft_data.join(y_pred)
+    points = draft(draft_data, max_players_per_club=5, dropout=0.1)
+    logging.info("Points %s", points)
 
     logging.info("Run URL: %s", wandb.run.get_url())
