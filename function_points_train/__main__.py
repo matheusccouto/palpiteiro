@@ -7,10 +7,12 @@ import os
 import sys
 from decimal import Decimal
 
+import numpy as np
 import pandas as pd
 import requests
 import sktune
 import wandb
+from sklearn.inspection import permutation_importance
 from sklearn.metrics import get_scorer
 
 from .main import get_data
@@ -24,6 +26,9 @@ QUERY_TEST = os.path.join(THIS_DIR, "query_test.sql")
 QUERY_DRAFT = os.path.join(THIS_DIR, "query_draft.sql")
 TARGET = "total_points"
 INDEX = "id"
+MAX_PLAYERS_PER_CLUB = 5
+DROPOUT = 0.333
+TIMES = 10
 METRIC = "neg_mean_poisson_deviance"
 DIRECTION = "maximize"
 N_TRIALS = 1
@@ -40,6 +45,9 @@ logging.basicConfig(
 # WandB
 os.environ["WANDB_SILENT"] = "true"
 
+# Pandas
+pd.set_option("mode.chained_assignment", None)
+
 # Draft API
 DRAFT_URL = os.environ["DRAFT_URL"]
 DRAFT_KEY = os.environ["DRAFT_KEY"]
@@ -50,17 +58,17 @@ def get_draft_data(path, players_ids):
     with open(path, encoding="utf-8") as file:
         query = file.read()
     query = query.format(players_ids=",".join(map(str, players_ids)))
-    return pd.read_gbq(query, index_col="id")
+    return pd.read_gbq(query, index_col="play_id")
 
 
 class DecimalEncoder(json.JSONEncoder):
     """Decimal encoder for JSON."""
 
-    def default(self, obj):
+    def default(self, o):
         """Encode Decimal."""
-        if isinstance(obj, Decimal):
-            return float(obj)
-        return json.JSONEncoder.default(self, obj)
+        if isinstance(o, Decimal):
+            return float(o)
+        return json.JSONEncoder.default(self, o)
 
 
 def draft(data, max_players_per_club, dropout):
@@ -84,12 +92,17 @@ def draft(data, max_players_per_club, dropout):
     }
     res = requests.post(
         DRAFT_URL,
-        params={"Content-Type": "application/json", "x-api-key": DRAFT_KEY},
+        headers={"Content-Type": "application/json", "x-api-key": DRAFT_KEY},
         data=json.dumps(body, cls=DecimalEncoder),
     )
     if res.status_code >= 300:
         raise ValueError(res.text)
-    return sum(p["actual_points"] for p in json.loads(res.content.decode())["players"])
+
+    content = json.loads(res.content.decode())
+    if content["status"] == "FAILED":
+        raise ValueError(content["cause"])
+
+    return sum(p["actual_points"] for p in json.loads(content["output"])["players"])
 
 
 if __name__ == "__main__":
@@ -100,6 +113,9 @@ if __name__ == "__main__":
     parser.add_argument("--query-test", default=QUERY_TEST)
     parser.add_argument("--target", default=TARGET)
     parser.add_argument("--index", default=INDEX)
+    parser.add_argument("--max-players-per-club", default=MAX_PLAYERS_PER_CLUB)
+    parser.add_argument("--dropout", default=DROPOUT)
+    parser.add_argument("--times", default=TIMES)
     parser.add_argument("--metric", default=METRIC)
     parser.add_argument("--direction", default=DIRECTION)
     parser.add_argument("--n-trials", default=N_TRIALS, type=int)
@@ -148,14 +164,68 @@ if __name__ == "__main__":
     logging.info("Score %s", score)
     wandb.log({"score": score})
 
+    
+    logging.info("Calculate importances.")
+    importances = pd.Series(
+        permutation_importance(
+            estimator,
+            x_test,
+            y_test,
+            scoring=args.metric,
+        )["importances_mean"],
+        index=x_test.columns,
+    ).sort_values(ascending=False)
+    wandb.log({"importances": importances.to_dict()})
+
     logging.info("Get draft data")
 
     draft_data = get_draft_data(QUERY_DRAFT, x_test.index).convert_dtypes()
     y_pred = pd.Series(
-        estimator.predict(x_test), index=x_test.index, name="expected_points"
+        estimator.predict(x_test),
+        index=x_test.index,
+        name="points",
     )
     draft_data = draft_data.join(y_pred)
-    points = draft(draft_data, max_players_per_club=5, dropout=0.1)
-    logging.info("Points %s", points)
 
+    sim = {}
+    ref = {}
+    for all_time_round in sorted(draft_data["all_time_round"].unique()):
+        rnd_data = draft_data[draft_data["all_time_round"] == all_time_round]
+        sim[all_time_round] = [
+            draft(
+                rnd_data,
+                max_players_per_club=args.max_players_per_club,
+                dropout=args.dropout,
+            )
+            for _ in range(args.times)
+        ]
+        rnd_data["points"] = rnd_data["actual_points"]
+        ref[all_time_round] = draft(
+            rnd_data,
+            max_players_per_club=args.max_players_per_club,
+            dropout=args.dropout,
+        )
+        logging.info(
+            "Round %03d - Avg: %.1f Std: %.1f Max: %.1f Min: %.1f Ref: %.1f",
+            all_time_round,
+            np.mean(sim[all_time_round]),
+            np.std(sim[all_time_round]),
+            max(sim[all_time_round]),
+            min(sim[all_time_round]),
+            ref[all_time_round],
+        )
+
+    mean_normalized_score_mean = np.mean([np.mean(sim[i]) / ref[i] for i in sim.keys()])
+    std_normalized_score_mean = np.std([np.mean(sim[i]) / ref[i] for i in sim.keys()])
+    mean_normalized_score_std = np.mean([np.std(sim[i]) / ref[i] for i in sim.keys()])
+    std_normalized_mean_std = np.std([np.std(sim[i]) / ref[i] for i in sim.keys()])
+
+    wandb.log(
+        {
+            "mean_normalized_score_mean": mean_normalized_score_mean,
+            "std_normalized_score_mean": std_normalized_score_mean,
+            "mean_normalized_score_std": mean_normalized_score_std,
+            "std_normalized_mean_std": std_normalized_mean_std,
+        }
+    )
     logging.info("Run URL: %s", wandb.run.get_url())

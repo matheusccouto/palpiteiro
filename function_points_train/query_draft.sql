@@ -1,6 +1,6 @@
 SELECT
-    id,
-    player,
+    id AS play_id,
+    player AS id,
     club,
     position,
     all_time_round,

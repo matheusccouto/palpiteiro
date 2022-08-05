@@ -13,3 +13,34 @@ Pipeline:
     - - histgradientboostingregressor
       - HistGradientBoostingRegressor:
           loss: poisson
+          learning_rate:
+            float:
+              low: 0.001
+              high: 1
+              log: true
+          max_iter:
+            int:
+              low: 10
+              high: 100
+              log: true
+          max_leaf_nodes:
+            int:
+              low: 16
+              high: 2048
+          max_depth:
+            int:
+              low: 2
+              high: 128
+          min_samples_leaf:
+            int:
+              low: 2
+              high: 512
+          l2_regularization:
+            float:
+              low: 0.001
+              high: 10
+              log: true
+          max_bins:
+            int:
+              low: 2
+              high: 255
