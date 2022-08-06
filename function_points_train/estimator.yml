@@ -12,4 +12,10 @@ Pipeline:
           - - 0
   - - histgradientboostingregressor
     - HistGradientBoostingRegressor:
+        l2_regularization: 0.12763263938300864
+        learning_rate: 0.10815045385423666
         loss: poisson
+        max_bins: 172
+        max_depth: 37
+        max_leaf_nodes: 1154
+        min_samples_leaf: 302

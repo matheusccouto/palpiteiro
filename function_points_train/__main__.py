@@ -185,12 +185,13 @@ if __name__ == "__main__":
         data=list(importances.iteritems()),
         columns=["feature", "importance"],
     )
-    importance_plot = wandb.plot.bar(
+    plot = wandb.plot.bar(
         table,
         label="feature",
         value="importance",
         title="Permutation Importance",
     )
+    wandb.log({"feature_importances": plot})
 
 
     # Draft simulation
