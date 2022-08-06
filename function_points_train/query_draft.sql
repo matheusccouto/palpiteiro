@@ -9,6 +9,6 @@ SELECT
 FROM
     palpiteiro.fct_player
 WHERE
-    status = 'expected'
+    played IS TRUE
     AND position != 'coach'
     AND id IN ({players_ids})

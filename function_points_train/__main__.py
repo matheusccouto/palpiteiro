@@ -138,6 +138,10 @@ if __name__ == "__main__":
 
     wandb.save(args.query_train)
     wandb.save(args.query_test)
+
+
+    # Tuning
+
     logging.info("Get training data")
     x_train, y_train = get_data(args.query_train, args.target, args.index)
     logging.info("Get testing data")
@@ -162,10 +166,12 @@ if __name__ == "__main__":
 
     score = get_scorer(args.metric)(estimator, x_test, y_test)
     logging.info("Score %s", score)
-    wandb.log({"score": score})
+    wandb.log({args.metric: score})
 
-    
-    logging.info("Calculate importances.")
+
+    # Feature importances
+
+    logging.info("Calculate feature importances.")
     importances = pd.Series(
         permutation_importance(
             estimator,
@@ -175,7 +181,19 @@ if __name__ == "__main__":
         )["importances_mean"],
         index=x_test.columns,
     ).sort_values(ascending=False)
-    wandb.log({"importances": importances.to_dict()})
+    table = wandb.Table(
+        data=list(importances.iteritems()),
+        columns=["feature", "importance"],
+    )
+    importance_plot = wandb.plot.bar(
+        table,
+        label="feature",
+        value="importance",
+        title="Permutation Importance",
+    )
+
+
+    # Draft simulation
 
     logging.info("Get draft data")
 
@@ -215,17 +233,37 @@ if __name__ == "__main__":
             ref[all_time_round],
         )
 
-    mean_normalized_score_mean = np.mean([np.mean(sim[i]) / ref[i] for i in sim.keys()])
-    std_normalized_score_mean = np.std([np.mean(sim[i]) / ref[i] for i in sim.keys()])
-    mean_normalized_score_std = np.mean([np.std(sim[i]) / ref[i] for i in sim.keys()])
-    std_normalized_mean_std = np.std([np.std(sim[i]) / ref[i] for i in sim.keys()])
 
+    # Scoring
+
+    normalized_score_mean = [np.mean(v) / ref[k] for k, v in sim.items()]
+    normalized_score_std = [np.std(v) / ref[k] for k, v in sim.items()]
     wandb.log(
         {
-            "mean_normalized_score_mean": mean_normalized_score_mean,
-            "std_normalized_score_mean": std_normalized_score_mean,
-            "mean_normalized_score_std": mean_normalized_score_std,
-            "std_normalized_mean_std": std_normalized_mean_std,
+            "mean_normalized_score_mean": np.mean(normalized_score_mean),
+            "std_normalized_score_mean": np.std(normalized_score_mean),
+            "mean_normalized_score_std": np.mean(normalized_score_std),
+            "std_normalized_mean_std": np.std(normalized_score_std),
         }
     )
+
+
+    # Time series scoring
+
+    table = wandb.Table(
+        data=[
+            [rnd, normalized_score_mean[i], normalized_score_std[i]]
+            for i, rnd in enumerate(sim)
+        ],
+        columns=["round", "normalized score mean", "normalized score std"],
+    )
+    plot = wandb.plot.line(
+        table,
+        x="round",
+        y="normalized score mean",
+        title="Normalized Score Mean",
+    )
+    wandb.log({"normalized_score_mean_plot": plot})
+
+
     logging.info("Run URL: %s", wandb.run.get_url())
