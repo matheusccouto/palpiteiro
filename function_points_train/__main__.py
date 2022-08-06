@@ -28,10 +28,10 @@ TARGET = "total_points"
 INDEX = "id"
 MAX_PLAYERS_PER_CLUB = 5
 DROPOUT = 0.333
-TIMES = 10
+TIMES = 5
 METRIC = "neg_mean_poisson_deviance"
 DIRECTION = "maximize"
-N_TRIALS = 1
+N_TRIALS = 100
 TIMEOUT = None
 OUTPUT = os.path.join(THIS_DIR, "xp-out.yml")
 
