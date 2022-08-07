@@ -8,7 +8,9 @@ WITH club AS (
         ANY_VALUE(m.valid) AS valid,
         SUM(s.total_points) AS total_points,
         SUM(s.offensive_points) AS offensive_points,
-        SUM(s.defensive_points) AS defensive_points
+        SUM(s.defensive_points) AS defensive_points,
+        SUM(s.penalty) AS penalties,
+        SUM(s.received_penalty) AS received_penalties
     FROM
         {{ ref("fct_scoring") }} AS s
     INNER JOIN
@@ -80,7 +82,35 @@ SELECT
         PARTITION BY
             c.club, c.home
         ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS defensive_allowed_points_opponent_last_5
+    ) AS defensive_allowed_points_opponent_last_5,
+    AVG(
+        c.penalties
+    ) OVER (
+        PARTITION BY
+            c.club, c.home
+        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+    ) AS penalties_club_last_5,
+    AVG(
+        o.penalties
+    ) OVER (
+        PARTITION BY
+            c.club, c.home
+        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+    ) AS penalties_opponent_last_5,
+    AVG(
+        c.received_penalties
+    ) OVER (
+        PARTITION BY
+            c.club, c.home
+        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+    ) AS received_penalties_club_last_5,
+    AVG(
+        o.received_penalties
+    ) OVER (
+        PARTITION BY
+            c.club, c.home
+        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+    ) AS received_penalties_opponent_last_5
 FROM
     club AS c
 INNER JOIN

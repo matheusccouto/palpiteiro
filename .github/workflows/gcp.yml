@@ -38,3 +38,9 @@ jobs:
           region: us-east4
           source_dir: function_points_train
           env_vars: "BUCKET_NAME=${{ inputs.BUCKET_NAME }}"
+      - name: retrain points
+        run: |
+          curl -m 70 -X POST https://us-east4-palpiteiro-dev.cloudfunctions.net/points_train \
+          -H "Authorization:bearer $(gcloud auth print-identity-token)" \
+          -H "Content-Type:application/json" \
+          -d '{}'
