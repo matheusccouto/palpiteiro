@@ -1,6 +1,6 @@
 SELECT
-    id,
-    player,
+    id AS play_id,
+    player AS id,
     club,
     position,
     all_time_round,
@@ -9,6 +9,6 @@ SELECT
 FROM
     palpiteiro.fct_player
 WHERE
-    status = 'expected'
+    played IS TRUE
     AND position != 'coach'
     AND id IN ({players_ids})
