@@ -87,7 +87,7 @@ SELECT
     c.received_penalties_club_last_5,
     c.received_penalties_opponent_last_5,
     AVG(
-        CAST(s.played AS FLOAT64)
+        CAST(s.played AS INT64)
     ) OVER (
         PARTITION BY
             s.player
