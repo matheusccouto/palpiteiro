@@ -22,6 +22,10 @@ SELECT
     total_allowed_points_opponent_last_5,
     offensive_allowed_points_opponent_last_5,
     defensive_allowed_points_opponent_last_5,
+    penalties_club_last_5,
+    penalties_opponent_last_5,
+    received_penalties_club_last_5,
+    received_penalties_opponent_last_5,
     IF(total_points < 0, 0, total_points) AS total_points
 FROM
     palpiteiro.fct_player
