@@ -81,7 +81,18 @@ SELECT
         PARTITION BY
             s.player, c.home
         ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS defensive_points_repr_last_5
+    ) AS defensive_points_repr_last_5,
+    c.penalties_club_last_5,
+    c.penalties_opponent_last_5,
+    c.received_penalties_club_last_5,
+    c.received_penalties_opponent_last_5,
+    AVG(
+        CAST(s.played AS INT64)
+    ) OVER (
+        PARTITION BY
+            s.player
+        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+    ) AS played_last_5
 FROM
     {{ ref ("fct_scoring") }} AS s
 INNER JOIN

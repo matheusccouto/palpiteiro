@@ -41,7 +41,12 @@ ai AS (
             defensive_points_club_last_5,
             total_allowed_points_opponent_last_5,
             offensive_allowed_points_opponent_last_5,
-            defensive_allowed_points_opponent_last_5
+            defensive_allowed_points_opponent_last_5,
+            penalties_club_last_5,
+            penalties_opponent_last_5,
+            received_penalties_club_last_5,
+            received_penalties_opponent_last_5,
+            played_last_5
         ) AS points,
         IF (p.status = 'expected', 1, 0) AS participate
     FROM
