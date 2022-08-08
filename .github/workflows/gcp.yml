@@ -33,7 +33,7 @@ jobs:
         with:
           name: points_train
           runtime: python39
-          memory_mb: 512
+          memory_mb: 1024
           entry_point: handler
           region: us-east4
           source_dir: function_points_train
