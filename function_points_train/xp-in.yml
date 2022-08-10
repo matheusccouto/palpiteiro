@@ -11,7 +11,7 @@ Pipeline:
               - - 0
     - - histgradientboostingregressor
       - HistGradientBoostingRegressor:
-          loss: poisson
+          # loss: poisson
           categorical_features: [0]
           learning_rate:
             float:
