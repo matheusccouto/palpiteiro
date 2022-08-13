@@ -26,12 +26,12 @@ def test_uri(setup_and_teardown):  # pylint: disable=unused-argument
     results = lambda_transform_odds.handler(
         event={"uri": "s3://palpiteiro-test/brasileirao/test.json"},
     )
-    assert fnmatch(results["uri"], "s3://palpiteiro-test/partidas/test.csv")
+    assert fnmatch(results["uri"], "s3://palpiteiro-test/brasileirao/test.csv")
 
 
 def test_exists(setup_and_teardown):  # pylint: disable=unused-argument
     """Test if CSV file exists."""
     results = lambda_transform_odds.handler(
-        event={"uri": "s3://palpiteiro-test/partidas/test.json"}
+        event={"uri": "s3://palpiteiro-test/brasileirao/test.json"}
     )
     assert utils.aws.s3.exists(results["uri"])
