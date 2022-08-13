@@ -4,10 +4,12 @@ params:
   main:
     cartola-bucket: cartola-main
     fivethirtyeight-bucket: fivethirtyeight-main
+    odds-bucket: betting-main
     deployment-bucket: palpiteiro-main
   dev:
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
+    odds-bucket: betting-dev
     deployment-bucket: palpiteiro-dev
 custom:
   account: "#{AWS::AccountId}"
@@ -111,6 +113,17 @@ functions:
         - "lambda_transform_cartola_scouts/*.py"
     layers:
       - { Ref: PandasLambdaLayer }
+  transform-odds:
+    handler: lambda_transform_odds.handler
+    description: Transform odds data.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_odds/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
   extract-cartola-matches:
     handler: lambda_extract_cartola_matches.handler
     description: Extract matches data from Cartola FC to JSON.
@@ -146,6 +159,20 @@ functions:
       - { Ref: PandasLambdaLayer }
     environment:
       BUCKET: ${param:fivethirtyeight-bucket}
+  extract-odds:
+    handler: lambda_extract_odds.handler
+    description: Extract odds from The Odds API.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_odds/*.py"
+    layers:
+      - { Ref: RequestsLambdaLayer }
+    environment:
+      BUCKET: ${param:odds-bucket}
+      THE_ODDS_API_KEY: ${env:THE_ODDS_API_KEY}
   load-gbq:
     handler: lambda_load_gbq.handler
     description: Load CSV into the database.
@@ -199,6 +226,9 @@ layers:
   pandas:
     package:
       artifact: layer_pandas.zip
+  requests:
+    package:
+      artifact: layer_requests.zip
 stepFunctions:
   stateMachines:
     palpiteiro-extract-cartola-players:
@@ -334,6 +364,42 @@ stepFunctions:
                 - league_id
                 - team1
                 - team2
+          Load Google Big Query:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load-gbq, Arn]
+            End: true
+    palpiteiro-extract-odds:
+      name: palpiteiro-extract_odds-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
+      events:
+        - schedule: rate(4 hours)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsFailed
+      definition:
+        StartAt: ExtractOdds
+        States:
+          ExtractOdds:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-odds, Arn]
+            Next: TransformOdds
+          TransformOdds:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-odds, Arn]
+            Next: Load Google Big Query
+            ResultSelector:
+              uri.$: "$.uri"
+              table: brasileirao
+              schema: odds
+              subset:
+                - season
+                - home
+                - away
           Load Google Big Query:
             Type: Task
             Resource:
