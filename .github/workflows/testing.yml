@@ -20,6 +20,7 @@ jobs:
       GCP_SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
       GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}
       GLBID: ${{ secrets.GLBID }}
+      THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
     strategy:
       fail-fast: false
       matrix:

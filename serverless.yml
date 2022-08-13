@@ -159,6 +159,7 @@ functions:
         - "lambda_extract_odds/*.py"
     environment:
       BUCKET: ${param:odds-bucket}
+      THE_ODDS_API_KEY: ${env:THE_ODDS_API_KEY}
   load-gbq:
     handler: lambda_load_gbq.handler
     description: Load CSV into the database.
