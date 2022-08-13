@@ -21,7 +21,7 @@ def get_odds(match):
                         data["home"][booker["key"]] = outcome["price"]
                     elif outcome["name"] == match["away_team"]:
                         data["away"][booker["key"]] = outcome["price"]
-                    elif outcome["name"] == match["Draw"]:
+                    elif outcome["name"] == "Draw":
                         data["away"][booker["key"]] = outcome["price"]
                     else:
                         raise ValueError("Invalid name")
