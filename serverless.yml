@@ -369,6 +369,42 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
+    palpiteiro-extract-odds:
+      name: palpiteiro-extract_odds-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
+      events:
+        - schedule: rate(4 hours)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsFailed
+      definition:
+        StartAt: ExtractOdds
+        States:
+          ExtractOdds:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-odds, Arn]
+            Next: TransformOdds
+          TransformOdds:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [transform-odds, Arn]
+            Next: Load Google Big Query
+            ResultSelector:
+              uri.$: "$.uri"
+              table: brasileirao
+              schema: odds
+              subset:
+                - season
+                - home
+                - away
+          Load Google Big Query:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [load-gbq, Arn]
+            End: true
     palpiteiro-draft:
       name: palpiteiro-draft-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
