@@ -38,6 +38,8 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     for match in data:
         odds = get_odds(match)
         row = {
+            "season": int(match["commence_time"][:4]),
+            "timestamp": match["commence_time"],
             "home": match["home_team"],
             "away": match["away_team"],
             "avg_home": np.mean(list(odds["home"].values())),
