@@ -33,6 +33,7 @@ jobs:
           - lambda_extract_cartola_players
           - lambda_extract_cartola_scouts
           - lambda_extract_fivethirtyeight_spi
+          - lambda_extract_odds
           - lambda_load_gbq
           - lambda_read_gbq
           - lambda_transform_cartola_matches
