@@ -43,9 +43,9 @@ def handler(event, context=None):  # pylint: disable=unused-argument
             "avg_home": np.mean(list(odds["home"].values())),
             "avg_away": np.mean(list(odds["away"].values())),
             "avg_draw": np.mean(list(odds["draw"].values())),
-            "pinnacle_home": odds["home"]["pinnacle"],
-            "pinnacle_away": odds["home"]["pinnacle"],
-            "pinnacle_draw": odds["home"]["pinnacle"],
+            "pinnacle_home": odds["home"].get("pinnacle"),
+            "pinnacle_away": odds["home"].get("pinnacle"),
+            "pinnacle_draw": odds["home"].get("pinnacle"),
         }
         rows.append(row)
 
