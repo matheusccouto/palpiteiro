@@ -4,8 +4,9 @@ import datetime
 import json
 import os
 
+import requests
+
 import utils.aws.s3
-import utils.http
 
 URL = (
     "https://api.the-odds-api.com/v4/sports/soccer_brazil_campeonato/odds/"
@@ -15,9 +16,9 @@ URL = (
 
 def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
-    odds = utils.http.get(URL)
+    odds = requests.get(URL)
     bucket = os.environ["BUCKET"]
     key = f"brasileirao/{datetime.datetime.now().isoformat()}.json"
     uri = f"s3://{bucket}/{key}"
-    utils.aws.s3.save(data=json.dumps(odds), uri=uri)
+    utils.aws.s3.save(data=json.dumps(odds.json()), uri=uri)
     return {"uri": uri}

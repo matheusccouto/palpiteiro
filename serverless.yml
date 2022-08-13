@@ -157,6 +157,8 @@ functions:
     package:
       patterns:
         - "lambda_extract_odds/*.py"
+    layers:
+      - { Ref: RequestsLambdaLayer }
     environment:
       BUCKET: ${param:odds-bucket}
       THE_ODDS_API_KEY: ${env:THE_ODDS_API_KEY}
@@ -213,6 +215,9 @@ layers:
   pandas:
     package:
       artifact: layer_pandas.zip
+  requests:
+    package:
+      artifact: layer_requests.zip
 stepFunctions:
   stateMachines:
     palpiteiro-extract-cartola-players:
