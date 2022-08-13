@@ -113,6 +113,17 @@ functions:
         - "lambda_transform_cartola_scouts/*.py"
     layers:
       - { Ref: PandasLambdaLayer }
+  transform-odds:
+    handler: lambda_transform_odds.handler
+    description: Transform odds data.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_transform_odds/*.py"
+    layers:
+      - { Ref: PandasLambdaLayer }
   extract-cartola-matches:
     handler: lambda_extract_cartola_matches.handler
     description: Extract matches data from Cartola FC to JSON.

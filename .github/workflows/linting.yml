@@ -26,6 +26,7 @@ jobs:
           - lambda_transform_cartola_matches
           - lambda_transform_cartola_players
           - lambda_transform_cartola_scouts
+          - lambda_transform_odds
     steps:
       - uses: actions/checkout@v2
       - name: python
