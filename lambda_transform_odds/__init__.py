@@ -40,9 +40,9 @@ def handler(event, context=None):  # pylint: disable=unused-argument
         row = {
             "home": match["home_team"],
             "away": match["away_team"],
-            "avg_home": np.mean(odds["home"].values()),
-            "avg_away": np.mean(odds["away"].values()),
-            "avg_draw": np.mean(odds["draw"].values()),
+            "avg_home": np.mean(list(odds["home"].values())),
+            "avg_away": np.mean(list(odds["away"].values())),
+            "avg_draw": np.mean(list(odds["draw"].values())),
             "pinnacle_home": odds["home"]["pinnacle"],
             "pinnacle_away": odds["home"]["pinnacle"],
             "pinnacle_draw": odds["home"]["pinnacle"],
