@@ -49,8 +49,8 @@ def handler(event, context=None):  # pylint: disable=unused-argument
             "max_away": np.max(list(odds["away"].values())),
             "max_draw": np.max(list(odds["draw"].values())),
             "pinnacle_home": odds["home"].get("pinnacle"),
-            "pinnacle_away": odds["home"].get("pinnacle"),
-            "pinnacle_draw": odds["home"].get("pinnacle"),
+            "pinnacle_away": odds["away"].get("pinnacle"),
+            "pinnacle_draw": odds["draw"].get("pinnacle"),
         }
         rows.append(row)
 
