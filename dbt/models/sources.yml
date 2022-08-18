@@ -30,3 +30,7 @@ sources:
             count: 1
             period: day
         loaded_at_field: loaded_at
+
+  - name: odds
+    tables:
+      - name: brasileirao
