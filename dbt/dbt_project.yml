@@ -26,12 +26,16 @@ models:
         schema: cartola
       fivethirtyeight:
         schema: fivethirtyeight
+      odds:
+        schema: odds
     mart:
       +materialized: view
       cartola:
         schema: cartola
       fivethirtyeight:
         schema: fivethirtyeight
+      odds:
+        schema: odds
       palpiteiro:
         schema: palpiteiro
         dim_player_last:

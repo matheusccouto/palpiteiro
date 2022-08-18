@@ -2,6 +2,7 @@ SELECT
     s.id,
     s.player,
     s.all_time_round,
+    c.timestamp,
     c.club,
     c.valid,
     s.position,
@@ -92,7 +93,16 @@ SELECT
         PARTITION BY
             s.player
         ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS played_last_5
+    ) AS played_last_5,
+    c.pinnacle_club,
+    c.pinnacle_opponent,
+    c.pinnacle_draw,
+    c.max_club,
+    c.max_opponent,
+    c.max_draw,
+    c.avg_club,
+    c.avg_opponent,
+    c.avg_draw
 FROM
     {{ ref ("fct_scoring") }} AS s
 INNER JOIN

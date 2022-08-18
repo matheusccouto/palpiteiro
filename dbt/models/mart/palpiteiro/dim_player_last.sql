@@ -16,6 +16,7 @@ ai AS (
         p.id,
         p.player,
         p.club,
+        p.timestamp,
         p.position,
         p.price_cartola,
         p.price_cartola_express,
@@ -74,6 +75,7 @@ expected_to_play AS (
 )
 SELECT
     e2p.id,
+    e2p.timestamp,
     dp.short_nickname AS name,
     dp.photo,
     c.id AS club,
