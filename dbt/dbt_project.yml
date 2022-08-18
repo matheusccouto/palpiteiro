@@ -16,8 +16,8 @@ seeds:
   palpiteiro:
     cartola:
       +schema: cartola
-    fivethirtyeight:
-      +schema: fivethirtyeight
+    palpiteiro:
+      +schema: palpiteiro
 models:
   palpiteiro:
     staging:
