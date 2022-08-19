@@ -446,7 +446,7 @@ stepFunctions:
             Type: Pass
             Next: Read Google Big Query
             Result:
-              query: SELECT * EXCEPT (timestamp, materialized_at), price_cartola AS price FROM palpiteiro.dim_player_last
+              query: SELECT * EXCEPT (materialized_at), price_cartola AS price FROM palpiteiro.dim_player_last
             ResultPath: "$.output"
           Custom:
             Type: Pass
