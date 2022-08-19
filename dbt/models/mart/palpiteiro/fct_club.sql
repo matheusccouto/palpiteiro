@@ -23,6 +23,7 @@ WITH club AS (
 SELECT
     c.club,
     c.all_time_round,
+    c.timestamp,
     c.home,
     c.opponent,
     c.valid,
@@ -110,13 +111,21 @@ SELECT
         PARTITION BY
             c.club, c.home
         ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS received_penalties_opponent_last_5
+    ) AS received_penalties_opponent_last_5,
+    h2h.pinnacle_club,
+    h2h.pinnacle_opponent,
+    h2h.pinnacle_draw,
+    h2h.max_club,
+    h2h.max_opponent,
+    h2h.max_draw,
+    h2h.avg_club,
+    h2h.avg_opponent,
+    h2h.avg_draw
 FROM
     club AS c
 INNER JOIN
     club AS o ON c.opponent = o.club AND c.all_time_round = o.all_time_round
-INNER JOIN
-    {{ ref ("fct_spi") }} AS s ON
-        EXTRACT(
-            DATE FROM c.timestamp AT TIME ZONE 'America/Sao_Paulo'
-        ) = s.date AND c.club = s.club
+LEFT JOIN
+    {{ ref ("fct_spi") }} AS s ON EXTRACT(DATE FROM c.timestamp AT TIME ZONE 'America/Sao_Paulo') = s.date AND c.club = s.club
+LEFT JOIN
+    {{ ref ("fct_h2h") }} AS h2h ON EXTRACT(DATE FROM h2h.timestamp AT TIME ZONE 'America/Sao_Paulo') = s.date AND c.club = h2h.club
