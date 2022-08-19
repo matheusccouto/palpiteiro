@@ -31,5 +31,4 @@ def handler(event, context=None):  # pylint: disable=unused-argument
         index_col=None,
         credentials=creds,
     ).to_dict(orient="records")
-    # print(type(dic[0]["materialized_at"]))
     return json.loads(json.dumps(dic, cls=Encoder))
