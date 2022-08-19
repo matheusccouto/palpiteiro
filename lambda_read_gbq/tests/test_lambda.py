@@ -33,5 +33,6 @@ def test_handler(expected):  # pylint: disable=unused-argument
 
 def test_return_serializable(expected):  # pylint: disable=unused-argument
     """Test if return is serializable."""
-    res = lambda_read_gbq.handler(event={"query": "SELECT * FROM test.test_read"})
+    res = lambda_read_gbq.handler(event={"query": "SELECT * FROM palpiteiro.dim_player_last"})
+    print(res)
     assert utils.test.is_serializable(res)
