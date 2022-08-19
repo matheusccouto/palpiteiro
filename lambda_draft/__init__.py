@@ -1,18 +1,11 @@
 """Lambda function."""
 
-import logging
-
 from .draft import Player, Scheme
 from .draft.algorithm.genetic import Genetic
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 
 def handler(event, context):  # pylint: disable=unused-argument
     """Lambda handler."""
-    logger.info("event: %s", event)
-
     scheme = Scheme(**event["scheme"])
     price = float(event["price"])
     max_players_per_club = int(event["max_players_per_club"])
