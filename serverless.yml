@@ -49,6 +49,15 @@ functions:
     package:
       patterns:
         - "lambda_dropout/**/*.py"
+  filter:
+    handler: lambda_filter.handler
+    description: Filter player by date for daily.
+    runtime: python3.9
+    timeout: 1 # seconds
+    memorySize: 128 # megabytes
+    package:
+      patterns:
+        - "lambda_filter/**/*.py"
   cartola-budget:
     handler: lambda_cartola_budget.handler
     description: Bot for getting available budget for my Cartola team.
@@ -459,8 +468,15 @@ stepFunctions:
                 Fn::GetAtt: [read-gbq, Arn]
               Payload.$: "$"
             InputPath: "$.output"
-            Next: Dropout
+            Next: Filter
             ResultPath: "$.output"
+          Filter:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [filter, Arn]
+            Next: Dropout
           Dropout:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
