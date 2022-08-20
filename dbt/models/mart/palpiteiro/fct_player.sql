@@ -94,15 +94,15 @@ SELECT
             s.player
         ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
     ) AS played_last_5,
-    c.pinnacle_club,
-    c.pinnacle_opponent,
-    c.pinnacle_draw,
-    c.max_club,
-    c.max_opponent,
-    c.max_draw,
-    c.avg_club,
-    c.avg_opponent,
-    c.avg_draw
+    c.pinnacle_odds_club,
+    c.pinnacle_odds_opponent,
+    c.pinnacle_odds_draw,
+    c.max_odds_club,
+    c.max_odds_opponent,
+    c.max_odds_draw,
+    c.avg_odds_club,
+    c.avg_odds_opponent,
+    c.avg_odds_draw
 FROM
     {{ ref ("fct_scoring") }} AS s
 INNER JOIN
