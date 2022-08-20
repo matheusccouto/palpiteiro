@@ -479,7 +479,7 @@ stepFunctions:
               FunctionName:
                 Fn::GetAtt: [filter, Arn]
               Payload:
-                players.$: $.output.Payload
+                players.$: $.output.players
                 scheme.$": $.scheme
                 price.$": $.price
                 max_players_per_club.$": $.max_players_per_club
