@@ -255,6 +255,9 @@ layers:
   requests:
     package:
       artifact: layer_requests.zip
+  kaggle:
+    package:
+      artifact: layer_kaggle.zip
 stepFunctions:
   stateMachines:
     palpiteiro-extract-cartola-players:
