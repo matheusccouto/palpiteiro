@@ -112,15 +112,15 @@ SELECT
             c.club, c.home
         ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
     ) AS received_penalties_opponent_last_5,
-    h2h.pinnacle_club,
-    h2h.pinnacle_opponent,
-    h2h.pinnacle_draw,
-    h2h.max_club,
-    h2h.max_opponent,
-    h2h.max_draw,
-    h2h.avg_club,
-    h2h.avg_opponent,
-    h2h.avg_draw
+    h2h.pinnacle_club AS pinnacle_odds_club,
+    h2h.pinnacle_opponent AS pinnacle_odds_opponent,
+    h2h.pinnacle_draw AS pinnacle_odds_draw,
+    h2h.max_club AS max_odds_club,
+    h2h.max_opponent AS max_odds_opponent,
+    h2h.max_draw AS max_odds_draw,
+    h2h.avg_club AS avg_odds_club,
+    h2h.avg_opponent AS avg_odds_opponent,
+    h2h.avg_draw AS avg_odds_draw
 FROM
     club AS c
 INNER JOIN

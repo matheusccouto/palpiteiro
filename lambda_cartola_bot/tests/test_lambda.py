@@ -13,7 +13,7 @@ THIS_DIR = os.path.dirname(__file__)
 @pytest.fixture(name="event")
 def event_fixture():
     """Mock typical event."""
-    with open(os.path.join(THIS_DIR, "sample.json")) as file:
+    with open(os.path.join(THIS_DIR, "sample.json"), encoding="utf-8") as file:
         yield json.load(file)
 
 
