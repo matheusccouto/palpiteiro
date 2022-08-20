@@ -288,6 +288,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: atletas
               schema: cartola
+              type: merge
               subset:
                 - temporada_id
                 - rodada_id
@@ -324,6 +325,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: pontuados
               schema: cartola
+              type: merge
               subset:
                 - temporada
                 - rodada
@@ -360,6 +362,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: partidas
               schema: cartola
+              type: merge
               subset:
                 - partida_id
           Load Google Big Query:
@@ -389,6 +392,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: spi
               schema: fivethirtyeight
+              type: merge
               subset:
                 - season
                 - league_id
@@ -426,6 +430,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: brasileirao
               schema: odds
+              type: merge
               subset:
                 - season
                 - home
@@ -473,6 +478,7 @@ stepFunctions:
                       uri.$: "$.uri"
                       table: null
                       schema: transfermarkt
+                      type: replace
                   End: true
     palpiteiro-draft:
       name: palpiteiro-draft-${opt:stage}

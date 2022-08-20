@@ -31,7 +31,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
     if event["table"] is None:
         event["table"] = os.path.splitext(os.path.basename(event["uri"]))[0]
-        
+
     table = f"{creds.project_id}.{event['schema']}.{event['table']}"
     tmp_table = f"{creds.project_id}.{event['schema']}.tmp_{event['table']}"
 
@@ -43,6 +43,15 @@ def handler(event, context=None):  # pylint: disable=unused-argument
         for field in client.get_table(table).schema
         if field.name in data.columns
     }
+
+    if event["type"] == "replace":
+        data.astype(table_schema).to_gbq(
+            destination_table=table,
+            if_exists="replace",
+            credentials=creds,
+        )
+        return {"statusCode": 200}
+
     data.astype(table_schema).to_gbq(
         destination_table=tmp_table,
         if_exists="replace",
