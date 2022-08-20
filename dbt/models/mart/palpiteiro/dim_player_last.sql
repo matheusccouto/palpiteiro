@@ -74,7 +74,7 @@ expected_to_play AS (
         participate > 0.5
 )
 SELECT
-    e2p.id,
+    e2p.player,
     e2p.timestamp,
     dp.short_nickname AS name,
     dp.photo,
