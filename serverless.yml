@@ -244,7 +244,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_players-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(8 hours)
+        - schedule: rate(1 hour)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
