@@ -183,7 +183,6 @@ def main():
             date = st.sidebar.date_input("Date").strftime("%Y-%m-%d")
         else:
             date = None
-        
 
     else:
         raise ValueError("Invalid game")
