@@ -468,15 +468,24 @@ stepFunctions:
                 Fn::GetAtt: [read-gbq, Arn]
               Payload.$: "$"
             InputPath: "$.output"
-            Next: Filter
+            ResultSelector:
+              players.$: $.Payload
             ResultPath: "$.output"
+            Next: Filter
           Filter:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
             Parameters:
               FunctionName:
                 Fn::GetAtt: [filter, Arn]
-              Payload.$: "$"
+              Payload:
+                players.$: $.output.Payload
+                scheme.$": $.scheme
+                price.$": $.price
+                max_players_per_club.$": $.max_players_per_club
+                bench.$: $.bench
+                date.$: $.date
+                dropout.$: $.dropout
             Next: Dropout
           Dropout:
             Type: Task
@@ -484,10 +493,7 @@ stepFunctions:
             Parameters:
               FunctionName:
                 Fn::GetAtt: [dropout, Arn]
-              Payload:
-                dropout.$: "$.dropout"
-                players.$: "$.output.Payload"
-            ResultPath: "$.output"
+              Payload.$: "$"
             Next: Draft
           Draft:
             Type: Task
@@ -495,12 +501,7 @@ stepFunctions:
             Parameters:
               FunctionName:
                 Fn::GetAtt: [draft, Arn]
-              Payload:
-                scheme.$: "$.scheme"
-                price.$: "$.price"
-                max_players_per_club.$: "$.max_players_per_club"
-                bench.$: "$.bench"
-                players.$: "$.output.Payload"
+              Payload.$: "$"
             OutputPath: "$.Payload"
             End: true
     palpiteiro-cartola-bot:
