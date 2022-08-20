@@ -21,6 +21,8 @@ jobs:
       GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL_DEV }}
       GLBID: ${{ secrets.GLBID }}
       THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
     strategy:
       fail-fast: false
       matrix:
