@@ -25,7 +25,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
 
     uri_list = []
     for path in glob.glob("/tmp/transfermarkt/*.csv"):
-        key = f"transfermarkt/{week}/{path}"
+        key = f"{week}/{os.path.basename(path)}"
         uri = f"s3://{bucket}/{key}"
         with open(path, encoding="utf-8") as file:
             utils.aws.s3.save(data=file.read(), uri=uri)
