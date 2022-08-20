@@ -495,6 +495,7 @@ stepFunctions:
               FunctionName:
                 Fn::GetAtt: [dropout, Arn]
               Payload.$: "$"
+            OutputPath: $.Payload
             Next: Draft
           Draft:
             Type: Task
