@@ -5,11 +5,13 @@ params:
     cartola-bucket: cartola-main
     fivethirtyeight-bucket: fivethirtyeight-main
     odds-bucket: betting-main
+    transfermarkt-bucket: transfermarkt-main
     deployment-bucket: palpiteiro-main
   dev:
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     odds-bucket: betting-dev
+    transfermarkt-bucket: transfermarkt-dev
     deployment-bucket: palpiteiro-dev
 custom:
   account: "#{AWS::AccountId}"
@@ -182,6 +184,21 @@ functions:
     environment:
       BUCKET: ${param:odds-bucket}
       THE_ODDS_API_KEY: ${env:THE_ODDS_API_KEY}
+  extract-transfermarkt:
+    handler: lambda_extract_transfermarkt.handler
+    description: Extract transfermarkt data from kaggle.
+    runtime: python3.9
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_transfermarkt/*.py"
+    layers:
+      - { Ref: KaggleLambdaLayer }
+    environment:
+      BUCKET: ${param:transfermarkt-bucket}
+      KAGGLE_USERNAME: ${env:KAGGLE_USERNAME}
+      KAGGLE_KEY: ${env:KAGGLE_KEY}
   load-gbq:
     handler: lambda_load_gbq.handler
     description: Load CSV into the database.
