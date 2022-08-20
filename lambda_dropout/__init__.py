@@ -8,4 +8,5 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     players = event["players"]
     dropout = event["dropout"]
     random.shuffle(players)
-    return players[: int(len(players) * (1 - dropout))]
+    event["players"] = players[: int(len(players) * (1 - dropout))]
+    return event
