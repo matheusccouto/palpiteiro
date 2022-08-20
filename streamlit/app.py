@@ -178,6 +178,7 @@ def main():
             step=0.01,
             format="%.2f",
         )
+        date = st.sidebar.date_input("Date")
 
     else:
         raise ValueError("Invalid game")

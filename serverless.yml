@@ -480,9 +480,9 @@ stepFunctions:
                 Fn::GetAtt: [filter, Arn]
               Payload:
                 players.$: $.output.players
-                scheme.$": $.scheme
-                price.$": $.price
-                max_players_per_club.$": $.max_players_per_club
+                scheme.$: $.scheme
+                price.$: $.price
+                max_players_per_club.$: $.max_players_per_club
                 bench.$: $.bench
                 date.$: $.date
                 dropout.$: $.dropout
