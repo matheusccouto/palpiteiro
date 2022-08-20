@@ -435,6 +435,43 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
+    palpiteiro-extract-transfermarkt:
+      name: palpiteiro-extract_transfermarkt-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
+      events:
+        - schedule: cron(0 0 * * WED *)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsFailed
+      definition:
+        StartAt: ExtractTransfermarkt
+        States:
+          ExtractTransfermarkt:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-transfermarkt, Arn]
+            Next: Map
+            ResultSelector:
+              uri.$: "$.uri"
+              table: null
+              schema: transfermarkt
+            Map:
+              Type: Map
+              End: true
+              Iterator:
+                StartAt: Load Google Big Query
+                States:      
+                  Load Google Big Query:
+                    Type: Task
+                    Resource:
+                      Fn::GetAtt: [load-gbq, Arn]
+                    Payload.$:
+                      uri.$: "$.uri"
+                      table: null
+                      schema: transfermarkt
+                    End: true
     palpiteiro-draft:
       name: palpiteiro-draft-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions

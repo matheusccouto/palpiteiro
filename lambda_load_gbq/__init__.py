@@ -29,6 +29,9 @@ client = bigquery.Client(credentials=creds)
 
 def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
+    if event["table"] is None:
+        event["table"] = os.path.splitext(os.path.basename(event["uri"]))[0]
+        
     table = f"{creds.project_id}.{event['schema']}.{event['table']}"
     tmp_table = f"{creds.project_id}.{event['schema']}.tmp_{event['table']}"
 
