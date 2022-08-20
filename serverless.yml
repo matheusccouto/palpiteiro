@@ -474,7 +474,7 @@ stepFunctions:
                   Parameters:
                     FunctionName:
                       Fn::GetAtt: [load-gbq, Arn]
-                    Payload.$:
+                    Payload:
                       uri.$: "$.uri"
                       table: null
                       schema: transfermarkt
