@@ -476,6 +476,7 @@ stepFunctions:
             Parameters:
               FunctionName:
                 Fn::GetAtt: [filter, Arn]
+              Payload.$: "$"
             Next: Dropout
           Dropout:
             Type: Task
