@@ -165,6 +165,7 @@ def main():
         )
         bench = True
         dropout = 0.0
+        date = None
 
     elif game == "Cartola Express":
         game = "cartola-express"
