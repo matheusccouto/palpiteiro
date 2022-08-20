@@ -19,7 +19,7 @@ def fixture_delete_atletas_mercado():
 def test_uri():
     """Test if lambda handler return the file URI."""
     results = lambda_extract_transfermarkt.handler(event={})
-    assert len(results > 1)
+    assert len(results) > 1
     assert fnmatch(results[0]["uri"], "s3://palpiteiro-test/transfermarkt/*/*.csv")
 
 
