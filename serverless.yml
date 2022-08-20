@@ -465,12 +465,14 @@ stepFunctions:
               States:      
                 Load Google Big Query:
                   Type: Task
-                  Resource:
-                    Fn::GetAtt: [load-gbq, Arn]
-                  Payload.$:
-                    uri.$: "$.uri"
-                    table: null
-                    schema: transfermarkt
+                  Resource: arn:aws:states:::lambda:invoke
+                  Parameters:
+                    FunctionName:
+                      Fn::GetAtt: [load-gbq, Arn]
+                    Payload.$:
+                      uri.$: "$.uri"
+                      table: null
+                      schema: transfermarkt
                   End: true
     palpiteiro-draft:
       name: palpiteiro-draft-${opt:stage}
