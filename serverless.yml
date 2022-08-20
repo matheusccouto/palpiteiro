@@ -457,21 +457,21 @@ stepFunctions:
               uri.$: "$.uri"
               table: null
               schema: transfermarkt
-            Map:
-              Type: Map
-              End: true
-              Iterator:
-                StartAt: Load Google Big Query
-                States:      
-                  Load Google Big Query:
-                    Type: Task
-                    Resource:
-                      Fn::GetAtt: [load-gbq, Arn]
-                    Payload.$:
-                      uri.$: "$.uri"
-                      table: null
-                      schema: transfermarkt
-                    End: true
+          Map:
+            Type: Map
+            End: true
+            Iterator:
+              StartAt: Load Google Big Query
+              States:      
+                Load Google Big Query:
+                  Type: Task
+                  Resource:
+                    Fn::GetAtt: [load-gbq, Arn]
+                  Payload.$:
+                    uri.$: "$.uri"
+                    table: null
+                    schema: transfermarkt
+                  End: true
     palpiteiro-draft:
       name: palpiteiro-draft-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
