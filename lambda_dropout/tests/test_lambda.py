@@ -24,4 +24,11 @@ def test_droupout(players):
     for val in [0.0, 0.1, 0.5]:
         event = {"players": players, "dropout": val}
         res = lambda_dropout.handler(event=event, context=None)
-        assert len(res) == len(players) * (1 - val)
+        assert len(res["players"]) == len(players) * (1 - val)
+
+
+def test_other_args(players):
+    """Test if other args persist."""
+    event = {"players": players, "dropout": 0.5, "whatever": "else"}
+    res = lambda_dropout.handler(event=event, context=None)
+    assert res["whatever"] == "else"

@@ -24,20 +24,52 @@ inv AS (
         id,
         season,
         timestamp,
-        club AS opponent,
         opponent AS club,
-        pinnacle_club AS pinnacle_opponent,
+        club AS opponent,
         pinnacle_opponent AS pinnacle_club,
+        pinnacle_club AS pinnacle_opponent,
         pinnacle_draw,
-        max_club AS max_opponent,
         max_opponent AS max_club,
+        max_club AS max_opponent,
         max_draw,
-        avg_club AS avg_opponent,
         avg_opponent AS avg_club,
+        avg_club AS avg_opponent,
         avg_draw
     FROM
         h2h
 )
-SELECT * FROM h2h
+SELECT
+    id,
+    season,
+    timestamp,
+    club,
+    opponent,
+    pinnacle_club,
+    pinnacle_opponent,
+    pinnacle_draw,
+    max_club,
+    max_opponent,
+    max_draw,
+    avg_club,
+    avg_opponent,
+    avg_draw
+FROM 
+    h2h
 UNION ALL
-SELECT * FROM inv
+SELECT
+    id,
+    season,
+    timestamp,
+    club,
+    opponent,
+    pinnacle_club,
+    pinnacle_opponent,
+    pinnacle_draw,
+    max_club,
+    max_opponent,
+    max_draw,
+    avg_club,
+    avg_opponent,
+    avg_draw
+FROM
+    inv

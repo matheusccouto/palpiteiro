@@ -49,6 +49,15 @@ functions:
     package:
       patterns:
         - "lambda_dropout/**/*.py"
+  filter:
+    handler: lambda_filter.handler
+    description: Filter player by date for daily.
+    runtime: python3.9
+    timeout: 1 # seconds
+    memorySize: 128 # megabytes
+    package:
+      patterns:
+        - "lambda_filter/**/*.py"
   cartola-budget:
     handler: lambda_cartola_budget.handler
     description: Bot for getting available budget for my Cartola team.
@@ -235,7 +244,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_players-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(8 hours)
+        - schedule: cron(0 * * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -271,7 +280,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_scouts-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(8 hours)
+        - schedule: cron(0 */8 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -307,7 +316,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_matches-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(8 hours)
+        - schedule: cron(0 */8 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -341,7 +350,7 @@ stepFunctions:
       name: palpiteiro-extract_fivethirtyeight_spi-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(8 hours)
+        - schedule: cron(0 */8 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -373,7 +382,7 @@ stepFunctions:
       name: palpiteiro-extract_odds-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(4 hours)
+        - schedule: cron(0 */4 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -459,18 +468,34 @@ stepFunctions:
                 Fn::GetAtt: [read-gbq, Arn]
               Payload.$: "$"
             InputPath: "$.output"
-            Next: Dropout
+            ResultSelector:
+              players.$: $.Payload
             ResultPath: "$.output"
+            Next: Filter
+          Filter:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [filter, Arn]
+              Payload:
+                players.$: $.output.players
+                scheme.$: $.scheme
+                price.$: $.price
+                max_players_per_club.$: $.max_players_per_club
+                bench.$: $.bench
+                date.$: $.date
+                dropout.$: $.dropout
+            OutputPath: $.Payload
+            Next: Dropout
           Dropout:
             Type: Task
             Resource: arn:aws:states:::lambda:invoke
             Parameters:
               FunctionName:
                 Fn::GetAtt: [dropout, Arn]
-              Payload:
-                dropout.$: "$.dropout"
-                players.$: "$.output.Payload"
-            ResultPath: "$.output"
+              Payload.$: "$"
+            OutputPath: $.Payload
             Next: Draft
           Draft:
             Type: Task
@@ -478,19 +503,14 @@ stepFunctions:
             Parameters:
               FunctionName:
                 Fn::GetAtt: [draft, Arn]
-              Payload:
-                scheme.$: "$.scheme"
-                price.$: "$.price"
-                max_players_per_club.$: "$.max_players_per_club"
-                bench.$: "$.bench"
-                players.$: "$.output.Payload"
+              Payload.$: "$"
             OutputPath: "$.Payload"
             End: true
     palpiteiro-cartola-bot:
       name: palpiteiro-cartola-bot-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: rate(8 hours)
+        - schedule: cron(10 */8 * * ? *)
       definition:
         Comment: Line-up bot for Cartola
         StartAt: Budget

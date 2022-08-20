@@ -1,7 +1,5 @@
 """Lambda function."""
 
-import json
-
 from .draft import Player, Scheme
 from .draft.algorithm.genetic import Genetic
 
