@@ -199,6 +199,7 @@ functions:
       BUCKET: ${param:transfermarkt-bucket}
       KAGGLE_USERNAME: ${env:KAGGLE_USERNAME}
       KAGGLE_KEY: ${env:KAGGLE_KEY}
+      KAGGLE_CONFIG_DIR: /tmp/
   load-gbq:
     handler: lambda_load_gbq.handler
     description: Load CSV into the database.
