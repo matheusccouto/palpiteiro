@@ -540,6 +540,7 @@ stepFunctions:
                 max_players_per_club: 5
                 bench: true
                 dropout: 0.0
+                date: null
             Resource: arn:aws:states:::aws-sdk:sfn:startSyncExecution
           Submit:
             Type: Task
