@@ -486,6 +486,7 @@ stepFunctions:
                 bench.$: $.bench
                 date.$: $.date
                 dropout.$: $.dropout
+            OutputPath: $.Payload
             Next: Dropout
           Dropout:
             Type: Task
