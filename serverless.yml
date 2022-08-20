@@ -244,7 +244,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_players-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 * * ? *)
+        - schedule: cron(0 * * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -280,7 +280,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_scouts-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 */8 * ? *)
+        - schedule: cron(0 */8 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -316,7 +316,7 @@ stepFunctions:
       name: palpiteiro-extract_cartola_matches-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 */8 * ? *)
+        - schedule: cron(0 */8 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -350,7 +350,7 @@ stepFunctions:
       name: palpiteiro-extract_fivethirtyeight_spi-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 */8 * ? *)
+        - schedule: cron(0 */8 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -382,7 +382,7 @@ stepFunctions:
       name: palpiteiro-extract_odds-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 */4 * ? *)
+        - schedule: cron(0 */4 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
@@ -510,7 +510,7 @@ stepFunctions:
       name: palpiteiro-cartola-bot-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(10 */8 * ? *)
+        - schedule: cron(10 */8 * * ? *)
       definition:
         Comment: Line-up bot for Cartola
         StartAt: Budget
