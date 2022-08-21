@@ -40,7 +40,7 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     data["loaded_at"] = pd.Timestamp.now(tz=TZ)
 
     if event["type"] == "replace":
-        data.convert_dtypes().to_gbq(
+        data.to_gbq(
             destination_table=table,
             if_exists="replace",
             credentials=creds,
