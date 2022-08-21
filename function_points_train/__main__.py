@@ -27,8 +27,8 @@ QUERY_DRAFT = os.path.join(THIS_DIR, "query_draft.sql")
 TARGET = "total_points"
 INDEX = "id"
 MAX_PLAYERS_PER_CLUB = 5
-DROPOUT = 0.333
-TIMES = 5
+DROPOUT = 0.5
+TIMES = 50
 METRIC = "neg_mean_poisson_deviance"
 DIRECTION = "maximize"
 N_TRIALS = 100
@@ -88,7 +88,7 @@ def draft(data, max_players_per_club, dropout):
         "max_players_per_club": max_players_per_club,
         "bench": False,
         "dropout": dropout,
-        "output": {"Payload": data.to_dict(orient="records")},
+        "players": data.to_dict(orient="records"),
     }
     res = requests.post(
         DRAFT_URL,

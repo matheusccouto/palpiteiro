@@ -18,7 +18,7 @@ creds = utils.google.get_creds_from_env_vars()
 @pytest.fixture(name="setup_and_teardown")
 def fixture_setup_and_teardown():
     """Setup and teardown palpiteiro-test."""
-    data=pd.read_csv(os.path.join(THIS_DIR, "existing.csv"), index_col=0)
+    data=pd.read_csv(os.path.join(THIS_DIR, "existing.csv"))
     data["loaded_at"] = pd.Timestamp.now(tz=zoneinfo.ZoneInfo("UTC"))
     data.to_gbq(
         destination_table="test.test_load",
@@ -39,6 +39,7 @@ def test_table(setup_and_teardown):  # pylint: disable=unused-argument
             "schema": "test",
             "uri": "s3://palpiteiro-test/load/test.csv",
             "subset": ["col1"],
+            "type": "merge",
         }
     )
 
@@ -48,5 +49,5 @@ def test_table(setup_and_teardown):  # pylint: disable=unused-argument
         credentials=creds,
         location="us-east4",
     ).sort_values("col1", ignore_index=True).drop("loaded_at", axis=1)
-    expected = pd.read_csv(os.path.join(THIS_DIR, "result.csv"), index_col=0)
+    expected = pd.read_csv(os.path.join(THIS_DIR, "result.csv"))
     pd.testing.assert_frame_equal(actual.convert_dtypes(), expected.convert_dtypes())

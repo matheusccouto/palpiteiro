@@ -5,11 +5,13 @@ params:
     cartola-bucket: cartola-main
     fivethirtyeight-bucket: fivethirtyeight-main
     odds-bucket: betting-main
+    transfermarkt-bucket: transfermarkt-main
     deployment-bucket: palpiteiro-main
   dev:
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     odds-bucket: betting-dev
+    transfermarkt-bucket: transfermarkt-dev
     deployment-bucket: palpiteiro-dev
 custom:
   account: "#{AWS::AccountId}"
@@ -182,6 +184,22 @@ functions:
     environment:
       BUCKET: ${param:odds-bucket}
       THE_ODDS_API_KEY: ${env:THE_ODDS_API_KEY}
+  extract-transfermarkt:
+    handler: lambda_extract_transfermarkt.handler
+    description: Extract transfermarkt data from kaggle.
+    runtime: python3.7
+    role:
+      { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
+    package:
+      patterns:
+        - "lambda_extract_transfermarkt/*.py"
+    layers:
+      - { Ref: KaggleLambdaLayer }
+    environment:
+      BUCKET: ${param:transfermarkt-bucket}
+      KAGGLE_USERNAME: ${env:KAGGLE_USERNAME}
+      KAGGLE_KEY: ${env:KAGGLE_KEY}
+      KAGGLE_CONFIG_DIR: /tmp/
   load-gbq:
     handler: lambda_load_gbq.handler
     description: Load CSV into the database.
@@ -238,6 +256,9 @@ layers:
   requests:
     package:
       artifact: layer_requests.zip
+  kaggle:
+    package:
+      artifact: layer_kaggle.zip
 stepFunctions:
   stateMachines:
     palpiteiro-extract-cartola-players:
@@ -267,6 +288,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: atletas
               schema: cartola
+              type: merge
               subset:
                 - temporada_id
                 - rodada_id
@@ -303,6 +325,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: pontuados
               schema: cartola
+              type: merge
               subset:
                 - temporada
                 - rodada
@@ -339,6 +362,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: partidas
               schema: cartola
+              type: merge
               subset:
                 - partida_id
           Load Google Big Query:
@@ -368,6 +392,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: spi
               schema: fivethirtyeight
+              type: merge
               subset:
                 - season
                 - league_id
@@ -405,6 +430,7 @@ stepFunctions:
               uri.$: "$.uri"
               table: brasileirao
               schema: odds
+              type: merge
               subset:
                 - season
                 - home
@@ -414,6 +440,42 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [load-gbq, Arn]
             End: true
+    palpiteiro-extract-transfermarkt:
+      name: palpiteiro-extract_transfermarkt-${opt:stage}
+      role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
+      events:
+        - schedule: cron(0 0 ? * WED *)
+      alarms:
+        topics:
+          alarm: { Ref: SNSTopic }
+        metrics:
+          - executionsFailed
+      definition:
+        StartAt: ExtractTransfermarkt
+        States:
+          ExtractTransfermarkt:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [extract-transfermarkt, Arn]
+            Next: Map
+          Map:
+            Type: Map
+            End: true
+            Iterator:
+              StartAt: Load Google Big Query
+              States:      
+                Load Google Big Query:
+                  Type: Task
+                  Resource: arn:aws:states:::lambda:invoke
+                  Parameters:
+                    FunctionName:
+                      Fn::GetAtt: [load-gbq, Arn]
+                    Payload:
+                      uri.$: "$.uri"
+                      table: null
+                      schema: transfermarkt
+                      type: replace
+                  End: true
     palpiteiro-draft:
       name: palpiteiro-draft-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions

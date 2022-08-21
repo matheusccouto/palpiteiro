@@ -27,5 +27,5 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     bucket = os.environ["BUCKET"]
     key = f"spi/{now}.csv"
     uri = f"s3://{bucket}/{key}"
-    utils.aws.s3.save(data=data.to_csv(), uri=uri)
+    utils.aws.s3.save(data=data.to_csv(index=False), uri=uri)
     return {"uri": uri}

@@ -27,6 +27,9 @@ SELECT
     received_penalties_club_last_5,
     received_penalties_opponent_last_5,
     played_last_5,
+    avg_odds_club,
+    avg_odds_opponent,
+    avg_odds_draw,
     IF(total_points <= 0.01, 0.01, total_points) AS total_points
 FROM
     palpiteiro.fct_player

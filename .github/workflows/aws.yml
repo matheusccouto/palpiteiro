@@ -26,6 +26,10 @@ on:
         required: true
       THE_ODDS_API_KEY:
         required: true
+      KAGGLE_USERNAME:
+        required: true
+      KAGGLE_KEY:
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -53,16 +57,22 @@ jobs:
           zip -r layer_pandas.zip python/
           rm -r python
       - name: bigquery layer
-        run: |      
+        run: |
           mkdir python
           pip install -r requirements-bigquery.txt --target python
           zip -r layer_bigquery.zip python/
           rm -r python
       - name: requests layer
-        run: |      
+        run: |
           mkdir python
           pip install -r requirements-requests.txt --target python
           zip -r layer_requests.zip python/
+          rm -r python
+      - name: kaggle layer
+        run: |
+          mkdir python
+          pip install -r requirements-kaggle.txt --target python
+          zip -r layer_kaggle.zip python/
           rm -r python
       - name: deploy
         run: sls deploy --stage ${{ inputs.STAGE }} --conceal
@@ -75,3 +85,5 @@ jobs:
           GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL: ${{ secrets.GCP_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL }}
           GLBID: ${{ secrets.GLBID }}
           THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
