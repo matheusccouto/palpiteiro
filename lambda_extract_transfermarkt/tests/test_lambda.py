@@ -2,8 +2,6 @@
 
 from fnmatch import fnmatch
 
-import pytest
-
 import lambda_extract_transfermarkt
 import utils.aws.s3
 import utils.test

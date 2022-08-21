@@ -39,6 +39,7 @@ def test_table(setup_and_teardown):  # pylint: disable=unused-argument
             "schema": "test",
             "uri": "s3://palpiteiro-test/load/test.csv",
             "subset": ["col1"],
+            "type": "merge",
         }
     )
 
