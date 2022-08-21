@@ -458,10 +458,6 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [extract-transfermarkt, Arn]
             Next: Map
-            ResultSelector:
-              uri.$: "$.uri"
-              table: null
-              schema: transfermarkt
           Map:
             Type: Map
             End: true
