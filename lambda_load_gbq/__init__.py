@@ -38,20 +38,20 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     file = utils.aws.s3.load(event["uri"])
     data = pd.read_csv(io.StringIO(file), index_col=0)
     data["loaded_at"] = pd.Timestamp.now(tz=TZ)
+    table_schema = {
+        field.name: DTYPES[field.field_type]
+        for field in client.get_table(table).schema
+        if field.name in data.columns
+    }
 
     if event["type"] == "replace":
-        data.to_gbq(
+        data.astype(table_schema).to_gbq(
             destination_table=table,
             if_exists="replace",
             credentials=creds,
         )
         return {"statusCode": 200}
 
-    table_schema = {
-        field.name: DTYPES[field.field_type]
-        for field in client.get_table(table).schema
-        if field.name in data.columns
-    }
     data.astype(table_schema).to_gbq(
         destination_table=tmp_table,
         if_exists="replace",
