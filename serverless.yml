@@ -444,7 +444,7 @@ stepFunctions:
       name: palpiteiro-extract_transfermarkt-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 0 * * WED *)
+        - schedule: cron(0 0 ? * WED *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }
