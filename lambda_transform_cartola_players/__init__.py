@@ -22,5 +22,5 @@ def handler(event, context=None):  # pylint: disable=unused-argument
 
     # Save as CSV
     uri = os.path.splitext(event["uri"])[0] + ".csv"
-    utils.aws.s3.save(data=pd.DataFrame.from_records(data).to_csv(), uri=uri)
+    utils.aws.s3.save(data=pd.DataFrame.from_records(data).to_csv(index=False), uri=uri)
     return {"uri": uri}
