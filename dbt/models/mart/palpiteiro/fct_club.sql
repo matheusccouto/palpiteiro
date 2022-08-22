@@ -42,76 +42,16 @@ SELECT
     o.total_points AS total_points_opponent,
     o.offensive_points AS offensive_points_opponent,
     o.defensive_points AS defensive_points_opponent,
-    AVG(
-        c.total_points
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS total_points_club_last_5,
-    AVG(
-        c.offensive_points
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS offensive_points_club_last_5,
-    AVG(
-        c.defensive_points
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS defensive_points_club_last_5,
-    AVG(
-        o.total_points
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS total_allowed_points_opponent_last_5,
-    AVG(
-        o.offensive_points
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS offensive_allowed_points_opponent_last_5,
-    AVG(
-        o.defensive_points
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS defensive_allowed_points_opponent_last_5,
-    AVG(
-        c.penalties
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS penalties_club_last_5,
-    AVG(
-        o.penalties
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS penalties_opponent_last_5,
-    AVG(
-        c.received_penalties
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS received_penalties_club_last_5,
-    AVG(
-        o.received_penalties
-    ) OVER (
-        PARTITION BY
-            c.club, c.home
-        ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS received_penalties_opponent_last_5,
+    AVG(c.total_points) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS total_points_club_last_5,
+    AVG(c.offensive_points) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS offensive_points_club_last_5,
+    AVG(c.defensive_points) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS defensive_points_club_last_5,
+    AVG(o.total_points) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS total_allowed_points_opponent_last_5,
+    AVG(o.offensive_points) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS offensive_allowed_points_opponent_last_5,
+    AVG(o.defensive_points) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS defensive_allowed_points_opponent_last_5,
+    AVG(c.penalties) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS penalties_club_last_5,
+    AVG(o.penalties) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS penalties_opponent_last_5,
+    AVG(c.received_penalties) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS received_penalties_club_last_5,
+    AVG(o.received_penalties) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING) AS received_penalties_opponent_last_5,
     h2h.pinnacle_club AS pinnacle_odds_club,
     h2h.pinnacle_opponent AS pinnacle_odds_opponent,
     h2h.pinnacle_draw AS pinnacle_odds_draw,
