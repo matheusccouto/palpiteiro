@@ -257,10 +257,6 @@ models:
         description: Saves in this match
         tests:
           - not_null
-      - name: difficult_save
-        description: Difficult saves in this match
-        tests:
-          - not_null
       - name: penalty_save
         description: Penalty save in this match
         tests:
