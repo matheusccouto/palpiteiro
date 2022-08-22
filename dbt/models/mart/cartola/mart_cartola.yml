@@ -153,10 +153,6 @@ models:
         description: Saves in this round
         tests:
           - not_negative
-      - name: difficult_save
-        description: Difficult saves in this round
-        tests:
-          - not_negative
       - name: penalty_save
         description: Penalty save in this round
         tests:

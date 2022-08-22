@@ -38,7 +38,7 @@ SELECT
     CAST(COALESCE(gs, 0) AS int) AS allowed_goal,
     CAST(COALESCE(sg, 0) AS int) AS no_goal,
     -- Difficult Save was replaced by Save. I calculated that on average for each difficult save, there are 2.218 save.
-    CAST(COALESCE(de, ROUND(dd * 2.218, 0)) AS int) AS save,
+    CAST(COALESCE(de, ROUND(dd * 2.218, 0), 0) AS int) AS save,
     CAST(COALESCE(dp, 0) AS int) AS penalty_save
 FROM
     {{ source ('cartola', 'pontuados') }}
