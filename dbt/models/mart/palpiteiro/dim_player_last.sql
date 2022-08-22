@@ -20,7 +20,7 @@ ai AS (
         p.position,
         p.price_cartola,
         p.price_cartola_express,
-        {{ target.dataset }}.points(
+        {{ target.dataset }}.predict_points(
             position,
             total_points_last_5,
             offensive_points_last_5,

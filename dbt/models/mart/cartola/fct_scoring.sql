@@ -1,10 +1,55 @@
 WITH scout AS (
     SELECT
-        *,
-        goal * 8 + 5 * assist + 3 * on_post_shoot + 1.2 * saved_shoot + 0.8 * missed_shoot + 0.5 * received_foul + 1 * received_penalty - 4 * missed_penalty - 0.1 * outside - 0.1 * missed_pass AS offensive,
-        no_goal * 5 + penalty_save * 7 + save * 1 + tackle * 1.2 - own_goal * 3 - red_card * 3 - yellow_card * 1 - allowed_goal * 1 - foul * 0.3 - penalty * 1 AS defensive
+        s.*,
+        {{ target.dataset }}.offensive_points_cartola(
+            p.slug,
+            s.goal,
+            s.assist,
+            s.yellow_card,
+            s.red_card,
+            s.missed_shoot,
+            s.on_post_shoot,
+            s.saved_shoot,
+            s.received_foul,
+            s.received_penalty,
+            s.missed_penalty,
+            s.outside,
+            s.missed_pass,
+            s.tackle,
+            s.foul,
+            s.penalty,
+            s.own_goal,
+            s.allowed_goal,
+            s.no_goal,
+            s.save,
+            s.penalty_save
+        ) AS offensive,
+        {{ target.dataset }}.defensive_points_cartola(
+            p.slug,
+            s.goal,
+            s.assist,
+            s.yellow_card,
+            s.red_card,
+            s.missed_shoot,
+            s.on_post_shoot,
+            s.saved_shoot,
+            s.received_foul,
+            s.received_penalty,
+            s.missed_penalty,
+            s.outside,
+            s.missed_pass,
+            s.tackle,
+            s.foul,
+            s.penalty,
+            s.own_goal,
+            s.allowed_goal,
+            s.no_goal,
+            s.save,
+            s.penalty_save
+        ) AS defensive
     FROM
-        {{ ref("stg_pontuados_scoring") }}
+        {{ ref("stg_pontuados_scoring") }} s
+        LEFT JOIN {{ ref("dim_position") }} p ON s.position = p.id
 ),
 
 point AS (
@@ -56,7 +101,6 @@ SELECT
     sc2.allowed_goal AS allowed_goal,
     sc2.no_goal AS no_goal,
     sc2.save AS save,
-    sc2.difficult_save AS difficult_save,
     sc2.penalty_save AS penalty_save,
     38 * (sc1.season - 2017) + sc1.round AS all_time_round
 FROM
