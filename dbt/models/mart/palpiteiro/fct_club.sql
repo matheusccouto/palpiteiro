@@ -27,6 +27,8 @@ SELECT
     c.home,
     c.opponent,
     c.valid,
+    COALESCE(SUM(CAST(c.valid AS INT64)) OVER (PARTITION BY c.club ORDER BY c.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING), 0) AS valid_last_5,
+    COALESCE(SUM(CAST(c.valid AS INT64)) OVER (PARTITION BY c.club, c.home ORDER BY c.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING), 0) AS valid_last_5_at
     s.spi_club,
     s.spi_opponent,
     s.prob_club,
@@ -60,7 +62,7 @@ SELECT
     h2h.max_draw AS max_odds_draw,
     h2h.avg_club AS avg_odds_club,
     h2h.avg_opponent AS avg_odds_opponent,
-    h2h.avg_draw AS avg_odds_draw
+    h2h.avg_draw AS avg_odds_draw,
 FROM
     club AS c
 INNER JOIN
