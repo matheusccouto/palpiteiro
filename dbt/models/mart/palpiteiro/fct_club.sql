@@ -5,7 +5,7 @@ WITH club AS (
         ANY_VALUE(m.opponent) AS opponent,
         ANY_VALUE(m.home) AS home,
         ANY_VALUE(m.timestamp) AS timestamp,
-        ANY_VALUE(m.valid) AS valid,
+        COALESCE(ANY_VALUE(m.valid), SUM(s.total_points) IS NOT NULL) AS valid,
         SUM(s.total_points) AS total_points,
         SUM(s.offensive_points) AS offensive_points,
         SUM(s.defensive_points) AS defensive_points,
