@@ -407,7 +407,7 @@ stepFunctions:
       name: palpiteiro-extract_odds-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(0 */4 * * ? *)
+        - schedule: cron(0 */6 * * ? *)
       alarms:
         topics:
           alarm: { Ref: SNSTopic }

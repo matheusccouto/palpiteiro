@@ -62,6 +62,26 @@ SELECT
     c.avg_odds_club,
     c.avg_odds_opponent,
     c.avg_odds_draw
+    -- s.goal,
+    -- s.assist,
+    -- s.yellow_card,
+    -- s.red_card,
+    -- s.missed_shoot,
+    -- s.on_post_shoot,
+    -- s.saved_shoot,
+    -- s.received_foul,
+    -- s.received_penalty,
+    -- s.missed_penalty,
+    -- s.outside,
+    -- s.missed_pass,
+    -- s.tackle,
+    -- s.foul,
+    -- s.penalty,
+    -- s.own_goal,
+    -- s.allowed_goal,
+    -- s.no_goal,
+    -- s.save,
+    -- s.penalty_save
 FROM
     {{ ref ("fct_scoring") }} AS s
 INNER JOIN
