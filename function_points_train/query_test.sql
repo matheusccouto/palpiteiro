@@ -30,13 +30,13 @@ SELECT
     avg_odds_club,
     avg_odds_opponent,
     avg_odds_draw,
-    IF(total_points <= 0.01, 0.01, total_points) AS total_points
+    total_points
 FROM
     palpiteiro.fct_player
 WHERE
     status = 'expected'
     AND played IS TRUE
     AND played_last_5 > 0
-    AND valid_club_last_5 . 0
+    AND valid_club_last_5 > 0
     AND position != 'coach'
     AND all_time_round >= (SELECT MAX(all_time_round) FROM cartola.fct_match) - 38
