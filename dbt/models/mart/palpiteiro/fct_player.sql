@@ -10,6 +10,8 @@ SELECT
     s.price AS price_cartola,
     s.price - s.variation AS price_cartola_express,
     s.played,
+    COALESCE(SUM(CAST(s.played AS INT64)) OVER (PARTITION BY s.player ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING), 0) AS played_last_5,
+    COALESCE(SUM(CAST(s.played AS INT64)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING), 0) AS played_last_5_at,   
     s.total_points,
     s.offensive_points,
     s.defensive_points,
@@ -34,61 +36,23 @@ SELECT
     c.total_allowed_points_opponent_last_5,
     c.offensive_allowed_points_opponent_last_5,
     c.defensive_allowed_points_opponent_last_5,
-    AVG(
-        s.total_points
-    ) OVER (
-        PARTITION BY
-            s.player, c.home
-        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS total_points_last_5,
-    AVG(
-        s.offensive_points
-    ) OVER (
-        PARTITION BY
-            s.player, c.home
-        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS offensive_points_last_5,
-    AVG(
-        s.defensive_points
-    ) OVER (
-        PARTITION BY
-            s.player, c.home
-        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS defensive_points_last_5,
-    s.total_points / (c.total_points_club + 0.1) AS total_points_repr,
-    s.offensive_points / (
-        c.offensive_points_club + 0.1 -- Add 0.1 to avoid division by zero)
-    ) AS offensive_points_repr,
-    s.defensive_points / (
-        c.defensive_points_club + 0.1 -- Add 0.1 to avoid division by zero)
-    ) AS defensive_points_repr,
-    AVG(
-        s.total_points / (c.total_points_club + 0.1) -- Add 0.1 to avoid division by zero)
-    ) OVER (
-        PARTITION BY
-            s.player, c.home
-        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS total_points_repr_last_5,
-    AVG(
-        s.offensive_points / (c.offensive_points_club + 0.1) -- Add 0.1 to avoid division by zero)
-    ) OVER (
-        PARTITION BY
-            s.player, c.home
-        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS offensive_points_repr_last_5,
-    AVG(
-        s.defensive_points / (c.defensive_points_club + 0.1) -- Add 0.1 to avoid division by zero)
-    ) OVER (
-        PARTITION BY
-            s.player, c.home
-        ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
-    ) AS defensive_points_repr_last_5,
+    AVG(s.total_points) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING) AS total_points_last_5,
+    AVG(s.offensive_points) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING) AS offensive_points_last_5,
+    AVG(s.defensive_points) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING) AS defensive_points_last_5,
+    s.total_points / NULLIF(c.total_points_club, 0) AS total_points_repr,
+    s.offensive_points / NULLIF(c.offensive_points_club, 0) AS offensive_points_repr,
+    s.defensive_points / NULLIF(c.defensive_points_club, 0) AS defensive_points_repr, 
+    AVG(s.total_points / NULLIF(c.total_points_club, 0)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING) AS total_points_repr_last_5,
+    AVG(s.offensive_points / NULLIF(c.offensive_points_club, 0)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING) AS offensive_points_repr_last_5,
+    AVG(s.defensive_points / NULLIF(c.defensive_points_club, 0)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 5 PRECEDING AND 1 PRECEDING) AS defensive_points_repr_last_5,
     c.penalties_club_last_5,
     c.penalties_opponent_last_5,
     c.received_penalties_club_last_5,
     c.received_penalties_opponent_last_5,
-    COALESCE(AVG(CAST(s.played AS INT64)) OVER (PARTITION BY s.player ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING), 0) AS played_last_5,
-    COALESCE(AVG(CAST(s.played AS INT64)) OVER (PARTITION BY s.player, c.home ORDER BY s.all_time_round ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING), 0) AS played_last_5_at,
+    c.valid_club_last_5,
+    c.valid_club_last_5_at,
+    c.valid_opponent_last_5,
+    c.valid_opponent_last_5_at,
     c.pinnacle_odds_club,
     c.pinnacle_odds_opponent,
     c.pinnacle_odds_draw,
@@ -98,8 +62,27 @@ SELECT
     c.avg_odds_club,
     c.avg_odds_opponent,
     c.avg_odds_draw
+    -- s.goal,
+    -- s.assist,
+    -- s.yellow_card,
+    -- s.red_card,
+    -- s.missed_shoot,
+    -- s.on_post_shoot,
+    -- s.saved_shoot,
+    -- s.received_foul,
+    -- s.received_penalty,
+    -- s.missed_penalty,
+    -- s.outside,
+    -- s.missed_pass,
+    -- s.tackle,
+    -- s.foul,
+    -- s.penalty,
+    -- s.own_goal,
+    -- s.allowed_goal,
+    -- s.no_goal,
+    -- s.save,
+    -- s.penalty_save
 FROM
     {{ ref ("fct_scoring") }} AS s
 INNER JOIN
-    {{ ref ("fct_club") }} AS c ON
-        s.club = c.club AND s.all_time_round = c.all_time_round
+    {{ ref ("fct_club") }} AS c ON s.club = c.club AND s.all_time_round = c.all_time_round
