@@ -13,7 +13,7 @@ import requests
 import sktune
 import wandb
 from sklearn.inspection import permutation_importance
-from sklearn.metrics import get_scorer
+from sklearn.metrics import get_scorer, make_scorer, ndcg_score
 
 from .main import get_data
 
@@ -29,7 +29,7 @@ INDEX = "id"
 MAX_PLAYERS_PER_CLUB = 5
 DROPOUT = 0.5
 TIMES = 50
-METRIC = "neg_mean_poisson_deviance"
+METRIC = "r2"
 DIRECTION = "maximize"
 N_TRIALS = 100
 TIMEOUT = None
@@ -105,6 +105,13 @@ def draft(data, max_players_per_club, dropout):
     return sum(p["actual_points"] for p in json.loads(content["output"])["players"])
 
 
+def _get_scorer(scoring):
+    """Extend sklearn get_scorer functionality."""
+    if scoring.lower().strip() == "ndcg":
+        return make_scorer(lambda y_true, y_pred: ndcg_score([y_true], [y_pred]))
+    return get_scorer(scoring)
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -139,7 +146,6 @@ if __name__ == "__main__":
     wandb.save(args.query_train)
     wandb.save(args.query_test)
 
-
     # Tuning
 
     logging.info("Get training data")
@@ -148,52 +154,61 @@ if __name__ == "__main__":
     x_test, y_test = get_data(args.query_test, args.target, args.index)
 
     wandb.save(args.estimator)
-    logging.info("Start tuning")
-    estimator = sktune.tune(
-        path=args.estimator,
-        x=x_train,
-        y=y_train,
-        scoring=args.metric,
-        cv=5,
-        n_trials=args.n_trials,
-        timeout=args.timeout,
-        direction=args.direction,
-        output=args.output,
-    )
+    for pos in x_train["position"].unique():
 
-    estimator.fit(x_train, y_train)
-    wandb.save(args.output)
+        x_train_pos = x_train[x_train["position"] == pos].drop(columns="position")
+        y_train_pos = y_train[x_train["position"] == pos]
 
-    score = get_scorer(args.metric)(estimator, x_test, y_test)
-    logging.info("Score %s", score)
-    wandb.log({args.metric: score})
+        x_test_pos = x_test[x_test["position"] == pos].drop(columns="position")
+        y_test_pos = y_test[x_test["position"] == pos]
 
+        logging.info("Start tuning %s", pos)
+        base, ext = os.path.splitext(args.output)
+        output = base + "-" + pos + ext
+        estimator = sktune.tune(
+            path=args.estimator,
+            x=x_train_pos,
+            y=y_train_pos,
+            scoring=_get_scorer(args.metric),
+            cv=5,
+            n_trials=args.n_trials,
+            timeout=args.timeout,
+            direction=args.direction,
+            output=output,
+        )
 
-    # Feature importances
+        estimator.fit(x_train_pos, y_train_pos)
+        wandb.save(output)
 
-    logging.info("Calculate feature importances.")
-    importances = pd.Series(
-        permutation_importance(
-            estimator,
-            x_test,
-            y_test,
-            scoring=args.metric,
-        )["importances_mean"],
-        index=x_test.columns,
-    ).sort_values(ascending=False)
-    table = wandb.Table(
-        data=list(importances.iteritems()),
-        columns=["feature", "importance"],
-    )
-    plot = wandb.plot.bar(
-        table,
-        label="feature",
-        value="importance",
-        title="Permutation Importance",
-    )
-    wandb.log({"feature_importances": plot})
+        score = _get_scorer(args.metric)(estimator, x_test_pos, y_test_pos)
+        logging.info("Score for %s is %s", pos, score)
+        wandb.log({f"{args.metric}_{pos}": score})
 
+        # Feature importances
 
+        logging.info("Calculate feature importances.")
+        importances = pd.Series(
+            permutation_importance(
+                estimator,
+                x_test_pos,
+                y_test_pos,
+                scoring=_get_scorer(args.metric),
+            )["importances_mean"],
+            index=x_test_pos.columns,
+        ).sort_values(ascending=False)
+        table = wandb.Table(
+            data=list(importances.iteritems()),
+            columns=["feature", f"importance_{pos}"],
+        )
+        plot = wandb.plot.bar(
+            table,
+            label="feature",
+            value=f"importance_{pos}",
+            title=f"Permutation Importance ({pos})",
+        )
+        wandb.log({"feature_importances": plot})
+
+    1 / 0
     # Draft simulation
 
     logging.info("Get draft data")
@@ -234,7 +249,6 @@ if __name__ == "__main__":
             ref[all_time_round],
         )
 
-
     # Scoring
 
     normalized_score_mean = [np.mean(v) / ref[k] for k, v in sim.items()]
@@ -247,7 +261,6 @@ if __name__ == "__main__":
             "std_normalized_mean_std": np.std(normalized_score_std),
         }
     )
-
 
     # Time series scoring
 
@@ -265,6 +278,5 @@ if __name__ == "__main__":
         title="Normalized Score Mean",
     )
     wandb.log({"normalized_score_mean_plot": plot})
-
 
     logging.info("Run URL: %s", wandb.run.get_url())

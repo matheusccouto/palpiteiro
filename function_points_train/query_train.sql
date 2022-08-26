@@ -1,5 +1,5 @@
 SELECT
-    datetime(timestamp) AS timestamp,
+    id,
     position,
     total_points_last_5_at,
     offensive_points_last_5_at,
