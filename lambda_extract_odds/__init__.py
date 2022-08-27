@@ -16,7 +16,7 @@ URL = (
 
 def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
-    odds = requests.get(URL)
+    odds = requests.get(URL, timeout=60)
     bucket = os.environ["BUCKET"]
     key = f"brasileirao/{datetime.datetime.now().isoformat()}.json"
     uri = f"s3://{bucket}/{key}"

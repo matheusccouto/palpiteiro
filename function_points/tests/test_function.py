@@ -25,11 +25,11 @@ def request_fixture():
 
 def test_count(req):
     """Test function handler."""
-    assert len(main.handler(req)["replies"]) == 50
+    assert len(main.handler(req)["replies"]) == 201
 
 
 def test_values(req):
     """Test function handler."""
     values = main.handler(req)["replies"]
     assert max(values) < 20
-    assert min(values) > 0
+    assert min(values) > -20

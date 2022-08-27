@@ -1,18 +1,7 @@
 Pipeline:
   steps:
-    - - columntransformer
-      - ColumnTransformer:
-          remainder: passthrough
-          transformers:
-            - - onehotencoder
-              - OrdinalEncoder:
-                  handle_unknown: use_encoded_value
-                  unknown_value: -1
-              - - 0
     - - histgradientboostingregressor
       - HistGradientBoostingRegressor:
-          loss: poisson
-          categorical_features: [0]
           learning_rate:
             float:
               low: 0.001

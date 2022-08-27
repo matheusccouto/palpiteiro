@@ -4,12 +4,8 @@ WITH player AS (
     FROM
         {{ ref("fct_player") }}
     WHERE
-        all_time_round = (
-            SELECT
-                MAX(all_time_round)
-            FROM
-                {{ ref("fct_match") }}
-        ) AND valid IS TRUE
+        all_time_round = (SELECT MAX(all_time_round) FROM {{ ref("fct_match") }}) 
+        AND valid IS TRUE
 ),
 ai AS (
     SELECT
@@ -20,34 +16,34 @@ ai AS (
         p.position,
         p.price_cartola,
         p.price_cartola_express,
-        {{ target.dataset }}.predict_points(
-            position,
-            total_points_last_5,
-            offensive_points_last_5,
-            defensive_points_last_5,
-            total_points_repr_last_5,
-            offensive_points_repr_last_5,
-            defensive_points_repr_last_5,
-            spi_club,
-            spi_opponent,
-            prob_club,
-            prob_opponent,
-            prob_tie,
-            importance_club,
-            importance_opponent,
-            proj_score_club,
-            proj_score_opponent,
-            total_points_club_last_5,
-            offensive_points_club_last_5,
-            defensive_points_club_last_5,
-            total_allowed_points_opponent_last_5,
-            offensive_allowed_points_opponent_last_5,
-            defensive_allowed_points_opponent_last_5,
-            penalties_club_last_5,
-            penalties_opponent_last_5,
-            received_penalties_club_last_5,
-            received_penalties_opponent_last_5,
-            played_last_5
+        IF (
+            position = 'coach', 
+            NULL, 
+            {{ target.dataset }}.predict_points(
+                position,
+                total_points_last_5_at,
+                offensive_points_last_5_at,
+                defensive_points_last_5_at,
+                spi_club,
+                spi_opponent,
+                prob_club,
+                prob_opponent,
+                prob_tie,
+                importance_club,
+                importance_opponent,
+                proj_score_club,
+                proj_score_opponent,
+                total_points_club_last_5_at,
+                offensive_points_club_last_5_at,
+                defensive_points_club_last_5_at,
+                total_allowed_points_opponent_last_5_at,
+                offensive_allowed_points_opponent_last_5_at,
+                defensive_allowed_points_opponent_last_5_at,
+                played_last_5,
+                avg_odds_club,
+                avg_odds_opponent,
+                avg_odds_draw
+            )
         ) AS points,
         IF (p.status = 'expected', 1, 0) AS participate
     FROM
@@ -60,8 +56,7 @@ club_agg AS (
     FROM
         ai
     WHERE
-        position != 'coach'
-        AND participate > 0.5
+        participate > 0.5
     GROUP BY
         club
 ),

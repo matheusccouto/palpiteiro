@@ -4,8 +4,7 @@ on:
     branches:
       - dev
     paths:
-      - function_points
-      - function_points_train
+      - function_points/**
       - ".github/workflows/gcp.yml"
       - ".github/workflows/gcp_dev.yml"
   workflow_dispatch:
