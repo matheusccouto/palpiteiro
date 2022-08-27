@@ -77,9 +77,9 @@ import optuna
 from sklearn.metrics import ndcg_score
 
 ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1)
-N_TRIALS = 100
+N_TRIALS = 200
 TIMEOUT = None
-NDCG_P = 0.1
+NDCG_P = 0.333
 
 
 def fit(estimator, x, y, q):
@@ -234,7 +234,7 @@ import requests
 
 MAX_PLAYERS_PER_CLUB = 5
 DROPOUT = 0.1
-N_TIMES = 50
+N_TIMES = 10
 
 DRAFT_URL = os.environ["DRAFT_URL"]
 DRAFT_KEY = os.environ["DRAFT_KEY"]
@@ -293,6 +293,7 @@ for rnd in sorted(test[TIME_COL].unique()):
 
     test_rnd = test[test[TIME_COL] == rnd]
     y_pred = pd.concat(y_preds.values())
+    y_pred = np.exp(y_pred)
     test_rnd = test_rnd.join(y_pred, rsuffix="_predicted")
 
     mapping = {
