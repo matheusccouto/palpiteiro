@@ -35,5 +35,5 @@ if __name__ == "__main__":
 
     if args.func == "upload":
         upload()
-    else: 
+    else:
         raise ValueError("Invalid arg")

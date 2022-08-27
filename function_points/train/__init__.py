@@ -1,6 +1,6 @@
 """Train model."""
 
-# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position,wrong-import-order,redefined-outer-name,invalid-name
 
 # %% [markdown]
 # ## Load data from warehouse
@@ -94,6 +94,7 @@ def fit(estimator, x, y, q):
 
 def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test):
     """Fit and predict estimator."""
+    # pylint: disable=too-many-arguments
     return pd.Series(
         fit(estimator, x_train, y_train, q_train).predict(
             X=x_test.astype("float64"),
@@ -122,6 +123,7 @@ def ndcg(y_true, y_pred, groups, p=1.0):
 
 class Objective:
     """Optuna objective."""
+    # pylint: disable=too-many-arguments,too-few-public-methods
 
     def __init__(self, estimator, x_train, y_train, q_train, x_test, y_test, q_test):
         self.estimator = estimator
@@ -228,7 +230,6 @@ import concurrent.futures
 import json
 from decimal import Decimal
 
-import numpy as np
 import requests
 
 MAX_PLAYERS_PER_CLUB = 5
@@ -272,6 +273,7 @@ def draft(data, max_players_per_club, dropout):
         DRAFT_URL,
         headers={"Content-Type": "application/json", "x-api-key": DRAFT_KEY},
         data=json.dumps(body, cls=DecimalEncoder),
+        timeout=30,
     )
     if res.status_code >= 300:
         raise ValueError(res.text)
