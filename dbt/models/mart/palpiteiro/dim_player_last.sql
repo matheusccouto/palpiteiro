@@ -80,8 +80,8 @@ SELECT
     e2p.price_cartola,
     e2p.price_cartola_express,
     CASE
-        WHEN e2p.position = 'coach' THEN round(ca.points, 2)
-        ELSE round(e2p.points * e2p.participate, 2)
+        WHEN e2p.position = 'coach' THEN round(exp(ca.points), 2)
+        ELSE round(exp(e2p.points * e2p.participate), 2)
     END AS points,
     current_timestamp AS materialized_at
 FROM
