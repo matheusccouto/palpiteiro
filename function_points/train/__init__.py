@@ -76,14 +76,16 @@ import numpy as np
 import optuna
 from sklearn.metrics import ndcg_score
 
-ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1)
-N_TRIALS = 200
+ESTIMATOR = lgbm.LGBMRanker(n_estimators=10, n_jobs=-1, objective="rank_xendcg")
+N_TRIALS = 250
 TIMEOUT = None
-NDCG_P = 0.333
+NDCG_P = 0.5
 
 
-def fit(estimator, x, y, q):
+def fit(estimator, x, y, q, features=None):
     """Fit estimator."""
+    if features is None:
+        features = x.columns
     estimator.fit(
         X=x.astype("float64"),
         y=y.round().clip(0, 30).astype("int"),
@@ -92,12 +94,14 @@ def fit(estimator, x, y, q):
     return estimator
 
 
-def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test):
+def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test, features=None):
     """Fit and predict estimator."""
     # pylint: disable=too-many-arguments
+    if features is None:
+        features = x_train.columns
     return pd.Series(
-        fit(estimator, x_train, y_train, q_train).predict(
-            X=x_test.astype("float64"),
+        fit(estimator, x_train[features], y_train, q_train).predict(
+            X=x_test[features].astype("float64"),
             group=q_test.astype("int").tolist(),
         ),
         index=x_test.index,
@@ -123,6 +127,7 @@ def ndcg(y_true, y_pred, groups, p=1.0):
 
 class Objective:
     """Optuna objective."""
+
     # pylint: disable=too-many-arguments,too-few-public-methods
 
     def __init__(self, estimator, x_train, y_train, q_train, x_test, y_test, q_test):
@@ -136,9 +141,7 @@ class Objective:
 
     def __call__(self, trial: optuna.Trial):
         params = dict(
-            boosting_type=trial.suggest_categorical(
-                "boosting_type", ["gbdt", "dart", "goss"]
-            ),
+            boosting_type=trial.suggest_categorical("boosting_type", ["gbdt", "dart", "goss"]),
             num_leaves=trial.suggest_int("num_leaves", 2, 1024),
             max_depth=trial.suggest_int("max_depth", 2, 128),
             learning_rate=trial.suggest_float("learning_rate", 1e-3, 1e0, log=True),
@@ -233,7 +236,7 @@ from decimal import Decimal
 import requests
 
 MAX_PLAYERS_PER_CLUB = 5
-DROPOUT = 0.1
+DROPOUT = 0.5
 N_TIMES = 10
 
 DRAFT_URL = os.environ["DRAFT_URL"]
@@ -306,10 +309,19 @@ for rnd in sorted(test[TIME_COL].unique()):
     }
     data = test_rnd.reset_index().rename(mapping, axis=1)[list(mapping.values())]
 
+    def run_draft():
+        """Wrapper to handle error on draft()."""
+        try:
+            return draft(data, MAX_PLAYERS_PER_CLUB, DROPOUT)
+        except ValueError as err:
+            if "There are not enough players to form a line-up" in str(err):
+                return draft(data, MAX_PLAYERS_PER_CLUB, DROPOUT)
+            raise err
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
         for _ in range(N_TIMES):
-            futures.append(executor.submit(draft, data, MAX_PLAYERS_PER_CLUB, DROPOUT))
+            futures.append(executor.submit(run_draft))
         draft_scores = [
             fut.result() for fut in concurrent.futures.as_completed(futures)
         ]
