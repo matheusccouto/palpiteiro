@@ -1,5 +1,6 @@
 # Experiments Tracking
 xp-out*.yml
+*.joblib
 wandb/
 
 # Streamlit
