@@ -70,31 +70,37 @@ print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
 
 from copy import deepcopy
 
+import joblib
 import lightgbm as lgbm
 import numpy as np
 import optuna
 from sklearn.metrics import ndcg_score
 
 ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1)
-N_TRIALS = 1
+N_TRIALS = 100
 TIMEOUT = None
 NDCG_P = 0.1
 
 
+def fit(estimator, x, y, q):
+    """Fit estimator."""
+    estimator.fit(
+        X=x.astype("float64"),
+        y=y.round().clip(0, 30).astype("int"),
+        group=q.astype("int").tolist(),
+    )
+    return estimator
+
+
 def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test):
     """Fit and predict estimator."""
-    estimator.fit(
-        X=x_train.astype("float64"),
-        y=y_train.round().clip(0, 30).astype("int"),
-        group=q_train.astype("int").tolist(),
-    )
     return pd.Series(
-        estimator.predict(
+        fit(estimator, x_train, y_train, q_train).predict(
             X=x_test.astype("float64"),
             group=q_test.astype("int").tolist(),
         ),
         index=x_test.index,
-        name=y_train.name
+        name=y_train.name,
     )
 
 
@@ -205,6 +211,16 @@ for pos in df[POSITION_COL].unique():
     scores[pos] = ndcg(y_test_pos, y_preds[pos], q_test_pos, p=NDCG_P)
     logging.info("%s NDCG: %s", pos.capitalize(), scores[pos])
 
+    # Artifacts to be uploaded later,
+    est = fit(
+        estimator=deepcopy(estimators[pos]),
+        x=pd.concat((x_train_pos, x_valid_pos, x_test_pos)),
+        y=pd.concat((y_train_pos, y_valid_pos, y_test_pos)),
+        q=pd.concat((q_train_pos, q_valid_pos, q_test_pos)),
+    )
+    with open(os.path.join(THIS_DIR, f"{pos}.joblib"), mode="wb") as file:
+        joblib.dump(est, file)
+
 
 # %%
 
@@ -216,8 +232,8 @@ import numpy as np
 import requests
 
 MAX_PLAYERS_PER_CLUB = 5
-DROPOUT = 0.0
-N_TIMES = 1
+DROPOUT = 0.1
+N_TIMES = 50
 
 DRAFT_URL = os.environ["DRAFT_URL"]
 DRAFT_KEY = os.environ["DRAFT_KEY"]
@@ -305,7 +321,7 @@ for rnd in sorted(test[TIME_COL].unique()):
 
     logging.info("Mean Draft: %.1f (%.2f)", mean_draft, mean_draft_norm)
     logging.info("Max Draft: %.1f (%.2f)", max_draft, max_draft_norm)
-    logging.info("%s", 79 * "-")
+    logging.info("%s", 40 * "-")
 
     mean_points.append(mean_draft_norm)
     max_points.append(max_draft_norm)
@@ -316,11 +332,3 @@ overall_max_points = np.mean(max_points)
 
 logging.info("Overall Mean Draft: %.2f", overall_mean_points)
 logging.info("Overall Max Draft: %.2f", overall_max_points)
-
-# %%
-
-import joblib
-
-for pos, estimator in estimators.items():
-    with open(os.path.join(THIS_DIR, f"{pos}.joblib"), mode="wb") as file:
-        joblib.dump(estimator, file)
