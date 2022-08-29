@@ -11,8 +11,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
@@ -25,7 +23,9 @@ jobs:
         with:
           python-version: "3.9"
       - name: install requirements
-        run: pip install -r function_points/requirements-train.txt        
+        run: pip install -r function_points/requirements-train.txt
+      - name: authenticate wandb
+        run: wandb login --anonymously
       - name: retrain
         run: python -m function_points.train
       - name: upload
