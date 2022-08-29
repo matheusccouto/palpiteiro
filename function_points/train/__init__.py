@@ -371,6 +371,7 @@ for rnd in sorted(test[TIME_COL].unique()):
             futures.append(executor.submit(run_draft))
         draft_scores = pd.Series(
             [fut.result() for fut in concurrent.futures.as_completed(futures)],
+            index=[f"run{i}" for i in range(len(futures))],
             name=rnd
         )
 

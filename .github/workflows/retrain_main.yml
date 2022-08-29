@@ -1,0 +1,17 @@
+name: retrain-main
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - function_points/**
+  schedule:
+    - cron:  '0 0 * * 2'
+  workflow_dispatch:
+jobs:
+  gcp:
+    uses: ./.github/workflows/retrain.yml
+    with:
+      BUCKET_NAME: palpiteiro-main
+    secrets:
+      GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_MAIN }}
