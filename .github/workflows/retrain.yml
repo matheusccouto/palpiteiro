@@ -23,12 +23,10 @@ jobs:
         with:
           python-version: "3.9"
       - name: install requirements
-        run: pip install -r function_points/requirements-train.txt
-      - name: authenticate wandb
-        run: wandb login ${{ env.WANDB_API_KEY }}
-        env:
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        run: pip install -r function_points/requirements-train.txt        
       - name: retrain
         run: python -m function_points.train
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
       - name: upload
         run: python -m function_points upload
