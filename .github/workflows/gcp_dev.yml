@@ -9,7 +9,7 @@ on:
       - ".github/workflows/gcp_dev.yml"
   workflow_dispatch:
 jobs:
-  retrain:
+  gcp:
     uses: ./.github/workflows/gcp.yml
     with:
       BUCKET_NAME: palpiteiro-dev

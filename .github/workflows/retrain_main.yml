@@ -11,7 +11,7 @@ on:
     - cron:  '0 0 * * 2'
   workflow_dispatch:
 jobs:
-  gcp:
+  retrain:
     uses: ./.github/workflows/retrain.yml
     with:
       BUCKET_NAME: palpiteiro-main
