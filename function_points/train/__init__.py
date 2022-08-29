@@ -18,6 +18,7 @@ DRAFT_N_TIMES = 10
 
 
 os.environ["WANDB_SILENT"] = "true"
+wandb.login(key=os.environ["WANDB_API_KEY"])
 wandb.init(
     project="palpiteiro-points",
     save_code=True,
