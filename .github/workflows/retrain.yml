@@ -14,10 +14,12 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
-      - name: authenticate
+      - name: authenticate gcp
         uses: "google-github-actions/auth@v0.7.1"
         with:
           credentials_json: ${{ secrets.GCP_KEYFILE }}
+      - name: authenticate wandb
+        run: wandb login ${{ secrets.WANDB_API_KEY }}
       - name: setup python
         uses: actions/setup-python@v3
         with:
@@ -26,7 +28,5 @@ jobs:
         run: pip install -r function_points/requirements-train.txt
       - name: retrain
         run: python -m function_points.train
-        env:
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
       - name: upload
         run: python -m function_points upload
