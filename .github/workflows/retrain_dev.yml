@@ -5,6 +5,8 @@ on:
       - dev
     paths:
       - function_points/**
+      - ".github/workflows/retrain.yml"
+      - ".github/workflows/retrain_dev.yml"
   schedule:
     - cron:  '0 0 * * 2'
   workflow_dispatch:
