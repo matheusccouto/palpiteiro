@@ -26,5 +26,7 @@ jobs:
         run: pip install -r function_points/requirements-train.txt
       - name: retrain
         run: python -m function_points.train
+        with:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
       - name: upload
         run: python -m function_points upload
