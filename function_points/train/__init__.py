@@ -7,28 +7,28 @@
 
 import os
 
-import wandb
+# import wandb
 
 NOTES = ""
-OPTUNA_N_TRIALS = 50
+OPTUNA_N_TRIALS = 100
 OPTUNA_TIMEOUT = None
 DRAFT_MAX_PLAYERS_PER_CLUB = 5
 DRAFT_DROPOUT = 0.5
 DRAFT_N_TIMES = 10
 
 
-os.environ["WANDB_SILENT"] = "true"
-wandb.init(
-    project="palpiteiro-points",
-    save_code=True,
-    config={
-        "optuna.n_trials": OPTUNA_N_TRIALS,
-        "optuna.timeout": OPTUNA_TIMEOUT,
-        "draft.timeout": DRAFT_MAX_PLAYERS_PER_CLUB,
-        "draft.dropout": DRAFT_DROPOUT,
-        "draft.n_times": DRAFT_N_TIMES,
-    },
-)
+# os.environ["WANDB_SILENT"] = "true"
+# wandb.init(
+#     project="palpiteiro-points",
+#     save_code=True,
+#     config={
+#         "optuna.n_trials": OPTUNA_N_TRIALS,
+#         "optuna.timeout": OPTUNA_TIMEOUT,
+#         "draft.timeout": DRAFT_MAX_PLAYERS_PER_CLUB,
+#         "draft.dropout": DRAFT_DROPOUT,
+#         "draft.n_times": DRAFT_N_TIMES,
+#     },
+# )
 
 # %% [markdown]
 # ## Load data from warehouse
@@ -49,7 +49,7 @@ THIS_DIR = os.path.dirname(__file__)
 QUERY = os.path.join(THIS_DIR, "query.sql")
 ID_COL = "id"
 
-wandb.save(QUERY)
+# wandb.save(QUERY)
 
 with open(QUERY, encoding="utf-8") as file:
     df = pd.read_gbq(file.read(), index_col=ID_COL)
@@ -89,16 +89,16 @@ x_test = test.drop(columns=to_drop)
 y_test = test[TARGET_COL]
 q_test = test["all_time_round"].value_counts().sort_index()
 
-wandb.log(
-    {
-        "x_train": x_train,
-        "y_train": y_train.to_frame(),
-        "x_valid": x_valid,
-        "y_valid": y_valid.to_frame(),
-        "x_test": x_test,
-        "y_test": y_test.to_frame(),
-    }
-)
+# wandb.log(
+#     {
+#         "x_train": x_train,
+#         "y_train": y_train.to_frame(),
+#         "x_valid": x_valid,
+#         "y_valid": y_valid.to_frame(),
+#         "x_test": x_test,
+#         "y_test": y_test.to_frame(),
+#     }
+# )
 
 
 # %% [markdown]
@@ -115,7 +115,7 @@ import optuna
 from sklearn.metrics import ndcg_score
 
 ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
-wandb.log({"estimator": str(ESTIMATOR)})
+# wandb.log({"estimator": str(ESTIMATOR)})
 
 
 def fit(estimator, x, y, q, features=None):
@@ -268,13 +268,13 @@ for pos in df[POSITION_COL].unique():
     with open(os.path.join(THIS_DIR, f"{pos}.joblib"), mode="wb") as file:
         joblib.dump(est, file)
 
-wandb.log(
-    {
-        "params": params,
-        "scores_valid": scores_valid,
-        "scores_test": scores_test,
-    }
-)
+# wandb.log(
+#     {
+#         "params": params,
+#         "scores_valid": scores_valid,
+#         "scores_test": scores_test,
+#     }
+# )
 
 
 # %%
@@ -399,10 +399,10 @@ overall_max_points = np.mean(max_points)
 logging.info("Overall Mean Draft: %.2f", overall_mean_points)
 logging.info("Overall Max Draft: %.2f", overall_max_points)
 
-wandb.log(
-    {
-        "points": pd.DataFrame(draft_history),
-        "draft_mean_points_norm": overall_mean_points,
-        "draft_max_points_norm": overall_max_points,
-    }
-)
+# wandb.log(
+#     {
+#         "points": pd.DataFrame(draft_history),
+#         "draft_mean_points_norm": overall_mean_points,
+#         "draft_max_points_norm": overall_max_points,
+#     }
+# )
