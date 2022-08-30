@@ -8,6 +8,10 @@ on:
     secrets:
       GCP_KEYFILE:
         required: true
+      DRAFT_URL:
+        required: true
+      DRAFT_KEY:
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -28,5 +32,8 @@ jobs:
         run: wandb login --anonymously
       - name: retrain
         run: python -m function_points.train
+        env:
+          DRAFT_URL: ${{ secrets.DRAFT_URL }}
+          DRAFT_KEY: ${{ secrets.DRAFT_KEY }}
       - name: upload
         run: python -m function_points upload
