@@ -37,3 +37,5 @@ jobs:
           DRAFT_KEY: ${{ secrets.DRAFT_KEY }}
       - name: upload
         run: python -m function_points upload
+        env:
+          BUCKET_NAME: ${{ inputs.BUCKET_NAME }}
