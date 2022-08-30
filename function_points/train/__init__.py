@@ -3,11 +3,38 @@
 # pylint: disable=wrong-import-position,wrong-import-order,redefined-outer-name,invalid-name
 
 # %% [markdown]
+# ## Set up a Weights & Biases experiment
+
+import os
+
+# import wandb
+
+NOTES = ""
+OPTUNA_N_TRIALS = 100
+OPTUNA_TIMEOUT = None
+DRAFT_MAX_PLAYERS_PER_CLUB = 5
+DRAFT_DROPOUT = 0.5
+DRAFT_N_TIMES = 10
+
+
+# os.environ["WANDB_SILENT"] = "true"
+# wandb.init(
+#     project="palpiteiro-points",
+#     save_code=True,
+#     config={
+#         "optuna.n_trials": OPTUNA_N_TRIALS,
+#         "optuna.timeout": OPTUNA_TIMEOUT,
+#         "draft.timeout": DRAFT_MAX_PLAYERS_PER_CLUB,
+#         "draft.dropout": DRAFT_DROPOUT,
+#         "draft.n_times": DRAFT_N_TIMES,
+#     },
+# )
+
+# %% [markdown]
 # ## Load data from warehouse
 
 # %%
 import logging
-import os
 import sys
 
 import pandas as pd
@@ -19,10 +46,12 @@ logging.basicConfig(
 )
 
 THIS_DIR = os.path.dirname(__file__)
-QUERY_TRAIN = os.path.join(THIS_DIR, "train.sql")
+QUERY = os.path.join(THIS_DIR, "query.sql")
 ID_COL = "id"
 
-with open(QUERY_TRAIN, encoding="utf-8") as file:
+# wandb.save(QUERY)
+
+with open(QUERY, encoding="utf-8") as file:
     df = pd.read_gbq(file.read(), index_col=ID_COL)
 
 df.head()
@@ -60,7 +89,16 @@ x_test = test.drop(columns=to_drop)
 y_test = test[TARGET_COL]
 q_test = test["all_time_round"].value_counts().sort_index()
 
-print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
+# wandb.log(
+#     {
+#         "x_train": x_train,
+#         "y_train": y_train.to_frame(),
+#         "x_valid": x_valid,
+#         "y_valid": y_valid.to_frame(),
+#         "x_test": x_test,
+#         "y_test": y_test.to_frame(),
+#     }
+# )
 
 
 # %% [markdown]
@@ -76,14 +114,14 @@ import numpy as np
 import optuna
 from sklearn.metrics import ndcg_score
 
-ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1)
-N_TRIALS = 200
-TIMEOUT = None
-NDCG_P = 0.333
+ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
+# wandb.log({"estimator": str(ESTIMATOR)})
 
 
-def fit(estimator, x, y, q):
+def fit(estimator, x, y, q, features=None):
     """Fit estimator."""
+    if features is None:
+        features = x.columns
     estimator.fit(
         X=x.astype("float64"),
         y=y.round().clip(0, 30).astype("int"),
@@ -92,12 +130,14 @@ def fit(estimator, x, y, q):
     return estimator
 
 
-def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test):
+def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test, features=None):
     """Fit and predict estimator."""
     # pylint: disable=too-many-arguments
+    if features is None:
+        features = x_train.columns
     return pd.Series(
-        fit(estimator, x_train, y_train, q_train).predict(
-            X=x_test.astype("float64"),
+        fit(estimator, x_train[features], y_train, q_train).predict(
+            X=x_test[features].astype("float64"),
             group=q_test.astype("int").tolist(),
         ),
         index=x_test.index,
@@ -123,6 +163,7 @@ def ndcg(y_true, y_pred, groups, p=1.0):
 
 class Objective:
     """Optuna objective."""
+
     # pylint: disable=too-many-arguments,too-few-public-methods
 
     def __init__(self, estimator, x_train, y_train, q_train, x_test, y_test, q_test):
@@ -136,9 +177,7 @@ class Objective:
 
     def __call__(self, trial: optuna.Trial):
         params = dict(
-            boosting_type=trial.suggest_categorical(
-                "boosting_type", ["gbdt", "dart", "goss"]
-            ),
+            boosting_type=trial.suggest_categorical("boosting_type", ["gbdt", "dart", "goss"]),
             num_leaves=trial.suggest_int("num_leaves", 2, 1024),
             max_depth=trial.suggest_int("max_depth", 2, 128),
             learning_rate=trial.suggest_float("learning_rate", 1e-3, 1e0, log=True),
@@ -161,12 +200,14 @@ class Objective:
             self.x_test,
             self.q_test,
         )
-        return ndcg(self.y_test, y_pred, self.q_test, p=NDCG_P)
+        return ndcg(self.y_test, y_pred, self.q_test)
 
 
 estimators = {}
 y_preds = {}
-scores = {}
+params = {}
+scores_valid = {}
+scores_test = {}
 for pos in df[POSITION_COL].unique():
 
     train_pos = train[train[POSITION_COL] == pos]
@@ -196,8 +237,12 @@ for pos in df[POSITION_COL].unique():
     )
 
     study = optuna.create_study(direction="maximize", study_name=pos)
-    study.optimize(objective, n_trials=N_TRIALS, timeout=TIMEOUT)
+    study.optimize(objective, n_trials=OPTUNA_N_TRIALS, timeout=OPTUNA_TIMEOUT)
 
+    scores_valid[pos] = study.best_value
+    params[pos] = study.best_params
+
+    estimators[pos].set_params(**study.best_params)
     y_preds[pos] = fit_predict(
         estimator=estimators[pos],
         x_train=pd.concat((x_train_pos, x_valid_pos)),
@@ -210,8 +255,8 @@ for pos in df[POSITION_COL].unique():
     ## Scorings
 
     # NDGC
-    scores[pos] = ndcg(y_test_pos, y_preds[pos], q_test_pos, p=NDCG_P)
-    logging.info("%s NDCG: %s", pos.capitalize(), scores[pos])
+    scores_test[pos] = ndcg(y_test_pos, y_preds[pos], q_test_pos)
+    logging.info("%s NDCG: %s", pos.capitalize(), scores_test[pos])
 
     # Artifacts to be uploaded later,
     est = fit(
@@ -223,6 +268,14 @@ for pos in df[POSITION_COL].unique():
     with open(os.path.join(THIS_DIR, f"{pos}.joblib"), mode="wb") as file:
         joblib.dump(est, file)
 
+# wandb.log(
+#     {
+#         "params": params,
+#         "scores_valid": scores_valid,
+#         "scores_test": scores_test,
+#     }
+# )
+
 
 # %%
 
@@ -231,10 +284,6 @@ import json
 from decimal import Decimal
 
 import requests
-
-MAX_PLAYERS_PER_CLUB = 5
-DROPOUT = 0.1
-N_TIMES = 10
 
 DRAFT_URL = os.environ["DRAFT_URL"]
 DRAFT_KEY = os.environ["DRAFT_KEY"]
@@ -287,6 +336,7 @@ def draft(data, max_players_per_club, dropout):
 
 mean_points = []
 max_points = []
+draft_history = []
 for rnd in sorted(test[TIME_COL].unique()):
 
     logging.info("Round %s", rnd)
@@ -306,13 +356,24 @@ for rnd in sorted(test[TIME_COL].unique()):
     }
     data = test_rnd.reset_index().rename(mapping, axis=1)[list(mapping.values())]
 
+    def run_draft():
+        """Wrapper to handle error on draft()."""
+        try:
+            return draft(data, DRAFT_MAX_PLAYERS_PER_CLUB, DRAFT_DROPOUT)
+        except ValueError as err:
+            if "There are not enough players to form a line-up" in str(err):
+                return draft(data, DRAFT_MAX_PLAYERS_PER_CLUB, DRAFT_DROPOUT)
+            raise err
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
-        for _ in range(N_TIMES):
-            futures.append(executor.submit(draft, data, MAX_PLAYERS_PER_CLUB, DROPOUT))
-        draft_scores = [
-            fut.result() for fut in concurrent.futures.as_completed(futures)
-        ]
+        for _ in range(DRAFT_N_TIMES):
+            futures.append(executor.submit(run_draft))
+        draft_scores = pd.Series(
+            [fut.result() for fut in concurrent.futures.as_completed(futures)],
+            index=[f"run{i}" for i in range(len(futures))],
+            name=rnd
+        )
 
     data["points"] = data["actual_points"]
     ref = draft(data, 5, 0.0)
@@ -326,6 +387,8 @@ for rnd in sorted(test[TIME_COL].unique()):
     logging.info("Max Draft: %.1f (%.2f)", max_draft, max_draft_norm)
     logging.info("%s", 40 * "-")
 
+    draft_scores["max"] = ref
+    draft_history.append(draft_scores)
     mean_points.append(mean_draft_norm)
     max_points.append(max_draft_norm)
 
@@ -335,3 +398,11 @@ overall_max_points = np.mean(max_points)
 
 logging.info("Overall Mean Draft: %.2f", overall_mean_points)
 logging.info("Overall Max Draft: %.2f", overall_max_points)
+
+# wandb.log(
+#     {
+#         "points": pd.DataFrame(draft_history),
+#         "draft_mean_points_norm": overall_mean_points,
+#         "draft_max_points_norm": overall_max_points,
+#     }
+# )
