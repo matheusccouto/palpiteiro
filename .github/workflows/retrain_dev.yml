@@ -17,3 +17,5 @@ jobs:
       BUCKET_NAME: palpiteiro-dev
     secrets:
       GCP_KEYFILE: ${{ secrets.GCP_KEYFILE_DEV }}
+      DRAFT_URL: ${{ secrets.DRAFT_URL_DEV }}
+      DRAFT_KEY: ${{ secrets.DRAFT_KEY_DEV }}
