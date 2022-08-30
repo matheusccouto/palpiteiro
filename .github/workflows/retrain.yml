@@ -31,7 +31,7 @@ jobs:
       - name: authenticate wandb
         run: wandb login --anonymously
       - name: retrain
-        run: python -m function_points.train
+        run: python function_points/train/__init__.py
         env:
           DRAFT_URL: ${{ secrets.DRAFT_URL }}
           DRAFT_KEY: ${{ secrets.DRAFT_KEY }}
