@@ -114,7 +114,8 @@ import numpy as np
 import optuna
 from sklearn.metrics import ndcg_score
 
-ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
+# ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
+ESTIMATOR = lgbm.LGBMRegressor(n_estimators=100, n_jobs=-1)
 # wandb.log({"estimator": str(ESTIMATOR)})
 
 
@@ -124,8 +125,9 @@ def fit(estimator, x, y, q, features=None):
         features = x.columns
     estimator.fit(
         X=x.astype("float64"),
-        y=y.round().clip(0, 30).astype("int"),
-        group=q.astype("int").tolist(),
+        y=y.astype("float64"),
+        # y=y.round().clip(0, 30).astype("int"),
+        # group=q.astype("int").tolist(),
     )
     return estimator
 
