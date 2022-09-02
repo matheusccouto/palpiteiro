@@ -19,13 +19,15 @@ POSITION = {
 
 def handler(event, context=None):  # pylint: disable=unused-argument
     """Lambda handler."""
-    return utils.http.post(
-        "https://api.cartolafc.globo.com/auth/time/salvar",
-        body={
+    body = {
             "esquema": 3,  # 433
-            "atleta": [p["id"] for p in event["players"]],
+            "atletas": [p["id"] for p in event["players"]],
             "capitao": max(event["players"], key=lambda p: p["points"])["id"],
             "reservas": {POSITION[p["position"]]: p["id"] for p in event["bench"]},
-        },
+        }
+    print(body)
+    return utils.http.post(
+        "https://api.cartola.globo.com/auth/time/salvar",
+        body=body,
         headers=HEADERS,
     )
