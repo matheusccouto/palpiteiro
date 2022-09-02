@@ -7,12 +7,14 @@ params:
     odds-bucket: betting-main
     transfermarkt-bucket: transfermarkt-main
     deployment-bucket: palpiteiro-main
+    cartola-bot-schedule-enabled: true
   dev:
     cartola-bucket: cartola-dev
     fivethirtyeight-bucket: fivethirtyeight-dev
     odds-bucket: betting-dev
     transfermarkt-bucket: transfermarkt-dev
     deployment-bucket: palpiteiro-dev
+    cartola-bot-schedule-enabled: false
 custom:
   account: "#{AWS::AccountId}"
 provider:
@@ -572,7 +574,10 @@ stepFunctions:
       name: palpiteiro-cartola-bot-${opt:stage}
       role: arn:aws:iam::${aws:accountId}:role/palpiteiro-step-functions
       events:
-        - schedule: cron(10 */8 * * ? *)
+        - schedule:
+            rate: cron(15 * * * ? *)
+            enabled: ${param:cartola-bot-schedule-enabled}
+
       definition:
         Comment: Line-up bot for Cartola
         StartAt: Budget
