@@ -115,7 +115,7 @@ import optuna
 from sklearn.metrics import ndcg_score
 
 # ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
-ESTIMATOR = lgbm.LGBMRegressor(n_estimators=10, n_jobs=-1)
+ESTIMATOR = lgbm.LGBMRegressor(n_estimators=100, n_jobs=-1)
 # wandb.log({"estimator": str(ESTIMATOR)})
 
 

@@ -577,7 +577,6 @@ stepFunctions:
         - schedule:
             rate: cron(15 * * * ? *)
             enabled: ${param:cartola-bot-schedule-enabled}
-
       definition:
         Comment: Line-up bot for Cartola
         StartAt: Budget
