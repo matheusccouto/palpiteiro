@@ -16,6 +16,8 @@ seeds:
   palpiteiro:
     cartola:
       +schema: cartola
+    express:
+      +schema: express
     palpiteiro:
       +schema: palpiteiro
 models:

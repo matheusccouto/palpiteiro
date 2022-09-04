@@ -1,4 +1,0 @@
-scikit-learn==1.0.2
-pandas-gbq==0.17.4
-google-cloud-storage
-scikit-tune
