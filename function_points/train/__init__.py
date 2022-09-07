@@ -116,7 +116,7 @@ import optuna
 from sklearn.metrics import ndcg_score, r2_score
 
 # ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
-ESTIMATOR = lgbm.LGBMRegressor(n_estimators=50, n_jobs=-1)
+ESTIMATOR = lgbm.LGBMRegressor(n_estimators=100, n_jobs=-1)
 # wandb.log({"estimator": str(ESTIMATOR)})
 
 
@@ -272,7 +272,7 @@ for pos in df[POSITION_COL].unique():
         x_train=pd.concat((x_train_pos, x_valid_pos))[features[pos]],
         y_train=pd.concat((y_train_pos, y_valid_pos)),
         q_train=pd.concat((q_train_pos, q_valid_pos)),
-        x_test=x_test_pos,
+        x_test=x_test_pos[features[pos]],
         q_test=q_test_pos,
     )
 
