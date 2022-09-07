@@ -39,7 +39,7 @@ def handler(request):
     """HTTP Cloud Function handler."""
     body = request.get_json()
     data = body["calls"]
-    names = body["userDefinedContext"]["names"]
+    names = body["userDefinedContext"]["names"].split(",")
 
     data = [dict(zip(names, row)) for row in data]
     data = [
