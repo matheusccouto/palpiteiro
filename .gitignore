@@ -1,7 +1,7 @@
 # Experiments Tracking
-xp-out*.yml
-*.joblib
 wandb/
+function_points/train/*.joblib
+function_points/train/*.json
 
 # Streamlit
 secrets.toml

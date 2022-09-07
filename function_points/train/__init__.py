@@ -10,7 +10,7 @@ import os
 # import wandb
 
 NOTES = ""
-OPTUNA_N_TRIALS = 100
+OPTUNA_N_TRIALS = 500
 OPTUNA_TIMEOUT = None
 DRAFT_MAX_PLAYERS_PER_CLUB = 5
 DRAFT_DROPOUT = 0.5
@@ -106,16 +106,17 @@ q_test = test["all_time_round"].value_counts().sort_index()
 
 # %%
 
+import json
 from copy import deepcopy
 
 import joblib
 import lightgbm as lgbm
 import numpy as np
 import optuna
-from sklearn.metrics import ndcg_score
+from sklearn.metrics import ndcg_score, r2_score
 
 # ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
-ESTIMATOR = lgbm.LGBMRegressor(n_estimators=100, n_jobs=-1)
+ESTIMATOR = lgbm.LGBMRegressor(n_estimators=50, n_jobs=-1)
 # wandb.log({"estimator": str(ESTIMATOR)})
 
 
@@ -147,20 +148,21 @@ def fit_predict(estimator, x_train, y_train, q_train, x_test, q_test, features=N
     )
 
 
-def ndcg(y_true, y_pred, groups, p=1.0):
+def score(y_true, y_pred, groups, p=1.0):
     """Mean groups NDCG"""
-    i = 0
-    scores = []
-    for g in groups.cumsum():
-        scores.append(
-            ndcg_score(
-                y_true[i:g].values.reshape(1, -1),
-                y_pred[i:g].values.reshape(1, -1),
-                k=round(p * len(y_pred[i:g])),
-            )
-        )
-        i = g
-    return np.mean(scores)
+    return r2_score(y_true, y_pred)
+    # i = 0
+    # scores = []
+    # for g in groups.cumsum():
+    #     scores.append(
+    #         ndcg_score(
+    #             y_true[i:g].values.reshape(1, -1),
+    #             y_pred[i:g].values.reshape(1, -1),
+    #             k=round(p * len(y_pred[i:g])),
+    #         )
+    #     )
+    #     i = g
+    # return np.mean(scores)
 
 
 class Objective:
@@ -179,7 +181,9 @@ class Objective:
 
     def __call__(self, trial: optuna.Trial):
         params = dict(
-            boosting_type=trial.suggest_categorical("boosting_type", ["gbdt", "dart", "goss"]),
+            boosting_type=trial.suggest_categorical(
+                "boosting_type", ["gbdt", "dart", "goss"]
+            ),
             num_leaves=trial.suggest_int("num_leaves", 2, 1024),
             max_depth=trial.suggest_int("max_depth", 2, 128),
             learning_rate=trial.suggest_float("learning_rate", 1e-3, 1e0, log=True),
@@ -193,21 +197,29 @@ class Objective:
             reg_alpha=trial.suggest_float("reg_alpha", 1e-3, 1e0, log=True),
             reg_lambda=trial.suggest_float("reg_lambda", 1e-3, 1e0, log=True),
         )
+
+        feats = [
+            col
+            for col in self.x_train.columns
+            if trial.suggest_categorical(f"use_feature_{col}", [True, False])
+        ]
+
         self.estimator.set_params(**params)
         y_pred = fit_predict(
             self.estimator,
-            self.x_train,
+            self.x_train[feats],
             self.y_train,
             self.q_train,
-            self.x_test,
+            self.x_test[feats],
             self.q_test,
         )
-        return ndcg(self.y_test, y_pred, self.q_test)
+        return score(self.y_test, y_pred, self.q_test)
 
 
 estimators = {}
 y_preds = {}
 params = {}
+features = {}
 scores_valid = {}
 scores_test = {}
 for pos in df[POSITION_COL].unique():
@@ -242,12 +254,22 @@ for pos in df[POSITION_COL].unique():
     study.optimize(objective, n_trials=OPTUNA_N_TRIALS, timeout=OPTUNA_TIMEOUT)
 
     scores_valid[pos] = study.best_value
-    params[pos] = study.best_params
+    params[pos] = {
+        key: val
+        for key, val in study.best_params.items()
+        if not key.startswith("use_feature_")
+    }
+    features[pos] = [
+        key.removeprefix("use_feature_")
+        for key, val in study.best_params.items()
+        if key.startswith("use_feature_") and val is True
+    ]
 
-    estimators[pos].set_params(**study.best_params)
+    estimators[pos].set_params(**params[pos])
+    estimators[pos].set_params(n_estimators=100)  # FIXME
     y_preds[pos] = fit_predict(
         estimator=estimators[pos],
-        x_train=pd.concat((x_train_pos, x_valid_pos)),
+        x_train=pd.concat((x_train_pos, x_valid_pos))[features[pos]],
         y_train=pd.concat((y_train_pos, y_valid_pos)),
         q_train=pd.concat((q_train_pos, q_valid_pos)),
         x_test=x_test_pos,
@@ -257,18 +279,24 @@ for pos in df[POSITION_COL].unique():
     ## Scorings
 
     # NDGC
-    scores_test[pos] = ndcg(y_test_pos, y_preds[pos], q_test_pos)
+    scores_test[pos] = score(y_test_pos, y_preds[pos], q_test_pos)
     logging.info("%s NDCG: %s", pos.capitalize(), scores_test[pos])
 
     # Artifacts to be uploaded later,
     est = fit(
         estimator=deepcopy(estimators[pos]),
-        x=pd.concat((x_train_pos, x_valid_pos, x_test_pos)),
+        x=pd.concat((x_train_pos, x_valid_pos, x_test_pos))[features[pos]],
         y=pd.concat((y_train_pos, y_valid_pos, y_test_pos)),
         q=pd.concat((q_train_pos, q_valid_pos, q_test_pos)),
     )
     with open(os.path.join(THIS_DIR, f"{pos}.joblib"), mode="wb") as file:
         joblib.dump(est, file)
+
+    with open(os.path.join(THIS_DIR, f"{pos}_features.json"), encoding="utf-8", mode="w") as file:
+        json.dump(features[pos], file)
+
+    with open(os.path.join(THIS_DIR, f"{pos}_params.json"), encoding="utf-8", mode="w") as file:
+        json.dump(params[pos], file)
 
 # wandb.log(
 #     {
@@ -374,7 +402,7 @@ for rnd in sorted(test[TIME_COL].unique()):
         draft_scores = pd.Series(
             [fut.result() for fut in concurrent.futures.as_completed(futures)],
             index=[f"run{i}" for i in range(len(futures))],
-            name=rnd
+            name=rnd,
         )
 
     data["points"] = data["actual_points"]
