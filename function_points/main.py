@@ -23,9 +23,7 @@ def load_joblib(
         return joblib.load(file)
 
 
-def load_json(
-    path,
-):
+def load_json(path):
     """Load json."""
     blob = bucket.blob(path)
     with blob.open(encoding="utf-8") as file:
