@@ -10,7 +10,7 @@ import os
 # import wandb
 
 NOTES = ""
-OPTUNA_N_TRIALS = 500
+OPTUNA_N_TRIALS = 100
 OPTUNA_TIMEOUT = None
 DRAFT_MAX_PLAYERS_PER_CLUB = 5
 DRAFT_DROPOUT = 0.5
@@ -113,7 +113,10 @@ import joblib
 import lightgbm as lgbm
 import numpy as np
 import optuna
+import optuna.logging
 from sklearn.metrics import ndcg_score, r2_score
+
+optuna.logging.set_verbosity(optuna.logging.WARN)
 
 # ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
 ESTIMATOR = lgbm.LGBMRegressor(n_estimators=100, n_jobs=-1)
