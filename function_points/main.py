@@ -23,18 +23,18 @@ def load_joblib(
         return joblib.load(file)
 
 
-def load_json(
+def load_list(
     path,
 ):
     """Load json."""
     blob = bucket.blob(path)
     with blob.open(encoding="utf-8") as file:
-        return json.load(file)
+        return ",".split(file.read())
 
 
 # Load models outside the handler for caching in between calls.
 models = {p: load_joblib(MODEL_PATH.format(position=p)) for p in POSITIONS}
-features = {p: load_json(FEATURES_PATH.format(position=p)) for p in POSITIONS}
+features = {p: load_list(FEATURES_PATH.format(position=p)) for p in POSITIONS}
 
 
 def handler(request):

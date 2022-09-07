@@ -2,6 +2,8 @@
 wandb/
 function_points/train/*.joblib
 function_points/train/*.json
+function_scouts/train/*.joblib
+function_scouts/train/*.json
 
 # Streamlit
 secrets.toml
