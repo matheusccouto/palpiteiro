@@ -42,7 +42,17 @@ ai AS (
                 played_last_5,
                 avg_odds_club,
                 avg_odds_opponent,
-                avg_odds_draw
+                avg_odds_draw,
+                total_points_last_19_at,
+                offensive_points_last_19_at,
+                defensive_points_last_19_at,
+                total_points_club_last_19_at,
+                offensive_points_club_last_19_at,
+                defensive_points_club_last_19_at,
+                total_allowed_points_opponent_last_19_at,
+                offensive_allowed_points_opponent_last_19_at,
+                defensive_allowed_points_opponent_last_19_at,
+                played_last_19
             )
         ) AS points,
         IF (p.status = 'expected', 1, 0) AS participate
