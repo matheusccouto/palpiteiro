@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION {{ target.dataset }}.predict_points(
     played_last_5 INT64,
     avg_odds_club FLOAT64,
     avg_odds_opponent FLOAT64,
-    avg_odds_draw FLOAT64
+    avg_odds_draw FLOAT64,
     total_points_last_19_at FLOAT64,
     offensive_points_last_19_at FLOAT64,
     defensive_points_last_19_at FLOAT64,
