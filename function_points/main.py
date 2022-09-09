@@ -38,6 +38,9 @@ features = {p: load_json(FEATURES_PATH.format(position=p)) for p in POSITIONS}
 def handler(request):
     """HTTP Cloud Function handler."""
     body = request.get_json()
+    print("body", body)
+    import logging
+    logging.info("body %s", body)
     data = body["calls"]
     names = body["userDefinedContext"]["names"].split(",")
 
