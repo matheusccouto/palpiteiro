@@ -119,7 +119,7 @@ from sklearn.metrics import ndcg_score, r2_score
 optuna.logging.set_verbosity(optuna.logging.WARN)
 
 # ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
-ESTIMATOR = lgbm.LGBMRegressor(n_estimators=100, n_jobs=-1)
+ESTIMATOR = lgbm.LGBMRegressor(n_estimators=500, n_jobs=-1)
 # wandb.log({"estimator": str(ESTIMATOR)})
 
 
