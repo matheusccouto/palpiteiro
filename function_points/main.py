@@ -1,5 +1,6 @@
 """Google Cloud Functions to predict player points."""
 
+import json
 import os
 
 import joblib
@@ -8,23 +9,80 @@ from google.cloud import storage
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 POSITIONS = ["goalkeeper", "defender", "fullback", "midfielder", "forward"]
 MODEL_PATH = "points/{position}.joblib"
+FEATURES_PATH = "points/{position}_features.json"
+NAMES = [
+    "position",
+    "total_points_last_5_at",
+    "offensive_points_last_5_at",
+    "defensive_points_last_5_at",
+    "spi_club",
+    "spi_opponent",
+    "prob_club",
+    "prob_opponent",
+    "prob_tie",
+    "importance_club",
+    "importance_opponent",
+    "proj_score_club",
+    "proj_score_opponent",
+    "total_points_club_last_5_at",
+    "offensive_points_club_last_5_at",
+    "defensive_points_club_last_5_at",
+    "total_allowed_points_opponent_last_5_at",
+    "offensive_allowed_points_opponent_last_5_at",
+    "defensive_allowed_points_opponent_last_5_at",
+    "played_last_5",
+    "avg_odds_club",
+    "avg_odds_opponent",
+    "avg_odds_draw",
+    "total_points_last_19_at",
+    "offensive_points_last_19_at",
+    "defensive_points_last_19_at",
+    "total_points_club_last_19_at",
+    "offensive_points_club_last_19_at",
+    "defensive_points_club_last_19_at",
+    "total_allowed_points_opponent_last_19_at",
+    "offensive_allowed_points_opponent_last_19_at",
+    "defensive_allowed_points_opponent_last_19_at",
+    "played_last_19",
+]
 
 bucket = storage.Client().get_bucket(BUCKET_NAME)
 
 
-def load(path,):
+def load_joblib(
+    path,
+):
     """Load model with joblib."""
     blob = bucket.blob(path)
     with blob.open(mode="rb") as file:
         return joblib.load(file)
 
 
+def load_json(path):
+    """Load json."""
+    blob = bucket.blob(path)
+    with blob.open(encoding="utf-8") as file:
+        return json.load(file)
+
+
 # Load models outside the handler for caching in between calls.
-models = {p: load(MODEL_PATH.format(position=p)) for p in POSITIONS}
+models = {p: load_joblib(MODEL_PATH.format(position=p)) for p in POSITIONS}
+features = {p: load_json(FEATURES_PATH.format(position=p)) for p in POSITIONS}
 
 
 def handler(request):
     """HTTP Cloud Function handler."""
-    data = request.get_json()["calls"]
-    pred = [models[row[0]].predict([row[1:]])[0] for row in data]
+    body = request.get_json()
+    data = body["calls"]
+
+    data = [dict(zip(NAMES, row)) for row in data]
+    data = [
+        (
+            row["position"],
+            [val for col, val in row.items() if col in features[row["position"]]],
+        )
+        for row in data
+    ]
+
+    pred = [models[pos].predict([row])[0] for pos, row in data]
     return {"replies": pred}

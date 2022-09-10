@@ -10,7 +10,7 @@ import os
 # import wandb
 
 NOTES = ""
-OPTUNA_N_TRIALS = 500
+OPTUNA_N_TRIALS = 1
 OPTUNA_TIMEOUT = None
 DRAFT_MAX_PLAYERS_PER_CLUB = 5
 DRAFT_DROPOUT = 0.5
@@ -65,6 +65,28 @@ TIME_COL = "all_time_round"
 CLUB_COL = "club"
 PRICE_COL = "price"
 POSITION_COL = "position"
+SCOUTS = [
+    "goal",
+    "assist",
+    "yellow_card",
+    "red_card",
+    "missed_shoot",
+    "on_post_shoot",
+    "saved_shoot",
+    "received_foul",
+    "received_penalty",
+    "missed_penalty",
+    "outside",
+    "missed_pass",
+    "tackle",
+    "foul",
+    "penalty",
+    "own_goal",
+    "allowed_goal",
+    "no_goal",
+    "save",
+    "penalty_save",
+]
 
 test_itv = (df[TIME_COL].max() - 38, df[TIME_COL].max())
 valid_itv = (test_itv[0] - 38, test_itv[0] - 1)
@@ -75,18 +97,18 @@ train = df[(df[TIME_COL] >= train_itv[0]) & (df[TIME_COL] <= train_itv[1])]
 valid = df[(df[TIME_COL] >= valid_itv[0]) & (df[TIME_COL] <= valid_itv[1])]
 test = df[(df[TIME_COL] >= test_itv[0]) & (df[TIME_COL] <= test_itv[1])]
 
-to_drop = [TARGET_COL, TIME_COL, CLUB_COL, PRICE_COL, POSITION_COL]
+to_drop = SCOUTS + [TARGET_COL, TIME_COL, CLUB_COL, PRICE_COL, POSITION_COL]
 
 x_train = train.drop(columns=to_drop)
-y_train = train[TARGET_COL]
+y_train = train[SCOUTS]
 q_train = train["all_time_round"].value_counts().sort_index()
 
 x_valid = valid.drop(columns=to_drop)
-y_valid = valid[TARGET_COL]
+y_valid = valid[SCOUTS]
 q_valid = valid["all_time_round"].value_counts().sort_index()
 
 x_test = test.drop(columns=to_drop)
-y_test = test[TARGET_COL]
+y_test = test[SCOUTS]
 q_test = test["all_time_round"].value_counts().sort_index()
 
 # wandb.log(
@@ -113,13 +135,10 @@ import joblib
 import lightgbm as lgbm
 import numpy as np
 import optuna
-import optuna.logging
 from sklearn.metrics import ndcg_score, r2_score
 
-optuna.logging.set_verbosity(optuna.logging.WARN)
-
 # ESTIMATOR = lgbm.LGBMRanker(n_estimators=100, n_jobs=-1, objective="rank_xendcg")
-ESTIMATOR = lgbm.LGBMRegressor(n_estimators=500, n_jobs=-1)
+ESTIMATOR = lgbm.LGBMRegressor(n_estimators=10, n_jobs=-1)
 # wandb.log({"estimator": str(ESTIMATOR)})
 
 
@@ -216,90 +235,101 @@ class Objective:
             self.x_test[feats],
             self.q_test,
         )
-        return score(self.y_test, y_pred, self.q_test)
+        return score(self.y_test.astype(float), y_pred, self.q_test)
 
 
-estimators = {}
-y_preds = {}
-params = {}
-features = {}
-scores_valid = {}
-scores_test = {}
+estimators = {p: {} for p in df[POSITION_COL].unique()}
+y_preds = {p: {} for p in df[POSITION_COL].unique()}
+params = {p: {} for p in df[POSITION_COL].unique()}
+features = {p: {} for p in df[POSITION_COL].unique()}
+scores_valid = {p: {} for p in df[POSITION_COL].unique()}
+scores_test = {p: {} for p in df[POSITION_COL].unique()}
 for pos in df[POSITION_COL].unique():
 
-    train_pos = train[train[POSITION_COL] == pos]
-    x_train_pos = x_train.loc[train_pos.index]
-    y_train_pos = y_train.loc[train_pos.index]
-    q_train_pos = train_pos[TIME_COL].value_counts().sort_index()
+    for scout in SCOUTS:
 
-    valid_pos = valid[valid[POSITION_COL] == pos]
-    x_valid_pos = x_valid.loc[valid_pos.index]
-    y_valid_pos = y_valid.loc[valid_pos.index]
-    q_valid_pos = valid_pos[TIME_COL].value_counts().sort_index()
+        train_pos = train[train[POSITION_COL] == pos]
+        x_train_pos = x_train.loc[train_pos.index]
+        y_train_pos = y_train.loc[train_pos.index][scout]
+        q_train_pos = train_pos[TIME_COL].value_counts().sort_index()
 
-    test_pos = test[test[POSITION_COL] == pos]
-    x_test_pos = x_test.loc[test_pos.index]
-    y_test_pos = y_test.loc[test_pos.index]
-    q_test_pos = test_pos[TIME_COL].value_counts().sort_index()
+        valid_pos = valid[valid[POSITION_COL] == pos]
+        x_valid_pos = x_valid.loc[valid_pos.index]
+        y_valid_pos = y_valid.loc[valid_pos.index][scout]
+        q_valid_pos = valid_pos[TIME_COL].value_counts().sort_index()
 
-    estimators[pos] = deepcopy(ESTIMATOR)
-    objective = Objective(
-        estimator=estimators[pos],
-        x_train=x_train_pos,
-        y_train=y_train_pos,
-        q_train=q_train_pos,
-        x_test=x_valid_pos,
-        y_test=y_valid_pos,
-        q_test=q_valid_pos,
-    )
+        test_pos = test[test[POSITION_COL] == pos]
+        x_test_pos = x_test.loc[test_pos.index]
+        y_test_pos = y_test.loc[test_pos.index][scout]
+        q_test_pos = test_pos[TIME_COL].value_counts().sort_index()
 
-    study = optuna.create_study(direction="maximize", study_name=pos)
-    study.optimize(objective, n_trials=OPTUNA_N_TRIALS, timeout=OPTUNA_TIMEOUT)
+        estimators[pos] = {scout: deepcopy(ESTIMATOR)}
+        objective = Objective(
+            estimator=estimators[pos][scout],
+            x_train=x_train_pos,
+            y_train=y_train_pos,
+            q_train=q_train_pos,
+            x_test=x_valid_pos,
+            y_test=y_valid_pos,
+            q_test=q_valid_pos,
+        )
 
-    scores_valid[pos] = study.best_value
-    params[pos] = {
-        key: val
-        for key, val in study.best_params.items()
-        if not key.startswith("use_feature_")
-    }
-    features[pos] = [
-        key.removeprefix("use_feature_")
-        for key, val in study.best_params.items()
-        if key.startswith("use_feature_") and val is True
-    ]
+        study = optuna.create_study(direction="maximize", study_name=f"{pos}_{scout}")
+        study.optimize(objective, n_trials=OPTUNA_N_TRIALS, timeout=OPTUNA_TIMEOUT)
 
-    estimators[pos].set_params(**params[pos])
-    estimators[pos].set_params(n_estimators=100)  # FIXME
-    y_preds[pos] = fit_predict(
-        estimator=estimators[pos],
-        x_train=pd.concat((x_train_pos, x_valid_pos))[features[pos]],
-        y_train=pd.concat((y_train_pos, y_valid_pos)),
-        q_train=pd.concat((q_train_pos, q_valid_pos)),
-        x_test=x_test_pos[features[pos]],
-        q_test=q_test_pos,
-    )
+        scores_valid[pos][scout] = study.best_value
+        params[pos][scout] = {
+            key: val
+            for key, val in study.best_params.items()
+            if not key.startswith("use_feature_")
+        }
+        features[pos][scout] = [
+            key.removeprefix("use_feature_")
+            for key, val in study.best_params.items()
+            if key.startswith("use_feature_") and val is True
+        ]
 
-    ## Scorings
+        estimators[pos][scout].set_params(**params[pos][scout])
+        estimators[pos][scout].set_params(n_estimators=100)  # FIXME
+        y_preds[pos][scout] = fit_predict(
+            estimator=estimators[pos][scout],
+            x_train=pd.concat((x_train_pos, x_valid_pos))[features[pos][scout]],
+            y_train=pd.concat((y_train_pos, y_valid_pos)),
+            q_train=pd.concat((q_train_pos, q_valid_pos)),
+            x_test=x_test_pos[features[pos][scout]],
+            q_test=q_test_pos,
+        )
 
-    # NDGC
-    scores_test[pos] = score(y_test_pos, y_preds[pos], q_test_pos)
-    logging.info("%s NDCG: %s", pos.capitalize(), scores_test[pos])
+        ## Scorings
 
-    # Artifacts to be uploaded later,
-    est = fit(
-        estimator=deepcopy(estimators[pos]),
-        x=pd.concat((x_train_pos, x_valid_pos, x_test_pos))[features[pos]],
-        y=pd.concat((y_train_pos, y_valid_pos, y_test_pos)),
-        q=pd.concat((q_train_pos, q_valid_pos, q_test_pos)),
-    )
-    with open(os.path.join(THIS_DIR, f"{pos}.joblib"), mode="wb") as file:
-        joblib.dump(est, file)
+        scores_test[pos][scout] = score(
+            y_test_pos.astype(float), y_preds[pos][scout], q_test_pos
+        )
+        logging.info("%s Score: %s", pos.capitalize(), scores_test[pos][scout])
 
-    with open(os.path.join(THIS_DIR, f"{pos}_features.json"), encoding="utf-8", mode="w") as file:
-        json.dump(features[pos], file)
+        # Artifacts to be uploaded later,
+        est = fit(
+            estimator=deepcopy(estimators[pos][scout]),
+            x=pd.concat((x_train_pos, x_valid_pos, x_test_pos))[features[pos][scout]],
+            y=pd.concat((y_train_pos, y_valid_pos, y_test_pos)),
+            q=pd.concat((q_train_pos, q_valid_pos, q_test_pos)),
+        )
+        with open(os.path.join(THIS_DIR, f"{pos}_{scout}.joblib"), mode="wb") as file:
+            joblib.dump(est, file)
 
-    with open(os.path.join(THIS_DIR, f"{pos}_params.json"), encoding="utf-8", mode="w") as file:
-        json.dump(params[pos], file)
+        with open(
+            os.path.join(THIS_DIR, f"{pos}_{scout}_features.json"),
+            encoding="utf-8",
+            mode="w",
+        ) as file:
+            json.dump(features[pos][scout], file)
+
+        with open(
+            os.path.join(THIS_DIR, f"{pos}_{scout}_params.json"),
+            encoding="utf-8",
+            mode="w",
+        ) as file:
+            json.dump(params[pos][scout], file)
 
 # wandb.log(
 #     {
@@ -308,6 +338,55 @@ for pos in df[POSITION_COL].unique():
 #         "scores_test": scores_test,
 #     }
 # )
+
+# %%
+
+
+def offensive_points(row):
+    """Points"""
+    points = 0
+    points += 8.0 * row["goal"]
+    points += 5.0 * row["assist"]
+    points += 3.0 * row["on_post_shoot"]
+    points += 1.2 * row["saved_shoot"]
+    points += 0.8 * row["missed_shoot"]
+    points += 0.5 * row["received_foul"]
+    points += 1.0 * row["received_penalty"]
+    points -= 4.0 * row["missed_penalty"]
+    points -= 0.1 * row["outside"]
+    if row["position"] != "goalkeeper":
+        points -= 0.1 * row["missed_pass"]
+    return points
+
+
+def defensive_points(row):
+    """Points"""
+    points = 0
+    if row["position"] in ("goalkeeper", "defender", "fullback"):
+        points += 5.0 * row["no_goal"]
+    if row["position"] == "goalkeeper":
+        points += 7.0 * row["penalty_save"]
+    if row["position"] == "goalkeeper":
+        points += 1.0 * row["save"]
+    if row["position"] == "goalkeeper":
+        points -= 1.0 * row["allowed_goal"]
+    points += 1.2 * row["tackle"]
+    points -= 3.0 * row["own_goal"]
+    points -= 3.0 * row["red_card"]
+    points -= 1.0 * row["yellow_card"]
+    points -= 0.3 * row["foul"]
+    points -= 1.0 * row["penalty"]
+    return points
+
+
+y_pred = (
+    pd.concat({pos: pd.concat(pos_data, axis=1) for pos, pos_data in y_preds.items()})
+    .reset_index(0)
+    .rename(columns={"level_0": "position"})
+)
+y_pred["offensive_points"] = y_pred.apply(offensive_points, axis=1)
+y_pred["defensive_points"] = y_pred.apply(defensive_points, axis=1)
+y_pred["points"] = y_pred["offensive_points"] + y_pred["defensive_points"]
 
 
 # %%
@@ -375,9 +454,7 @@ for rnd in sorted(test[TIME_COL].unique()):
     logging.info("Round %s", rnd)
 
     test_rnd = test[test[TIME_COL] == rnd]
-    y_pred = pd.concat(y_preds.values())
-    y_pred = np.exp(y_pred)
-    test_rnd = test_rnd.join(y_pred, rsuffix="_predicted")
+    test_rnd = test_rnd.join(np.exp(y_pred["points"]), rsuffix="_predicted")
 
     mapping = {
         ID_COL: "id",

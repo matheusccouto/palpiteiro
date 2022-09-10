@@ -28,5 +28,5 @@ jobs:
         run: dbt source freshness --profiles-dir . --target main
         working-directory: ./dbt
       - name: snapshot
-        run: dbt run --exclude path:snapshots/palpiteiro --profiles-dir . --target main
+        run: dbt snapshot --exclude path:snapshots/palpiteiro --profiles-dir . --target main
         working-directory: ./dbt
