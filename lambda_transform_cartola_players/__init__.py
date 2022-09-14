@@ -18,6 +18,9 @@ def handler(event, context=None):  # pylint: disable=unused-argument
     data = data["atletas"]
     for row in data:
         row.update(row.pop("scout"))
+
+        if "scout" in row["gato_mestre"]:
+            row.remove("scout")
         row.update(row.pop("gato_mestre"))
 
     # Save as CSV

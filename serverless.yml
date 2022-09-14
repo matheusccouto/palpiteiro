@@ -190,6 +190,7 @@ functions:
     handler: lambda_extract_transfermarkt.handler
     description: Extract transfermarkt data from kaggle.
     runtime: python3.7
+    timeout: 60
     role:
       { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/palpiteiro-scraper" }
     package:
