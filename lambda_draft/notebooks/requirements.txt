@@ -1,8 +1,0 @@
-optuna
-numpy
-pandas
-plotly
-num2words
-ipykernel
-nbformat
-scikit-learn

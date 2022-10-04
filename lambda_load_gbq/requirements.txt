@@ -1,2 +1,0 @@
-boto3
-pandas-gbq==0.17.4
